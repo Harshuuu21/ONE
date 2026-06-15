@@ -47,7 +47,7 @@ export function LandingCta() {
           className="mt-12"
         >
           <Link
-            href="/os"
+            href="/onboarding"
             className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-lg font-medium text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95"
           >
             Enter ONE
