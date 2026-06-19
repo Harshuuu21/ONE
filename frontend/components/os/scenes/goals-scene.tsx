@@ -75,10 +75,20 @@ export function GoalsScene() {
           <GoalCard key={g.id} goal={g} onContribute={setCelebrate} />
         ))}
 
-        <button className="flex min-h-[7rem] items-center justify-center gap-2 rounded-3xl border border-dashed border-border bg-card/40 p-5 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
-          <Plus className="size-5" />
-          <span className="font-medium">Dream up a new goal</span>
-        </button>
+        <div className="grid grid-cols-2 gap-4">
+          <button className="flex min-h-[7rem] items-center justify-center gap-2 rounded-3xl border border-dashed border-border bg-card/40 p-5 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
+            <Plus className="size-5" />
+            <span className="font-medium">Dream up a new goal</span>
+          </button>
+
+          <button className="flex flex-col min-h-[7rem] items-center justify-center gap-1.5 rounded-3xl border border-dashed border-primary/40 bg-primary/5 p-5 text-primary transition-colors hover:border-primary hover:bg-primary/10">
+            <div className="flex items-center gap-2 font-medium">
+              <Sparkles className="size-5" />
+              <span>Plan a dream trip</span>
+            </div>
+            <span className="text-xs text-primary/70">Powered by Trip Intelligence</span>
+          </button>
+        </div>
       </div>
 
       {/* celebration wow moment */}

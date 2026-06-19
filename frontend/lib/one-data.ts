@@ -242,13 +242,26 @@ export const trip = {
   days: 14,
   budget: 7800,
   saved: 4200,
+  spent: 1250, // Added for active tracking
   travelers: 2,
+  status: 'funding', // 'planning', 'funding', 'active', 'completed'
+  budgetTier: 'mid-range',
+  weather: { temp: 18, condition: 'Clear Sky' },
   breakdown: [
-    { label: 'Flights', planned: 2400, tone: 'Booked early — you saved $310' },
-    { label: 'Stays', planned: 2100, tone: '12 nights across Tokyo & Kyoto' },
-    { label: 'Food', planned: 1400, tone: 'About $50/day each' },
-    { label: 'Trains & transit', planned: 900, tone: 'JR Pass included' },
-    { label: 'Experiences', planned: 1000, tone: 'Room for the unplanned' },
+    { label: 'Flights', planned: 2400, spent: 2400, tone: 'Booked early — you saved $310' },
+    { label: 'Stays', planned: 2100, spent: 0, tone: '12 nights across Tokyo & Kyoto' },
+    { label: 'Food', planned: 1400, spent: 0, tone: 'About $50/day each' },
+    { label: 'Trains & transit', planned: 900, spent: 0, tone: 'JR Pass included' },
+    { label: 'Experiences', planned: 1000, spent: 0, tone: 'Room for the unplanned' },
+  ],
+  itinerary: [
+    { day: 1, title: 'Arrival in Tokyo', activities: ['Settle into Shinjuku hotel', 'Evening walk through Omoide Yokocho', 'Dinner at Ichiran Ramen'] },
+    { day: 2, title: 'Classic Tokyo', activities: ['Senso-ji Temple early morning', 'Ueno Park', 'Akihabara electronics & anime culture'] },
+    { day: 3, title: 'Modern Tokyo', activities: ['Shibuya Crossing', 'Meiji Shrine', 'Harajuku shopping', 'Evening at Roppongi'] },
+  ],
+  communities: [
+    { name: 'Japan Travel Tips', members: 1402, type: 'public' },
+    { name: 'Smart Backpackers', members: 890, type: 'public' }
   ],
   intelligence:
     'If you book the Kyoto leg before March 1, prices historically rise 22% after. I am watching three flight routes for you.',
