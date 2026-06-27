@@ -81,12 +81,14 @@ export function GoalsScene() {
             <span className="font-medium">Dream up a new goal</span>
           </button>
 
-          <button className="flex flex-col min-h-[7rem] items-center justify-center gap-1.5 rounded-3xl border border-dashed border-primary/40 bg-primary/5 p-5 text-primary transition-colors hover:border-primary hover:bg-primary/10">
+          <button className="flex flex-col min-h-[7rem] items-center justify-center gap-2 rounded-3xl border border-primary/30 bg-accent p-5 text-accent-foreground transition-colors hover:border-primary/50">
             <div className="flex items-center gap-2 font-medium">
-              <Sparkles className="size-5" />
-              <span>Plan a dream trip</span>
+              <Sparkles className="size-4" />
+              <span>AI Goal Forecasting</span>
             </div>
-            <span className="text-xs text-primary/70">Powered by Trip Intelligence</span>
+            <span className="text-xs text-center text-accent-foreground/80">
+              See what happens if you increase monthly savings by $50.
+            </span>
           </button>
         </div>
       </div>

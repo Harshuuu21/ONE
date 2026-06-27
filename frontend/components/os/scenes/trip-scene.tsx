@@ -8,10 +8,10 @@ import { trip, currency } from '@/lib/one-data'
 import { OneOrb } from '@/components/one-mark'
 import { SceneHeader } from '../scene-header'
 
-type Tab = 'funding' | 'itinerary' | 'community'
+type Tab = 'planning' | 'funding' | 'itinerary' | 'community'
 
 export function TripScene() {
-  const [activeTab, setActiveTab] = useState<Tab>('funding')
+  const [activeTab, setActiveTab] = useState<Tab>('planning')
   
   const pct = Math.round((trip.saved / trip.budget) * 100)
   const spentPct = Math.round((trip.spent / trip.budget) * 100)
@@ -67,8 +67,8 @@ export function TripScene() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-8 flex gap-2 border-b border-border pb-px">
-        {(['funding', 'itinerary', 'community'] as const).map((t) => (
+      <div className="mt-8 flex gap-2 border-b border-border pb-px overflow-x-auto">
+        {(['planning', 'funding', 'itinerary', 'community'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -89,6 +89,48 @@ export function TripScene() {
 
       <div className="mt-6">
         <AnimatePresence mode="wait">
+          {activeTab === 'planning' && (
+            <motion.div
+              key="planning"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
+              <div className="rounded-3xl border border-primary/40 bg-primary/5 p-6 flex flex-col items-center justify-center text-center">
+                <div className="flex items-center gap-2 font-medium text-primary mb-2">
+                  <CloudSun className="size-5" />
+                  <span>Dream Destination Search</span>
+                </div>
+                <p className="text-sm text-muted-foreground max-w-sm mb-4">
+                  Tell ONE your travel budget and dates, and it will recommend the best destinations and generate a full itinerary.
+                </p>
+                <button className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02]">
+                  Plan a new trip
+                </button>
+              </div>
+
+              <p className="text-sm font-medium text-muted-foreground mt-4">AI Suggested Destinations</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative overflow-hidden rounded-2xl h-32 group cursor-pointer border border-border">
+                  <div className="absolute inset-0 bg-secondary group-hover:bg-primary/20 transition-colors" />
+                  <div className="absolute bottom-3 left-4">
+                    <p className="font-serif text-lg font-medium">Lisbon</p>
+                    <p className="text-xs text-muted-foreground">Est. {currency(4500)}</p>
+                  </div>
+                </div>
+                <div className="relative overflow-hidden rounded-2xl h-32 group cursor-pointer border border-border">
+                  <div className="absolute inset-0 bg-secondary group-hover:bg-primary/20 transition-colors" />
+                  <div className="absolute bottom-3 left-4">
+                    <p className="font-serif text-lg font-medium">Costa Rica</p>
+                    <p className="text-xs text-muted-foreground">Est. {currency(6200)}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {activeTab === 'funding' && (
             <motion.div
               key="funding"

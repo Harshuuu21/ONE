@@ -297,9 +297,9 @@ export const pillars = [
   },
   { id: 'goals', name: 'Goals', label: 'Life Goals', line: 'Save for dreams, not balances.' },
   {
-    id: 'reputation',
-    name: 'Reputation',
-    label: 'Financial Reputation',
+    id: 'profile',
+    name: 'Profile',
+    label: 'Profile',
     line: 'A new kind of identity built on trust and consistency.',
   },
   {
@@ -326,9 +326,74 @@ export const pillars = [
     label: 'Financial Journey',
     line: 'See your past, present, and future as one story.',
   },
+  {
+    id: 'transactions',
+    name: 'Transactions',
+    label: 'Transactions',
+    line: 'Smart tracking and AI observations.',
+  },
+  {
+    id: 'calendar',
+    name: 'Calendar',
+    label: 'Calendar',
+    line: 'Your financial timeline.',
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    label: 'Reports',
+    line: 'Visual insights into your money.',
+  },
 ] as const
 
 export type PillarId = (typeof pillars)[number]['id']
+
+// --- 8. Transactions -------------------------------------------------------
+export type Transaction = {
+  id: string
+  merchant: string
+  amount: number
+  date: string
+  category: string
+  type: 'expense' | 'income'
+  aiInsight?: string
+}
+
+export const transactions: Transaction[] = [
+  { id: 'tx1', merchant: 'Whole Foods', amount: 142.50, date: 'Today', category: 'Groceries', type: 'expense' },
+  { id: 'tx2', merchant: 'Aurora Cloud', amount: 14.99, date: 'Yesterday', category: 'Subscriptions', type: 'expense', aiInsight: 'You have not used this in 4 months.' },
+  { id: 'tx3', merchant: 'TechCorp Salary', amount: 4200.00, date: 'Apr 1', category: 'Income', type: 'income' },
+  { id: 'tx4', merchant: 'Uber', amount: 24.50, date: 'Mar 28', category: 'Transport', type: 'expense' },
+  { id: 'tx5', merchant: 'Blue Bottle Coffee', amount: 6.50, date: 'Mar 28', category: 'Dining', type: 'expense', aiInsight: 'You usually spend less on coffee on weekdays.' },
+]
+
+// --- 9. Calendar -----------------------------------------------------------
+export type CalendarEvent = {
+  id: string
+  title: string
+  date: string
+  type: 'deadline' | 'trip' | 'reminder' | 'milestone'
+}
+
+export const calendarEvents: CalendarEvent[] = [
+  { id: 'ce1', title: 'Japan Trip Starts', date: 'Apr 2', type: 'trip' },
+  { id: 'ce2', title: 'Daniel R. Repayment', date: 'Apr 5', type: 'reminder' },
+  { id: 'ce3', title: 'Emergency Fund Milestone ($10k)', date: 'Apr 15', type: 'milestone' },
+  { id: 'ce4', title: 'Aurora Cloud Renews', date: 'Apr 28', type: 'deadline' },
+]
+
+// --- 10. Reports -----------------------------------------------------------
+export const reports = {
+  monthlySavings: 850,
+  monthlySpending: 2100,
+  categories: [
+    { label: 'Housing', amount: 1200, color: 'bg-primary' },
+    { label: 'Groceries', amount: 400, color: 'bg-primary/80' },
+    { label: 'Dining', amount: 300, color: 'bg-primary/60' },
+    { label: 'Transport', amount: 200, color: 'bg-primary/40' },
+  ],
+}
+
 
 export function currency(n: number) {
   return new Intl.NumberFormat('en-US', {

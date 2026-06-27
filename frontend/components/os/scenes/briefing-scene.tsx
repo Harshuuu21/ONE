@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react'
 import { ArrowUpRight, TrendingUp, AlertCircle, Trophy } from 'lucide-react'
-import { briefing, insights, currency } from '@/lib/one-data'
+import { briefing, insights, currency, goals, conversations, trip } from '@/lib/one-data'
 import { OneOrb } from '@/components/one-mark'
 import { SceneHeader } from '../scene-header'
 
@@ -54,6 +54,47 @@ export function BriefingScene() {
             />
           </div>
           <p className="mt-2 text-sm font-medium text-primary">Strong and steady</p>
+        </div>
+      </div>
+
+      {/* Command Center Summaries */}
+      <p className="mb-3 mt-8 text-sm font-medium text-muted-foreground">
+        Active Priorities
+      </p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {/* Goals Summary */}
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <p className="text-xs text-muted-foreground mb-1">Top Goal</p>
+          <p className="font-medium truncate">{goals[0].title}</p>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+            <motion.div
+              className="h-full rounded-full bg-primary"
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.round((goals[0].saved / goals[0].target) * 100)}%` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+
+        {/* Trips Summary */}
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <p className="text-xs text-muted-foreground mb-1">Upcoming Trip</p>
+          <p className="font-medium truncate">{trip.destination}</p>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+            <motion.div
+              className="h-full rounded-full bg-primary"
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.round((trip.saved / trip.budget) * 100)}%` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+
+        {/* Community Summary */}
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <p className="text-xs text-muted-foreground mb-1">Community</p>
+          <p className="font-medium truncate">Top 12% Contributor</p>
+          <p className="mt-1 text-xs text-primary">{conversations[0].replies} new replies</p>
         </div>
       </div>
 
