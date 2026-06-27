@@ -68,11 +68,11 @@ export function SummaryScreen({ data }: SummaryScreenProps) {
             // In a real app, we'd save this to a backend or context.
             // For this simulated experience, we'll store a flag in localStorage.
             localStorage.setItem('one_onboarding_complete', 'true')
-            router.push('/os')
+            router.push('/setup')
           }}
           className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95"
         >
-          Enter Dashboard
+          Continue Setup
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </button>
       </motion.div>
