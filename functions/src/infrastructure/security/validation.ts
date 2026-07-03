@@ -6,7 +6,7 @@ export const validatePayload = <T>(schema: z.ZodSchema<T>, data: any): T => {
         return schema.parse(data);
     } catch (error) {
         if (error instanceof z.ZodError) {
-            throw new HttpsError('invalid-argument', 'Validation failed', error.errors);
+            throw new HttpsError('invalid-argument', 'Validation failed', error.issues);
         }
         throw new HttpsError('internal', 'An unexpected error occurred during validation');
     }
