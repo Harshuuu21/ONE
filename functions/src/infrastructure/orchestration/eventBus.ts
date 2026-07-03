@@ -13,6 +13,7 @@ export enum SystemEvents {
     TRANSACTION_CREATED = "one.financial.transaction_created",
     
     // Other Events
+    GOAL_CREATED = "one.goals.goal_created",
     GOAL_COMPLETED = "one.goals.goal_completed",
     TRIP_CREATED = "one.travel.trip_created",
     COMMUNITY_POST_CREATED = "one.community.post_created",
