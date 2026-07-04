@@ -41,6 +41,26 @@ export const processCommunityEventsForReputation = onCustomEventPublished(
                         reliabilityScore: 5
                     });
                     break;
+                case SystemEvents.LENDING_REPAYMENT_MADE:
+                    // Increase reliability and engagement scores
+                    await applyReputationEvent(uid, type, correlationId, {
+                        reliabilityScore: 10,
+                        collaborationScore: 5
+                    });
+                    break;
+                case SystemEvents.LENDING_PENALTY_APPLIED:
+                    // Strictly downgrade reliability
+                    await applyReputationEvent(uid, type, correlationId, {
+                        reliabilityScore: -20
+                    });
+                    break;
+                case SystemEvents.LENDING_LOAN_DEFAULTED:
+                    // Massive downgrade
+                    await applyReputationEvent(uid, type, correlationId, {
+                        reliabilityScore: -50,
+                        contributionScore: -20
+                    });
+                    break;
                 // Add more cases as needed for specific deterministic score adjustments
             }
         } catch (error) {

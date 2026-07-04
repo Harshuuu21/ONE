@@ -12,3 +12,4 @@ export * as planning from "./services/planning";
 export * as travel from "./services/travel";
 export * as community from "./services/community";
 export * as reputation from "./services/reputation";
+export * as lending from "./services/lending";

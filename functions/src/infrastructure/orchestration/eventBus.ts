@@ -28,7 +28,15 @@ export enum SystemEvents {
     GOAL_CREATED = "one.goals.goal_created",
     GOAL_COMPLETED = "one.goals.goal_completed",
     TRIP_CREATED = "one.travel.trip_created",
-    MONEY_REQUEST_CREATED = "one.lending.request_created"
+    
+    // Lending Events
+    LENDING_REQUEST_CREATED = "one.lending.request_created",
+    LENDING_MATCH_FOUND = "one.lending.match_found",
+    LENDING_LOAN_ACTIVE = "one.lending.loan_active",
+    LENDING_REPAYMENT_MADE = "one.lending.repayment_made",
+    LENDING_PENALTY_APPLIED = "one.lending.penalty_applied",
+    LENDING_LOAN_COMPLETED = "one.lending.loan_completed",
+    LENDING_LOAN_DEFAULTED = "one.lending.loan_defaulted"
 }
 
 export const publishEvent = async (type: SystemEvents, payload: any, correlationId?: string) => {

@@ -92,3 +92,9 @@ export const initializeUserRecords = async (
 
     await batch.commit();
 };
+
+export const getUserById = async (uid: string) => {
+    const doc = await db.collection("users").doc(uid).get();
+    if (!doc.exists) return null;
+    return doc.data();
+};

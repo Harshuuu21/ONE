@@ -77,5 +77,23 @@ service cloud.firestore {
       allow read: if request.auth != null && resource.data.uid == request.auth.uid;
       allow write: if false; // Managed by Eventarc & Backend
     }
+
+    // Community Lending Engine Collections
+    match /loan_requests/{requestId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
+    match /loans/{loanId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
+    match /loan_installments/{installmentId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
+    match /loan_repayments/{repaymentId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
   }
 }
