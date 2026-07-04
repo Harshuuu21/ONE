@@ -13,3 +13,8 @@ export * as travel from "./services/travel";
 export * as community from "./services/community";
 export * as reputation from "./services/reputation";
 export * as lending from "./services/lending";
+
+// Export Platform Hubs & Observability
+export * as notification from "./services/notification/events/notificationProcessor";
+export * as health from "./api/healthApi";
+export * as aiHub from "./infrastructure/ai/aiCircuitBreaker";
