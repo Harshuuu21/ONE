@@ -53,5 +53,29 @@ service cloud.firestore {
       allow read: if request.auth != null && resource.data.uid == request.auth.uid;
       allow write: if false; // Managed by Backend API
     }
+
+    // Community Platform Collections
+    match /communities/{communityId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
+    match /community_members/{memberId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
+    match /community_posts/{postId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Managed by Backend API
+    }
+
+    // Reputation Engine Collections
+    match /reputation_profiles/{profileId} {
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow write: if false; // Managed by Eventarc & Backend
+    }
+    match /reputation_history/{historyId} {
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow write: if false; // Managed by Eventarc & Backend
+    }
   }
 }

@@ -12,11 +12,22 @@ export enum SystemEvents {
     // Financial Events
     TRANSACTION_CREATED = "one.financial.transaction_created",
     
+    // Community Events
+    COMMUNITY_CREATED = "one.community.created",
+    COMMUNITY_MEMBER_JOINED = "one.community.member_joined",
+    COMMUNITY_POST_CREATED = "one.community.post_created",
+    CHALLENGE_CREATED = "one.community.challenge_created",
+    CHALLENGE_COMPLETED = "one.community.challenge_completed",
+    GOAL_SHARED = "one.community.goal_shared",
+    GOAL_ACHIEVED = "one.community.goal_achieved",
+    TRAVEL_SHARED = "one.community.travel_shared",
+    HELPFUL_REPLY = "one.community.helpful_reply",
+    MILESTONE_CELEBRATED = "one.community.milestone_celebrated",
+    
     // Other Events
     GOAL_CREATED = "one.goals.goal_created",
     GOAL_COMPLETED = "one.goals.goal_completed",
     TRIP_CREATED = "one.travel.trip_created",
-    COMMUNITY_POST_CREATED = "one.community.post_created",
     MONEY_REQUEST_CREATED = "one.lending.request_created"
 }
 
