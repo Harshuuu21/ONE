@@ -76,7 +76,10 @@ export function GoalsScene() {
         ))}
 
         <div className="grid grid-cols-2 gap-4">
-          <button className="flex min-h-[7rem] items-center justify-center gap-2 rounded-3xl border border-dashed border-border bg-card/40 p-5 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
+          <button 
+            onClick={() => alert("Goal creation coming soon!")}
+            className="flex min-h-[7rem] items-center justify-center gap-2 rounded-3xl border border-dashed border-border bg-card/40 p-5 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+          >
             <Plus className="size-5" />
             <span className="font-medium">Dream up a new goal</span>
           </button>
