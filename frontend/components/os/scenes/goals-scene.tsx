@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Plus, Sparkles } from 'lucide-react'
 import { goals, currency, type Goal } from '@/lib/one-data'
 import { SceneHeader } from '../scene-header'
-
+import { CreateGoalModal } from '../create-goal-modal'
 function GoalCard({ goal, onContribute }: { goal: Goal; onContribute: (g: Goal) => void }) {
   const pct = Math.round((goal.saved / goal.target) * 100)
   return (
@@ -61,6 +61,12 @@ function GoalCard({ goal, onContribute }: { goal: Goal; onContribute: (g: Goal) 
 
 export function GoalsScene() {
   const [celebrate, setCelebrate] = useState<Goal | null>(null)
+  const [activeGoals, setActiveGoals] = useState<Goal[]>(goals)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
+  const handleCreateGoal = (newGoal: Goal) => {
+    setActiveGoals((prev) => [...prev, newGoal])
+  }
 
   return (
     <div>
@@ -71,13 +77,13 @@ export function GoalsScene() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {goals.map((g) => (
+        {activeGoals.map((g) => (
           <GoalCard key={g.id} goal={g} onContribute={setCelebrate} />
         ))}
 
         <div className="grid grid-cols-2 gap-4">
           <button 
-            onClick={() => alert("Goal creation coming soon!")}
+            onClick={() => setIsCreateModalOpen(true)}
             className="flex min-h-[7rem] items-center justify-center gap-2 rounded-3xl border border-dashed border-border bg-card/40 p-5 text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
           >
             <Plus className="size-5" />
@@ -150,6 +156,12 @@ export function GoalsScene() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CreateGoalModal 
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateGoal}
+      />
     </div>
   )
 }
