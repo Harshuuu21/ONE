@@ -43,12 +43,20 @@ export function LandingNav() {
             The seven pillars
           </a>
         </nav>
-        <Link
-          href="/onboarding"
-          className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95"
-        >
-          Enter ONE
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Log In
+          </Link>
+          <Link
+            href="/setup"
+            className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95"
+          >
+            Set up ONE
+          </Link>
+        </div>
       </div>
     </motion.header>
   )

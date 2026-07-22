@@ -79,7 +79,17 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                       <input type="email" defaultValue="maya@example.com" className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Danger Zone</p>
+                      <p className="text-sm font-medium">Session & Access</p>
+                      <button 
+                        onClick={async () => {
+                          const { AuthService } = await import('@/services/auth.service');
+                          await AuthService.logout();
+                          window.location.href = '/login';
+                        }}
+                        className="mt-2 mr-2 rounded-xl border border-primary bg-primary/5 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                      >
+                        Log Out
+                      </button>
                       <button className="mt-2 rounded-xl border border-destructive bg-destructive/5 px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground">
                         Delete Account
                       </button>

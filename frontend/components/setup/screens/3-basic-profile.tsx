@@ -1,31 +1,67 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, Mail, Phone, User, Calendar } from 'lucide-react'
+import { ArrowRight, Mail, User, Lock, AlertCircle } from 'lucide-react'
+import { AuthService } from '@/services/auth.service'
+import { useAuth } from '@/hooks/useAuth'
+import { useRouter } from 'next/navigation'
 
 export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  
+  const { user } = useAuth()
+  const router = useRouter()
 
-  const handleContinue = () => {
+  // If already logged in, skip registration
+  if (user && !loading) {
+    onNext();
+    return null;
+  }
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    
+    if (!name || !email || !password) {
+      setError('Please fill in all fields')
+      return
+    }
+
     setLoading(true)
-    setTimeout(() => {
+    try {
+      await AuthService.register(email, password, name)
+      onNext() // Move to the next setup step on success
+    } catch (err: any) {
+      console.error('Registration error:', err)
+      setError(err.message || 'Failed to register account')
+    } finally {
       setLoading(false)
-      onNext()
-    }, 600)
+    }
   }
 
   return (
-    <div className="flex flex-col space-y-8">
+    <form onSubmit={handleRegister} className="flex flex-col space-y-8">
       <div className="space-y-4 text-center">
         <h2 className="text-3xl font-serif font-semibold tracking-tight">
-          Basic Profile
+          Create Account
         </h2>
         <p className="text-muted-foreground text-lg">
-          Just a few details to set up your identity.
+          Set up your identity and secure your financial data.
         </p>
       </div>
 
       <div className="space-y-4 max-w-md mx-auto w-full">
+        {error && (
+          <div className="flex items-center gap-2 rounded-xl bg-destructive/10 p-4 text-sm font-medium text-destructive">
+            <AlertCircle className="size-4" />
+            <p>{error}</p>
+          </div>
+        )}
+
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground ml-1">Full Name</label>
           <div className="relative">
@@ -33,6 +69,9 @@ export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
             <input 
               type="text" 
               placeholder="e.g. Maya Sharma"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
               className="w-full rounded-2xl border border-border bg-card pl-12 pr-4 py-4 text-base outline-none focus:border-primary transition-colors"
             />
           </div>
@@ -41,37 +80,29 @@ export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground ml-1">Email</label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-primary" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
             <input 
               type="email" 
-              defaultValue="maya@example.com"
-              disabled
-              className="w-full rounded-2xl border border-border bg-secondary/50 pl-12 pr-4 py-4 text-base text-muted-foreground cursor-not-allowed outline-none"
+              placeholder="maya@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              className="w-full rounded-2xl border border-border bg-card pl-12 pr-4 py-4 text-base outline-none focus:border-primary transition-colors"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">Verified</span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground ml-1">Mobile Number</label>
+          <label className="text-sm font-medium text-muted-foreground ml-1">Password</label>
           <div className="relative">
-            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-primary" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
             <input 
-              type="tel" 
-              defaultValue="+91 98765 43210"
-              disabled
-              className="w-full rounded-2xl border border-border bg-secondary/50 pl-12 pr-4 py-4 text-base text-muted-foreground cursor-not-allowed outline-none"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">Verified</span>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground ml-1">Date of Birth</label>
-          <div className="relative">
-            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
-            <input 
-              type="date" 
+              type="password" 
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              minLength={6}
               className="w-full rounded-2xl border border-border bg-card pl-12 pr-4 py-4 text-base outline-none focus:border-primary transition-colors"
             />
           </div>
@@ -80,14 +111,14 @@ export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
 
       <div className="pt-6">
         <button
-          onClick={handleContinue}
+          type="submit"
           disabled={loading}
           className="flex items-center justify-center gap-2 w-full max-w-sm mx-auto rounded-full bg-primary px-6 py-4 text-base font-medium text-primary-foreground transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
         >
-          {loading ? 'Saving...' : 'Continue'}
+          {loading ? 'Creating Account...' : 'Continue'}
           {!loading && <ArrowRight className="size-4" />}
         </button>
       </div>
-    </div>
+    </form>
   )
 }
