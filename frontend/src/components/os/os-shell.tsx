@@ -32,6 +32,7 @@ import { JourneyScene } from './scenes/journey-scene'
 import { TransactionsScene } from './scenes/transactions-scene'
 import { CalendarScene } from './scenes/calendar-scene'
 import { ReportsScene } from './scenes/reports-scene'
+import { LendingScene } from './scenes/lending-scene'
 import { AssistantBar } from './assistant-bar'
 import { GlobalSearch } from './global-search'
 import { NotificationsPanel } from './notifications-panel'
@@ -61,6 +62,7 @@ const SCENES: Record<PillarId, () => React.ReactNode> = {
   journey: () => <JourneyScene />,
   calendar: () => <CalendarScene />,
   reports: () => <ReportsScene />,
+  lending: () => <LendingScene />,
 }
 
 export function OsShell() {

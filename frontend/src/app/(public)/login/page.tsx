@@ -27,7 +27,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await AuthService.login(email, password)
-      router.push('/os') // Redirect to OS on success
+      router.push('/dashboard') // Redirect to Dashboard on success
     } catch (err: any) {
       console.error('Login error:', err)
       setError(err.message || 'Invalid credentials')
@@ -107,3 +107,4 @@ export default function LoginPage() {
     </div>
   )
 }
+
