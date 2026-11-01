@@ -36,6 +36,18 @@ export default function LoginPage() {
     }
   }
 
+  const handleDemoLogin = async () => {
+    setLoading(true)
+    try {
+      await AuthService.demoLogin()
+      router.push('/dashboard')
+    } catch (err: any) {
+      setError(err?.message || 'Demo login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="grain flex min-h-[100svh] w-full flex-col items-center justify-center p-6 bg-background">
       <form onSubmit={handleLogin} className="w-full max-w-sm space-y-8">
@@ -86,7 +98,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 space-y-3">
           <button
             type="submit"
             disabled={loading}
@@ -94,6 +106,15 @@ export default function LoginPage() {
           >
             {loading ? 'Logging in...' : 'Log In'}
             {!loading && <ArrowRight className="size-4" />}
+          </button>
+
+          <button
+            type="button"
+            disabled={loading}
+            onClick={handleDemoLogin}
+            className="w-full rounded-full border border-border bg-card hover:bg-secondary/70 py-3.5 text-sm font-medium text-foreground transition-all"
+          >
+            Quick Demo Sign In (Maya Lin)
           </button>
         </div>
 
@@ -107,4 +128,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

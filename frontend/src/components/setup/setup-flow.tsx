@@ -56,7 +56,7 @@ export function SetupFlow() {
     if (currentStepIndex < STEPS.length - 1) {
       setCurrentStepIndex((i) => i + 1)
     } else {
-      router.push('/os')
+      router.push('/dashboard')
     }
   }
 

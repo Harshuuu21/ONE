@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
+import { getStoredUser, subscribeToAuthUpdates } from '@/services/auth.service';
 
 interface AuthContextType {
   user: User | null;
@@ -19,12 +20,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    // 1. Check local session first
+    const stored = getStoredUser();
+    if (stored) {
+      setUser(stored);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+
+    // 2. Subscribe to local auth changes
+    const unsubLocal = subscribeToAuthUpdates((updatedUser) => {
+      setUser(updatedUser);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    // 3. Listen to Firebase auth state if available
+    let unsubFirebase = () => {};
+    try {
+      unsubFirebase = onAuthStateChanged(auth, (currentUser) => {
+        if (currentUser) {
+          setUser(currentUser);
+        }
+      });
+    } catch {
+      // Ignore in frontend standalone mode
+    }
+
+    return () => {
+      unsubLocal();
+      unsubFirebase();
+    };
   }, []);
 
   return (
