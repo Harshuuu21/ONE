@@ -18,12 +18,12 @@ import {
   MessageSquare,
   type LucideIcon,
 } from 'lucide-react'
-import { OneOrb } from '@/components/one-mark'
-import { ProtectedRoute } from '@/components/auth/protected-route'
-import { AssistantBar } from '@/components/os/assistant-bar'
-import { GlobalSearch } from '@/components/os/global-search'
-import { NotificationsPanel } from '@/components/os/notifications-panel'
-import { SettingsModal } from '@/components/os/settings-modal'
+import { OneOrb } from '@/components/common/one-mark'
+import { ProtectedRoute } from '@/components/layout/protected-route'
+import { AssistantBar } from '@/components/layout/assistant-bar'
+import { GlobalSearch } from '@/components/layout/global-search'
+import { NotificationsPanel } from '@/components/layout/notifications-panel'
+import { SettingsModal } from '@/app/(authenticated)/settings/components/settings-modal'
 import type { PillarId } from '@/lib/one-data'
 
 type NavItem = {
@@ -37,7 +37,7 @@ const NAV: NavItem[] = [
   { id: 'dashboard', label: 'Briefing', icon: Sparkles, href: '/dashboard' },
   { id: 'goals', label: 'Goals', icon: Target, href: '/goals' },
   { id: 'savings', label: 'Savings', icon: Receipt, href: '/savings' },
-  { id: 'trips', label: 'Trips', icon: Compass, href: '/dashboard/trips' },
+  { id: 'trips', label: 'Trips', icon: Compass, href: '/trips' },
   { id: 'community', label: 'Community', icon: MessagesSquare, href: '/community' },
   { id: 'wallet', label: 'Wallet', icon: HandHeart, href: '/wallet' },
   { id: 'chat', label: 'AI Chat', icon: MessageSquare, href: '/chat' },
@@ -72,7 +72,7 @@ export default function AuthenticatedLayout({
         router.push('/goals')
         break
       case 'trips':
-        router.push('/dashboard/trips')
+        router.push('/trips')
         break
       case 'community':
         router.push('/community')
@@ -187,4 +187,3 @@ export default function AuthenticatedLayout({
     </ProtectedRoute>
   )
 }
-

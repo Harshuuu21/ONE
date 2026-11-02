@@ -1,15 +1,11 @@
-import { SetupFlow } from '@/components/setup/setup-flow'
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Setup | ONE',
-  description: 'Securely set up your financial intelligence and lending profile.',
-}
+import { SetupFlow } from './components/setup-flow'
 
 export default function SetupPage() {
   return (
-    <div className="grain min-h-[100svh] w-full overflow-hidden">
-      <SetupFlow />
+    <div className="grain min-h-[100svh] bg-background">
+      <div className="mx-auto max-w-xl px-5 py-12">
+        <SetupFlow />
+      </div>
     </div>
   )
 }

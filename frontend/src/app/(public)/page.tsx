@@ -1,9 +1,9 @@
-import { LandingNav } from '@/components/landing/landing-nav'
-import { LandingHero } from '@/components/landing/landing-hero'
-import { BeliefSection } from '@/components/landing/belief-section'
-import { AiCharacterSection } from '@/components/landing/ai-character-section'
-import { PillarsSection } from '@/components/landing/pillars-section'
-import { LandingCta } from '@/components/landing/landing-cta'
+import { LandingNav } from './components/landing-nav'
+import { LandingHero } from './components/landing-hero'
+import { BeliefSection } from './components/belief-section'
+import { AiCharacterSection } from './components/ai-character-section'
+import { PillarsSection } from './components/pillars-section'
+import { LandingCta } from './components/landing-cta'
 
 export default function Page() {
   return (

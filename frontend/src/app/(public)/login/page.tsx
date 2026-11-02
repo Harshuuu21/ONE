@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react'
 import { AuthService } from '@/services/auth.service'
-import { OneOrb } from '@/components/one-mark'
+import { OneOrb } from '@/components/common/one-mark'
 import Link from 'next/link'
 
 export default function LoginPage() {

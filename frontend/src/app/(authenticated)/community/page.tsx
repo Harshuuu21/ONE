@@ -1,6 +1,5 @@
-import { CommunityScene } from '@/components/os/scenes/community-scene'
+import { CommunityScene } from './components/community-scene';
 
 export default function CommunityPage() {
-  return <CommunityScene />
+  return <CommunityScene />;
 }
-

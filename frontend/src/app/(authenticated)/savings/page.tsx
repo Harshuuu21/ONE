@@ -1,6 +1,5 @@
-import { TransactionsScene } from '@/components/os/scenes/transactions-scene'
+import { TransactionsScene } from './components/transactions-scene';
 
 export default function SavingsPage() {
-  return <TransactionsScene />
+  return <TransactionsScene />;
 }
-

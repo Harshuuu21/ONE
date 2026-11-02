@@ -1,6 +1,5 @@
-import { BriefingScene } from '@/components/os/scenes/briefing-scene'
+import { BriefingScene } from './components/briefing-scene';
 
 export default function DashboardPage() {
-  return <BriefingScene />
+  return <BriefingScene />;
 }
-

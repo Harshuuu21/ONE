@@ -1,6 +1,5 @@
-import { CommunityScene } from '@/components/os/scenes/community-scene'
+import { redirect } from 'next/navigation';
 
-export default function DashboardCommunityPage() {
-  return <CommunityScene />
+export default function DashboardCommunityRedirect() {
+  redirect('/community');
 }
-

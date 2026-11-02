@@ -1,6 +1,5 @@
-import { TripScene } from '@/components/os/scenes/trip-scene'
+import { redirect } from 'next/navigation';
 
-export default function DashboardTripsPage() {
-  return <TripScene />
+export default function DashboardTripsRedirect() {
+  redirect('/trips');
 }
-
