@@ -1,0 +1,175 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AccountType {
+  SAVINGS
+  CHECKING
+  CREDIT
+  INVESTMENT
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum LendingStatus {
+  PENDING
+  FUNDED
+  ACTIVE
+  REPAID
+  DEFAULTED
+}
+
+enum ConsentStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  passwordHash    String
+  firstName       String
+  lastName        String?
+  role            Role             @default(USER)
+  reputationScore Int              @default(780)
+  reputationTitle String           @default("Reliable Peer")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  accounts        Account[]
+  transactions    Transaction[]
+  goals           Goal[]
+  trips           Trip[]
+  lendingRequests LendingRequest[]
+  consents        Consent[]
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id                  String        @id @default(uuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankName            String
+  accountNumberMasked String
+  accountType         AccountType   @default(SAVINGS)
+  balance             Decimal       @default(0.0)
+  currency            String        @default("INR")
+  isConnected         Boolean       @default(true)
+  aaConnectionId      String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  transactions        Transaction[]
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId   String?
+  account     Account?        @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  title       String
+  amount      Decimal
+  category    String
+  type        TransactionType @default(EXPENSE)
+  date        DateTime        @default(now())
+  note        String?
+  createdAt   DateTime        @default(now())
+
+  @@map("transactions")
+}
+
+model Goal {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  targetAmount  Decimal
+  currentAmount Decimal  @default(0.0)
+  category      String
+  deadline      DateTime?
+  isCompleted   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("goals")
+}
+
+model Trip {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destination    String
+  budget         Decimal
+  spent          Decimal  @default(0.0)
+  startDate      DateTime?
+  endDate        DateTime?
+  travelersCount Int      @default(1)
+  isCompleted    Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("trips")
+}
+
+model LendingRequest {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason       String
+  amount       Decimal
+  termMonths   Int           @default(3)
+  interestRate Decimal       @default(4.5)
+  status       LendingStatus @default(PENDING)
+  fundedAmount Decimal       @default(0.0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("lending_requests")
+}
+
+model Consent {
+  id         String        @id @default(uuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose    String
+  status     ConsentStatus @default(ACTIVE)
+  validUntil DateTime
+  grantedAt  DateTime      @default(now())
+  metadata   Json?
+
+  @@map("consents")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  resource  String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
