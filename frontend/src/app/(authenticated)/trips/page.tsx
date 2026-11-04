@@ -1,6 +1,5 @@
-import { TripScene } from './components/trip-scene';
+import { TripScene } from '@/features/trips/components/trip-scene'
 
 export default function TripsPage() {
-  return <TripScene />;
+  return <TripScene />
 }
-

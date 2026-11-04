@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ArrowRight, RefreshCcw, ShieldCheck } from 'lucide-react'
-import { AutoPayService } from '@/app/(authenticated)/wallet/services/autopay.service'
+import { AutoPayService } from '@/features/bank-accounts/services/autopay.service'
 
 export function RepaymentAuthScreen({ onNext }: { onNext: () => void }) {
   const [loading, setLoading] = useState(false)

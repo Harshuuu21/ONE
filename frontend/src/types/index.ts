@@ -22,6 +22,14 @@ export type {
   AutoPayAuthorization,
 } from '@/lib/firebase-models';
 
+export interface BankAccount {
+  id: string;
+  bankName: string;
+  accountNumberMasked: string;
+  accountType?: 'savings' | 'checking';
+  balance?: number;
+}
+
 export interface NavItem {
   id: string;
   label: string;

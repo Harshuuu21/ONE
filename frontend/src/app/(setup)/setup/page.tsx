@@ -1,4 +1,4 @@
-import { SetupFlow } from './components/setup-flow'
+import { SetupFlow } from '@/features/setup/components/setup-flow'
 
 export default function SetupPage() {
   return (

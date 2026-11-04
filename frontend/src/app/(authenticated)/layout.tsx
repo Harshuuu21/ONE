@@ -23,7 +23,7 @@ import { ProtectedRoute } from '@/components/layout/protected-route'
 import { AssistantBar } from '@/components/layout/assistant-bar'
 import { GlobalSearch } from '@/components/layout/global-search'
 import { NotificationsPanel } from '@/components/layout/notifications-panel'
-import { SettingsModal } from '@/app/(authenticated)/settings/components/settings-modal'
+import { SettingsModal } from '@/features/settings/components/settings-modal'
 import type { PillarId } from '@/lib/one-data'
 
 type NavItem = {

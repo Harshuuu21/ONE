@@ -1,5 +1,5 @@
-import { GoalsScene } from './components/goals-scene';
+import { GoalsScene } from '@/features/goals/components/goals-scene'
 
 export default function GoalsPage() {
-  return <GoalsScene />;
+  return <GoalsScene />
 }

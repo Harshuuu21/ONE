@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ArrowRight, ArrowDown, Building2, ShieldCheck, Cpu } from 'lucide-react'
-import { AccountAggregatorService } from '@/app/(authenticated)/wallet/services/account-aggregator.service'
+import { AccountAggregatorService } from '@/features/account-aggregator/services/account-aggregator.service'
 
 export function ConnectBankScreen({ onNext }: { onNext: () => void }) {
   const [loading, setLoading] = useState(false)
