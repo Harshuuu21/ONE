@@ -1,5 +1,3 @@
-import { useAuth as useAuthContext } from '@/contexts/AuthProvider';
+'use client';
 
-export function useAuth() {
-  return useAuthContext();
-}
+export { useAuth } from '@/features/authentication/hooks/useAuth';

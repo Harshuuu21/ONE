@@ -1,56 +1,45 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, Mail, User, Lock, AlertCircle } from 'lucide-react'
-import { AuthService } from '@/services/auth.service'
+import { ArrowRight, Mail, User, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { useRouter } from 'next/navigation'
 
 export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [name, setName] = useState('')
+  const [name, setName] = useState(user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : '')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  
-  const { user } = useAuth()
-  const router = useRouter()
 
-  // If already logged in, skip registration
-  if (user && !loading) {
-    onNext();
-    return null;
-  }
-
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     
-    if (!name || !email || !password) {
-      setError('Please fill in all fields')
+    if (!name.trim()) {
+      setError('Please enter your full name')
       return
     }
 
     setLoading(true)
     try {
-      await AuthService.register(email, password, name)
-      onNext() // Move to the next setup step on success
+      // In the new flow, mobile number is already verified
+      onNext()
     } catch (err: any) {
-      console.error('Registration error:', err)
-      setError(err.message || 'Failed to register account')
+      console.error('Profile setup error:', err)
+      setError(err.message || 'Failed to update profile')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleRegister} className="flex flex-col space-y-8">
+    <form onSubmit={handleProfileSave} className="flex flex-col space-y-8">
       <div className="space-y-4 text-center">
         <h2 className="text-3xl font-serif font-semibold tracking-tight">
-          Create Account
+          Personalize Your Profile
         </h2>
         <p className="text-muted-foreground text-lg">
-          Set up your identity and secure your financial data.
+          Tell us how you would like your financial copilot to address you.
         </p>
       </div>
 
@@ -78,7 +67,7 @@ export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground ml-1">Email</label>
+          <label className="text-sm font-medium text-muted-foreground ml-1">Email (Optional)</label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
             <input 
@@ -86,23 +75,6 @@ export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
               placeholder="maya@example.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              required
-              className="w-full rounded-2xl border border-border bg-card pl-12 pr-4 py-4 text-base outline-none focus:border-primary transition-colors"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground ml-1">Password</label>
-          <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
-            <input 
-              type="password" 
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={6}
               className="w-full rounded-2xl border border-border bg-card pl-12 pr-4 py-4 text-base outline-none focus:border-primary transition-colors"
             />
           </div>
@@ -115,7 +87,7 @@ export function BasicProfileScreen({ onNext }: { onNext: () => void }) {
           disabled={loading}
           className="flex items-center justify-center gap-2 w-full max-w-sm mx-auto rounded-full bg-primary px-6 py-4 text-base font-medium text-primary-foreground transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
         >
-          {loading ? 'Creating Account...' : 'Continue'}
+          {loading ? 'Saving...' : 'Continue'}
           {!loading && <ArrowRight className="size-4" />}
         </button>
       </div>

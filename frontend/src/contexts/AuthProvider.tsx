@@ -1,69 +1,60 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase/config';
-import { getStoredUser, subscribeToAuthUpdates } from '@/services/auth.service';
+import type { AuthUser } from '@/features/authentication/types';
+import { AuthApi } from '@/features/authentication/services/authApi';
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   loading: boolean;
+  logout: () => Promise<void>;
+  setUser: (user: AuthUser | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  logout: async () => {},
+  setUser: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Check local session first
-    const stored = getStoredUser();
-    if (stored) {
-      setUser(stored);
-      setLoading(false);
-    } else {
-      setLoading(false);
-    }
+    // 1. Initial check of persisted session
+    const stored = AuthApi.getStoredUser();
+    setUser(stored);
+    setLoading(false);
 
-    // 2. Subscribe to local auth changes
-    const unsubLocal = subscribeToAuthUpdates((updatedUser) => {
-      setUser(updatedUser);
-      setLoading(false);
-    });
+    // 2. Listen to custom auth events
+    const handleAuthChange = () => {
+      const updated = AuthApi.getStoredUser();
+      setUser(updated);
+    };
 
-    // 3. Listen to Firebase auth state if available
-    let unsubFirebase = () => {};
-    try {
-      unsubFirebase = onAuthStateChanged(auth, (currentUser) => {
-        if (currentUser) {
-          setUser(currentUser);
-        }
-      });
-    } catch {
-      // Ignore in frontend standalone mode
-    }
+    window.addEventListener('one-auth-changed', handleAuthChange);
+    window.addEventListener('storage', handleAuthChange);
 
     return () => {
-      unsubLocal();
-      unsubFirebase();
+      window.removeEventListener('one-auth-changed', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
     };
   }, []);
 
+  const logout = async () => {
+    await AuthApi.logout();
+    setUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+export function useAuthContext() {
+  return useContext(AuthContext);
 }

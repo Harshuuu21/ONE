@@ -1,6 +1,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { ENV } from './config/env.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -19,6 +20,7 @@ export const createApp = (): Express => {
   );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
   app.use(requestLogger);
 
   // Health check
@@ -34,4 +36,3 @@ export const createApp = (): Express => {
 
   return app;
 };
-

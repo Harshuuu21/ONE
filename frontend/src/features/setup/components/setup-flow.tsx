@@ -16,6 +16,8 @@ import { RepaymentAuthScreen } from './screens/9-repayment-auth'
 import { PrivacyControlsScreen } from './screens/10-privacy-controls'
 import { AiConsentScreen } from './screens/11-ai-consent'
 import { SetupCompleteScreen } from './screens/12-setup-complete'
+import { PasskeyRegistration } from '@/features/authentication/components/PasskeyRegistration'
+import { PasskeyApi } from '@/features/authentication/services/passkeyApi'
 
 type SetupStep =
   | 'welcome'
@@ -30,6 +32,7 @@ type SetupStep =
   | 'privacy-controls'
   | 'ai-consent'
   | 'setup-complete'
+  | 'passkey'
 
 const STEPS: SetupStep[] = [
   'welcome',
@@ -43,7 +46,8 @@ const STEPS: SetupStep[] = [
   'repayment-auth',
   'privacy-controls',
   'ai-consent',
-  'setup-complete'
+  'setup-complete',
+  'passkey',
 ]
 
 export function SetupFlow() {
@@ -86,6 +90,20 @@ export function SetupFlow() {
         return <AiConsentScreen onNext={nextStep} />
       case 'setup-complete':
         return <SetupCompleteScreen onNext={nextStep} />
+      case 'passkey':
+        return (
+          <PasskeyRegistration
+            onRegister={async (deviceName) => {
+              try {
+                await PasskeyApi.registerPasskey(deviceName);
+              } catch (e) {
+                console.warn('Passkey registration skipped or failed:', e);
+              }
+              router.push('/dashboard');
+            }}
+            onSkip={() => router.push('/dashboard')}
+          />
+        )
       default:
         return null
     }

@@ -1,5 +1,5 @@
-import { LoginForm } from '@/features/authentication/components/login-form'
+import { AuthenticationFlow } from '@/features/authentication/components/AuthenticationFlow';
 
 export default function LoginPage() {
-  return <LoginForm />
+  return <AuthenticationFlow initialStep="MOBILE_INPUT" />;
 }

@@ -40,26 +40,130 @@ enum ConsentStatus {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  passwordHash    String
-  firstName       String
-  lastName        String?
-  role            Role             @default(USER)
-  reputationScore Int              @default(780)
-  reputationTitle String           @default("Reliable Peer")
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id               String           @id @default(uuid())
+  mobileNumber     String?          @unique
+  email            String?          @unique
+  passwordHash     String?
+  isMobileVerified Boolean          @default(false)
+  firstName        String?
+  lastName         String?
+  role             Role             @default(USER)
+  reputationScore  Int              @default(780)
+  reputationTitle  String           @default("Reliable Peer")
+  onboardingStep   String           @default("ACTIVE")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
-  accounts        Account[]
-  transactions    Transaction[]
-  goals           Goal[]
-  trips           Trip[]
-  lendingRequests LendingRequest[]
-  consents        Consent[]
-  auditLogs       AuditLog[]
+  accounts         Account[]
+  transactions     Transaction[]
+  goals            Goal[]
+  trips            Trip[]
+  lendingRequests  LendingRequest[]
+  consents         Consent[]
+  auditLogs        AuditLog[]
+  devices          UserDevice[]
+  passkeys         PasskeyCredential[]
+  sessions         UserSession[]
+  authAuditLogs    AuthenticationAuditLog[]
 
   @@map("users")
+}
+
+model OtpVerification {
+  id           String   @id @default(uuid())
+  mobileNumber String
+  otpHash      String
+  attempts     Int      @default(0)
+  maxAttempts  Int      @default(3)
+  expiresAt    DateTime
+  isUsed       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([mobileNumber, isUsed])
+  @@map("otp_verifications")
+}
+
+model UserDevice {
+  id           String              @id @default(uuid())
+  userId       String
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceName   String
+  userAgent    String?
+  ipAddress    String?
+  lastActiveAt DateTime            @default(now())
+  createdAt    DateTime            @default(now())
+
+  passkeys     PasskeyCredential[]
+  sessions     UserSession[]
+
+  @@index([userId])
+  @@map("user_devices")
+}
+
+model PasskeyCredential {
+  id           String      @id @default(uuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId     String?
+  device       UserDevice? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  credentialId String      @unique
+  publicKey    Bytes
+  counter      BigInt      @default(0)
+  deviceType   String      @default("singleDevice")
+  backedUp     Boolean     @default(false)
+  transports   String[]    @default([])
+  createdAt    DateTime    @default(now())
+  lastUsedAt   DateTime?
+
+  @@index([userId])
+  @@map("passkey_credentials")
+}
+
+model PasskeyChallenge {
+  id        String   @id @default(uuid())
+  userId    String?
+  challenge String   @unique
+  type      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([challenge])
+  @@map("passkey_challenges")
+}
+
+model UserSession {
+  id               String      @id @default(uuid())
+  userId           String
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId         String?
+  device           UserDevice? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  refreshTokenHash String      @unique
+  expiresAt        DateTime
+  isRevoked        Boolean     @default(false)
+  ipAddress        String?
+  userAgent        String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([userId, isRevoked])
+  @@map("user_sessions")
+}
+
+model AuthenticationAuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  mobileNumber String?
+  event        String
+  status       String
+  ipAddress    String?
+  userAgent    String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([mobileNumber])
+  @@map("authentication_audit_logs")
 }
 
 model Account {
@@ -172,4 +276,3 @@ model AuditLog {
 
   @@map("audit_logs")
 }
-
