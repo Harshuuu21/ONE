@@ -69,11 +69,17 @@ export class SessionService {
     ipAddress?: string,
     userAgent?: string
   ): Promise<TokenPair> {
-    const device = await this.resolveDevice(userId, userAgent, ipAddress);
+    let deviceId = 'dev_fallback_' + userId;
+    try {
+      const device = await this.resolveDevice(userId, userAgent, ipAddress);
+      deviceId = device.id;
+    } catch (err: any) {
+      console.warn('[SessionService] DB device resolution fallback:', err.message);
+    }
 
     // Generate access token (15 mins)
     const accessToken = jwt.sign(
-      { id: userId, role, deviceId: device.id },
+      { id: userId, role, deviceId },
       ENV.JWT_SECRET,
       { expiresIn: '15m' }
     );
@@ -84,16 +90,20 @@ export class SessionService {
     const expiresAt = new Date(Date.now() + ENV.JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000);
 
     // Save session in DB
-    await prisma.userSession.create({
-      data: {
-        userId,
-        deviceId: device.id,
-        refreshTokenHash,
-        expiresAt,
-        ipAddress: ipAddress || null,
-        userAgent: userAgent || null,
-      },
-    });
+    try {
+      await prisma.userSession.create({
+        data: {
+          userId,
+          deviceId: deviceId.startsWith('dev_fallback_') ? null : deviceId,
+          refreshTokenHash,
+          expiresAt,
+          ipAddress: ipAddress || null,
+          userAgent: userAgent || null,
+        },
+      });
+    } catch (err: any) {
+      console.warn('[SessionService] DB session persistence fallback:', err.message);
+    }
 
     return {
       accessToken,

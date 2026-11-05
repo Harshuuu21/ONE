@@ -26,6 +26,18 @@ export const errorHandler = (
     });
   }
 
+  if (
+    err.message?.includes('database server') ||
+    err.message?.includes('credentials for') ||
+    err.message?.includes('P1000') ||
+    err.message?.includes('P1001')
+  ) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database server is unreachable or credentials in backend/.env are invalid. Please check your PostgreSQL service.',
+    });
+  }
+
   console.error('[Unhandled Error]', err);
 
   return res.status(500).json({
