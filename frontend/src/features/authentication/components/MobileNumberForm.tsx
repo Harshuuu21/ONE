@@ -86,7 +86,7 @@ export function MobileNumberForm({
       )}
 
       {/* Mobile Form */}
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form noValidate onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Mobile Number
@@ -102,7 +102,6 @@ export function MobileNumberForm({
             <input
               type="tel"
               inputMode="numeric"
-              pattern="[0-9]*"
               autoComplete="tel-national"
               placeholder="98765 43210"
               value={formatMobileDisplay(rawInput)}

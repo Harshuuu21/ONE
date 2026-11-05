@@ -157,7 +157,7 @@ export function OtpVerification({
       )}
 
       {/* 6-Cell OTP Inputs */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form noValidate onSubmit={handleSubmit} className="space-y-6">
         <div className="flex justify-between gap-2 md:gap-3">
           {otpDigits.map((digit, idx) => (
             <input

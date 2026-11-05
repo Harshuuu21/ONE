@@ -17,12 +17,12 @@ export function validateIndianMobile(raw: string): { isValid: boolean; normalize
     };
   }
 
-  // Indian mobile numbers must start with 6, 7, 8, or 9
-  if (!/^[6-9]\d{9}$/.test(tenDigit)) {
+  // Accept any valid 10 digits
+  if (!/^\d{10}$/.test(tenDigit)) {
     return {
       isValid: false,
       normalized: '',
-      error: 'Indian mobile numbers start with 6, 7, 8, or 9',
+      error: 'Please enter a valid 10-digit mobile number',
     };
   }
 
