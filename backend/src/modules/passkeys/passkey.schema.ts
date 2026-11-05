@@ -25,3 +25,4 @@ export const loginVerifySchema = z.object({
     mobileNumber: z.string().optional(),
   }),
 });
+

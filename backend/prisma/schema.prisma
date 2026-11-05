@@ -17,6 +17,7 @@ enum AccountType {
   CHECKING
   CREDIT
   INVESTMENT
+  DEPOSIT
 }
 
 enum TransactionType {
@@ -34,37 +35,83 @@ enum LendingStatus {
 }
 
 enum ConsentStatus {
+  PENDING
+  APPROVED
   ACTIVE
+  REJECTED
   REVOKED
   EXPIRED
 }
 
-model User {
-  id               String           @id @default(uuid())
-  mobileNumber     String?          @unique
-  email            String?          @unique
-  passwordHash     String?
-  isMobileVerified Boolean          @default(false)
-  firstName        String?
-  lastName         String?
-  role             Role             @default(USER)
-  reputationScore  Int              @default(780)
-  reputationTitle  String           @default("Reliable Peer")
-  onboardingStep   String           @default("ACTIVE")
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+enum ConsentEventType {
+  REQUESTED
+  APPROVED
+  REJECTED
+  EXPIRED
+  REVOKED
+  FETCHED
+}
 
-  accounts         Account[]
-  transactions     Transaction[]
-  goals            Goal[]
-  trips            Trip[]
-  lendingRequests  LendingRequest[]
-  consents         Consent[]
-  auditLogs        AuditLog[]
-  devices          UserDevice[]
-  passkeys         PasskeyCredential[]
-  sessions         UserSession[]
-  authAuditLogs    AuthenticationAuditLog[]
+enum AAConnectionStatus {
+  PENDING
+  ACTIVE
+  FAILED
+  DISCONNECTED
+}
+
+enum AALinkingSessionStatus {
+  INITIATED
+  REDIRECTED
+  DISCOVERED
+  COMPLETED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+enum LinkedAccountStatus {
+  LINKED
+  DELINKED
+  CONSENT_PENDING
+  SYNC_FAILED
+}
+
+enum CallbackStatus {
+  PROCESSED
+  FAILED
+  DUPLICATE
+  INVALID_SIGNATURE
+}
+
+model User {
+  id                 String                   @id @default(uuid())
+  mobileNumber       String?                  @unique
+  email              String?                  @unique
+  passwordHash       String?
+  isMobileVerified   Boolean                  @default(false)
+  firstName          String?
+  lastName           String?
+  role               Role                     @default(USER)
+  reputationScore    Int                      @default(780)
+  reputationTitle    String                   @default("Reliable Peer")
+  onboardingStep     String                   @default("ACTIVE")
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  accounts           Account[]
+  linkedBankAccounts LinkedBankAccount[]
+  aaConnections      AaConnection[]
+  aaLinkingSessions  AaLinkingSession[]
+  transactions       Transaction[]
+  goals              Goal[]
+  trips              Trip[]
+  lendingRequests    LendingRequest[]
+  consents           Consent[]
+  auditLogs          AuditLog[]
+  devices            UserDevice[]
+  passkeys           PasskeyCredential[]
+  sessions           UserSession[]
+  authAuditLogs      AuthenticationAuditLog[]
 
   @@map("users")
 }
@@ -166,6 +213,140 @@ model AuthenticationAuditLog {
   @@map("authentication_audit_logs")
 }
 
+// ---------------------------------------------------------------------------
+// Account Aggregator (AA) & Bank Linking Models
+// ---------------------------------------------------------------------------
+
+model AaConnection {
+  id                String             @id @default(uuid())
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  providerId        String             // "SETU", "ANUMATI", "ONEMONEY", "FINVU", "MOCK_AA"
+  providerName      String             // "Setu AA", "Anumati (Perfios)", "OneMoney", "Finvu", "Sahamati Mock"
+  aaCustomerHandle  String?            // e.g. "9876543210@onemoney"
+  status            AAConnectionStatus @default(PENDING)
+  metadata          Json?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  linkingSessions   AaLinkingSession[]
+  linkedAccounts    LinkedBankAccount[]
+  consents          Consent[]
+
+  @@unique([userId, providerId])
+  @@index([userId, status])
+  @@map("aa_connections")
+}
+
+model AaLinkingSession {
+  id                 String                 @id @default(uuid())
+  userId             String
+  user               User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aaConnectionId     String?
+  aaConnection       AaConnection?          @relation(fields: [aaConnectionId], references: [id], onDelete: SetNull)
+  providerId         String
+  correlationId      String                 @unique // Cryptographic correlation token for redirect & callbacks
+  redirectUrl        String                 // Authorized hosted AA portal URL
+  status             AALinkingSessionStatus @default(INITIATED)
+  discoveredAccounts Json?                  // Discovered accounts payload
+  errorReason        String?
+  expiresAt          DateTime
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+
+  @@index([userId])
+  @@index([correlationId])
+  @@map("aa_linking_sessions")
+}
+
+model LinkedBankAccount {
+  id                  String              @id @default(uuid())
+  userId              String
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aaConnectionId      String?
+  aaConnection        AaConnection?       @relation(fields: [aaConnectionId], references: [id], onDelete: SetNull)
+  fipId               String              // e.g. "FIP_HDFC", "FIP_ICICI", "FIP_SBI", "FIP_AXIS"
+  bankName            String              // "HDFC Bank", "State Bank of India", etc.
+  bankLogoUrl         String?
+  accountType         AccountType         @default(SAVINGS)
+  accountNumberMasked String              // "XXXXXXXX4091" - Masked only, never raw
+  accountRefNumber    String              // Provider FIP reference token
+  currency            String              @default("INR")
+  balance             Decimal             @default(0.0)
+  status              LinkedAccountStatus @default(LINKED)
+  linkedAt            DateTime            @default(now())
+  lastSyncedAt        DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  @@unique([userId, fipId, accountNumberMasked])
+  @@index([userId, status])
+  @@map("linked_bank_accounts")
+}
+
+model Consent {
+  id             String         @id @default(uuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aaConnectionId String?
+  aaConnection   AaConnection?  @relation(fields: [aaConnectionId], references: [id], onDelete: SetNull)
+  consentHandle  String         @unique // ReBIT consent request handle
+  consentId      String?        @unique // Assigned ReBIT consent ID after approval
+  purpose        String         // Purpose code & description (e.g., "101 - Wealth management and analytics")
+  dataTypes      String[]       @default(["TRANSACTIONS", "PROFILE", "SUMMARY"])
+  status         ConsentStatus  @default(PENDING)
+  dataRangeFrom  DateTime       @default(now())
+  dataRangeTo    DateTime       @default(now())
+  fetchFrequency String         @default("DAILY")
+  validUntil     DateTime       // Consent expiry date
+  grantedAt      DateTime?
+  revokedAt      DateTime?
+  accounts       Json?          // Array of linked bank account IDs covered by this consent
+  metadata       Json?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  events         ConsentEvent[]
+
+  @@index([userId, status])
+  @@map("consents")
+}
+
+model ConsentEvent {
+  id        String           @id @default(uuid())
+  consentId String
+  consent   Consent          @relation(fields: [consentId], references: [id], onDelete: Cascade)
+  eventType ConsentEventType
+  actor     String?          // "USER", "AA_PROVIDER", "SYSTEM"
+  reason    String?
+  ipAddress String?
+  userAgent String?
+  payload   Json?
+  createdAt DateTime         @default(now())
+
+  @@index([consentId])
+  @@map("consent_events")
+}
+
+model ProviderCallbackEvent {
+  id            String         @id @default(uuid())
+  providerId    String
+  correlationId String?
+  eventType     String         // "ACCOUNT_LINKING", "CONSENT_STATUS", "DISCOVERY"
+  signature     String?
+  payload       Json
+  status        CallbackStatus @default(PROCESSED)
+  processedAt   DateTime       @default(now())
+  errorMessage  String?
+
+  @@index([providerId, correlationId])
+  @@map("provider_callback_events")
+}
+
+// ---------------------------------------------------------------------------
+// Existing Domain Models (Preserved for compatibility)
+// ---------------------------------------------------------------------------
+
 model Account {
   id                  String        @id @default(uuid())
   userId              String
@@ -203,34 +384,34 @@ model Transaction {
 }
 
 model Goal {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title         String
   targetAmount  Decimal
-  currentAmount Decimal  @default(0.0)
+  currentAmount Decimal   @default(0.0)
   category      String
   deadline      DateTime?
-  isCompleted   Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  isCompleted   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@map("goals")
 }
 
 model Trip {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   destination    String
   budget         Decimal
-  spent          Decimal  @default(0.0)
+  spent          Decimal   @default(0.0)
   startDate      DateTime?
   endDate        DateTime?
-  travelersCount Int      @default(1)
-  isCompleted    Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  travelersCount Int       @default(1)
+  isCompleted    Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@map("trips")
 }
@@ -249,19 +430,6 @@ model LendingRequest {
   updatedAt    DateTime      @updatedAt
 
   @@map("lending_requests")
-}
-
-model Consent {
-  id         String        @id @default(uuid())
-  userId     String
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  purpose    String
-  status     ConsentStatus @default(ACTIVE)
-  validUntil DateTime
-  grantedAt  DateTime      @default(now())
-  metadata   Json?
-
-  @@map("consents")
 }
 
 model AuditLog {

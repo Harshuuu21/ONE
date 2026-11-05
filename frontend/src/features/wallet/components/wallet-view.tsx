@@ -1,149 +1,169 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { AnimatePresence, motion } from 'motion/react'
-import { ShieldCheck, Users, HandHeart, Heart } from 'lucide-react'
-import { lendingRequests, lendingYou, currency, type LendingRequest } from '@/lib/one-data'
-import { SceneHeader } from '@/components/common/scene-header'
+import React, { useState } from 'react';
+import { SceneHeader } from '@/components/common/scene-header';
+import { useBankAccounts } from '@/features/bank-accounts';
+import { LinkedAccountsView } from '@/features/bank-accounts/components/LinkedAccountsView';
+import { useAccountAggregator } from '@/features/account-aggregator';
+import { AAProviderSelector } from '@/features/account-aggregator/components/AAProviderSelector';
+import { AccountDiscoveryList } from '@/features/bank-accounts/components/AccountDiscoveryList';
+import { AAProvider } from '@/features/account-aggregator/types';
+import { ShieldCheck, X } from 'lucide-react';
 
-export function LendingScene() {
-  const [backed, setBacked] = useState<LendingRequest | null>(null)
+export function WalletView() {
+  const {
+    linkedAccounts,
+    totalBalance,
+    loading: bankLoading,
+    fetchLinked,
+    delink,
+    discover,
+    discovered,
+    selectedAccounts,
+    toggleAccountSelection,
+    setSelectedAccounts,
+    linkSelected,
+  } = useBankAccounts();
+
+  const {
+    providers,
+    initiate,
+    loading: aaLoading,
+    error: aaError,
+  } = useAccountAggregator();
+
+  const [connectModalOpen, setConnectModalOpen] = useState(false);
+  const [connectStep, setConnectStep] = useState<'SELECT_PROVIDER' | 'SELECT_ACCOUNTS'>('SELECT_PROVIDER');
+  const [chosenProviderId, setChosenProviderId] = useState<string>('SAHAMATI_MOCK');
+  const [modalError, setModalError] = useState<string | null>(null);
+
+  const handleProviderContinue = async (providerId: string) => {
+    setChosenProviderId(providerId);
+    setModalError(null);
+    try {
+      const res = await initiate(providerId);
+      await discover(providerId, res.sessionId);
+      setConnectStep('SELECT_ACCOUNTS');
+    } catch {
+      await discover(providerId);
+      setConnectStep('SELECT_ACCOUNTS');
+    }
+  };
+
+  const handleLinkAccounts = async () => {
+    setModalError(null);
+    try {
+      await linkSelected(chosenProviderId);
+      setConnectModalOpen(false);
+      setConnectStep('SELECT_PROVIDER');
+      fetchLinked();
+    } catch (err: any) {
+      setModalError(err.message || 'Failed to link accounts');
+    }
+  };
 
   return (
-    <div>
+    <div className="space-y-8">
       <SceneHeader
-        eyebrow="Community lending"
-        title="Money, made human again."
-        subtitle="Back real people with real plans. Build trust both ways. Every loan repaid strengthens the whole community."
+        eyebrow="Financial Accounts"
+        title="Wallet &amp; Connected Banks"
+        subtitle="Live multi-bank account portfolio synchronized securely through RBI's Account Aggregator framework."
       />
 
-      {/* your standing */}
-      <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          { label: 'Trust circle', value: lendingYou.trustCircle, icon: Users },
-          { label: 'Backing now', value: lendingYou.activelyBacking, icon: HandHeart },
-          { label: 'Total backed', value: currency(lendingYou.totalBacked), icon: Heart },
-          { label: 'On-time rate', value: `${lendingYou.onTimeRate}%`, icon: ShieldCheck },
-        ].map((s) => {
-          const Icon = s.icon
-          return (
-            <div key={s.label} className="rounded-2xl border border-border bg-card p-4">
-              <Icon className="size-4 text-primary" />
-              <p className="mt-2 font-serif text-xl font-medium tracking-tight">{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
+      {/* Main Multi-Bank Accounts View */}
+      <LinkedAccountsView
+        accounts={linkedAccounts}
+        totalBalance={totalBalance}
+        loading={bankLoading}
+        onRefresh={fetchLinked}
+        onDelink={delink}
+        onConnectMore={() => {
+          setConnectStep('SELECT_PROVIDER');
+          setConnectModalOpen(true);
+        }}
+      />
+
+      {/* Account Aggregator Connection Modal */}
+      {connectModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md">
+          <div className="w-full max-w-lg rounded-3xl border border-border bg-card p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-xl font-serif font-bold text-foreground">
+                  {connectStep === 'SELECT_PROVIDER'
+                    ? 'Link Bank via Account Aggregator'
+                    : 'Select Bank Accounts'}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {connectStep === 'SELECT_PROVIDER'
+                    ? 'Choose an RBI-regulated Account Aggregator'
+                    : 'Choose accounts discovered for your mobile number'}
+                </p>
+              </div>
+              <button
+                onClick={() => setConnectModalOpen(false)}
+                className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors"
+              >
+                <X className="size-5" />
+              </button>
             </div>
-          )
-        })}
-      </div>
 
-      <p className="mb-3 text-sm font-medium text-muted-foreground">People who could use a hand</p>
-      <div className="grid gap-4">
-        {lendingRequests.map((r, i) => {
-          const pct = Math.round((r.funded / r.amount) * 100)
-          return (
-            <motion.div
-              key={r.id}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="rounded-3xl border border-border bg-card p-6"
-            >
-              <div className="flex items-start gap-4">
-                <Image
-                  src={r.avatar || '/placeholder.svg'}
-                  alt={r.name}
-                  width={52}
-                  height={52}
-                  className="size-13 rounded-full object-cover"
-                  style={{ width: 52, height: 52 }}
+            {modalError && (
+              <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+                {modalError}
+              </div>
+            )}
+
+            {connectStep === 'SELECT_PROVIDER' ? (
+              <div className="space-y-4">
+                <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 text-xs text-muted-foreground flex items-start gap-2.5">
+                  <ShieldCheck className="size-4 shrink-0 text-primary mt-0.5" />
+                  <span>
+                    ONE connects via official AA bridges without accessing your netbanking passwords or PINs.
+                  </span>
+                </div>
+                <AAProviderSelector
+                  providers={providers}
+                  onContinue={handleProviderContinue}
+                  loading={aaLoading}
+                  error={aaError}
                 />
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium">{r.name}</p>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground">
-                      <ShieldCheck className="size-3" />
-                      {r.reputationTitle} · {r.reputation}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-sm font-medium text-primary">{r.reason}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-pretty">
-                    {r.story}
-                  </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <AccountDiscoveryList
+                  accounts={discovered}
+                  selectedAccounts={selectedAccounts}
+                  onToggleAccount={toggleAccountSelection}
+                  onSelectAll={() => setSelectedAccounts(discovered)}
+                  onDeselectAll={() => setSelectedAccounts([])}
+                />
+
+                <div className="pt-2 flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setConnectStep('SELECT_PROVIDER')}
+                    className="px-4 py-2.5 rounded-xl border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLinkAccounts}
+                    disabled={bankLoading || selectedAccounts.length === 0}
+                    className="px-6 py-2.5 rounded-xl bg-primary text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-all"
+                  >
+                    {bankLoading ? 'Linking Accounts...' : `Link ${selectedAccounts.length} Account(s)`}
+                  </button>
                 </div>
               </div>
-
-              <div className="mt-4">
-                <div className="flex items-end justify-between text-sm">
-                  <span className="font-medium">
-                    {currency(r.funded)}{' '}
-                    <span className="text-muted-foreground">of {currency(r.amount)}</span>
-                  </span>
-                  <span className="text-muted-foreground">
-                    {r.backers} backers · {r.termMonths} mo
-                  </span>
-                </div>
-                <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
-                  <motion.div
-                    className="h-full rounded-full bg-primary"
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${pct}%` }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, ease: 'easeOut' }}
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={() => setBacked(r)}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 font-medium text-primary-foreground transition-transform hover:scale-[1.01] active:scale-95"
-              >
-                <HandHeart className="size-4" />
-                Back {r.name.split(' ')[0]}
-              </button>
-            </motion.div>
-          )
-        })}
-      </div>
-
-      {/* recognition wow moment */}
-      <AnimatePresence>
-        {backed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-6 backdrop-blur-sm"
-            onClick={() => setBacked(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.85, y: 20, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm rounded-3xl border border-border bg-card p-8 text-center"
-            >
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <HandHeart className="size-6" />
-              </div>
-              <p className="font-serif text-2xl font-medium tracking-tight">
-                You backed {backed.name.split(' ')[0]}.
-              </p>
-              <p className="mt-2 leading-relaxed text-muted-foreground text-pretty">
-                That&apos;s real support, not a transaction. Your reliability score just grew,
-                and {backed.name.split(' ')[0]} will know someone believed in the plan.
-              </p>
-              <button
-                onClick={() => setBacked(null)}
-                className="mt-6 w-full rounded-full bg-primary py-3 font-medium text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95"
-              >
-                Done
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
+
+// Named alias export for backwards compatibility
+export { WalletView as LendingScene };

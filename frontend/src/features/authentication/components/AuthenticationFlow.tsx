@@ -209,3 +209,4 @@ export function AuthenticationFlow({ initialStep = 'MOBILE_INPUT' }: Authenticat
     </div>
   );
 }
+

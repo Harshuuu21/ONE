@@ -24,3 +24,4 @@ export const refreshTokenSchema = z.object({
 
 export type RequestOtpInput = z.infer<typeof requestOtpSchema>['body'];
 export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>['body'];
+

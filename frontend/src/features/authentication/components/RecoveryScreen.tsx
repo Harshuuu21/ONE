@@ -53,3 +53,4 @@ export function RecoveryScreen({ onStartRecovery, onCancel }: RecoveryScreenProp
     </div>
   );
 }
+

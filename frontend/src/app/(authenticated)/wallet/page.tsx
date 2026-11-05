@@ -1,5 +1,5 @@
-import { LendingScene as WalletView } from '@/features/wallet/components/wallet-view'
+import { WalletView } from '@/features/wallet/components/wallet-view';
 
 export default function WalletPage() {
-  return <WalletView />
+  return <WalletView />;
 }

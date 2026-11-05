@@ -204,3 +204,4 @@ export class AuthApi {
     window.dispatchEvent(new Event('one-auth-changed'));
   }
 }
+

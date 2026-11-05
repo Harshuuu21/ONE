@@ -50,3 +50,4 @@ export function usePasskey() {
     clearError: () => setError(null),
   };
 }
+

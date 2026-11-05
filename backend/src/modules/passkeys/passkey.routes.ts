@@ -44,3 +44,4 @@ router.get('/', requireAuth, PasskeyController.listPasskeys);
 router.delete('/:id', requireAuth, PasskeyController.deletePasskey);
 
 export default router;
+

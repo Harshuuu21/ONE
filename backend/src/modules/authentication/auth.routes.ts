@@ -18,3 +18,4 @@ router.post('/logout-all', requireAuth, AuthenticationController.logoutAll);
 router.get('/sessions', requireAuth, AuthenticationController.listSessions);
 
 export default router;
+
