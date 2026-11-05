@@ -176,6 +176,8 @@ export class AuthApi {
     try {
       localStorage.setItem(LOCAL_SESSION_KEY, JSON.stringify(user));
       localStorage.setItem(LOCAL_TOKEN_KEY, accessToken);
+      // Synchronize cookie for server-side Next.js middleware protection
+      document.cookie = `one_access_token=${accessToken}; path=/; max-age=86400; SameSite=Lax`;
       window.dispatchEvent(new Event('one-auth-changed'));
     } catch (err) {
       console.error('Failed to store session:', err);
@@ -201,6 +203,8 @@ export class AuthApi {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(LOCAL_SESSION_KEY);
     localStorage.removeItem(LOCAL_TOKEN_KEY);
+    // Clear auth cookie
+    document.cookie = 'one_access_token=; path=/; max-age=0; SameSite=Lax';
     window.dispatchEvent(new Event('one-auth-changed'));
   }
 }

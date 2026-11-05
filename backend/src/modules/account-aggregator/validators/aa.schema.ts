@@ -18,3 +18,4 @@ export const aaCallbackSchema = z.object({
     errorReason: z.string().optional(),
   }),
 });
+

@@ -174,3 +174,4 @@ export function ConsentDetailCard({ consent, onRevoke }: ConsentDetailCardProps)
     </div>
   );
 }
+

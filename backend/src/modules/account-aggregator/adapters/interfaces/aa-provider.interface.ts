@@ -61,3 +61,4 @@ export interface IAAProvider {
    */
   verifyCallbackSignature(headers: Record<string, any>, rawPayload: any): boolean;
 }
+

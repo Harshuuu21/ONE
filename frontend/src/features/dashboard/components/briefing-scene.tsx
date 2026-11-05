@@ -6,6 +6,9 @@ import { briefing, insights, currency, goals, conversations, trip } from '@/lib/
 import { OneOrb } from '@/components/common/one-mark'
 import { SceneHeader } from '@/components/common/scene-header'
 
+import { useAuth } from '@/hooks/useAuth'
+import { useBankAccounts } from '@/features/bank-accounts'
+
 const ICONS = {
   opportunity: TrendingUp,
   caution: AlertCircle,
@@ -14,9 +17,19 @@ const ICONS = {
 }
 
 export function BriefingScene() {
+  const { user } = useAuth()
+  const { linkedAccounts, totalBalance } = useBankAccounts()
+
+  const greeting = user?.firstName
+    ? `Good morning, ${user.firstName}`
+    : briefing.greeting
+
+  const displaySafeToSpend = linkedAccounts.length > 0
+    ? Math.round(totalBalance * 0.05) // Safe 5% liquid threshold
+    : briefing.safeToSpend
   return (
     <div>
-      <SceneHeader eyebrow="Your morning briefing" title={briefing.greeting} />
+      <SceneHeader eyebrow="Your morning briefing" title={greeting} />
 
       {/* the headline insight */}
       <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-7 md:p-9">
@@ -39,9 +52,13 @@ export function BriefingScene() {
         <div className="rounded-3xl border border-border bg-card p-6">
           <p className="text-sm text-muted-foreground">Safe to spend today</p>
           <p className="mt-1 font-serif text-4xl font-medium tracking-tight">
-            {currency(briefing.safeToSpend)}
+            {currency(displaySafeToSpend)}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">{briefing.safeToSpendNote}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {linkedAccounts.length > 0
+              ? `Calculated from ₹${totalBalance.toLocaleString('en-IN')} across ${linkedAccounts.length} linked accounts`
+              : briefing.safeToSpendNote}
+          </p>
         </div>
         <div className="flex flex-col justify-center rounded-3xl border border-border bg-card p-6">
           <p className="text-sm text-muted-foreground">This month&apos;s momentum</p>

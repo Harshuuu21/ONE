@@ -24,3 +24,4 @@ router.get('/connections', requireAuth, AAController.listConnections);
 router.get('/connections/:id/status', requireAuth, AAController.getConnectionStatus);
 
 export default router;
+

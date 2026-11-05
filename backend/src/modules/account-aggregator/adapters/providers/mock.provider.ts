@@ -150,3 +150,4 @@ export class MockAAProvider implements IAAProvider {
     return signature === expected || signature === 'valid_mock_signature';
   }
 }
+

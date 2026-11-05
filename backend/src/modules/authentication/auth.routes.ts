@@ -3,12 +3,23 @@ import { AuthenticationController } from './auth.controller.js';
 import { validateRequest } from '../../middleware/validateRequest.js';
 import { requireAuth } from '../../middleware/authMiddleware.js';
 import { requestOtpSchema, verifyOtpSchema, refreshTokenSchema } from './auth.schema.js';
+import { otpRequestLimiter, otpVerifyLimiter } from '../../middleware/rateLimiter.js';
 
 const router = Router();
 
 // Mobile & OTP
-router.post('/otp/request', validateRequest(requestOtpSchema), AuthenticationController.requestOtp);
-router.post('/otp/verify', validateRequest(verifyOtpSchema), AuthenticationController.verifyOtp);
+router.post(
+  '/otp/request',
+  otpRequestLimiter,
+  validateRequest(requestOtpSchema),
+  AuthenticationController.requestOtp
+);
+router.post(
+  '/otp/verify',
+  otpVerifyLimiter,
+  validateRequest(verifyOtpSchema),
+  AuthenticationController.verifyOtp
+);
 router.post('/identify', AuthenticationController.identify);
 
 // Sessions

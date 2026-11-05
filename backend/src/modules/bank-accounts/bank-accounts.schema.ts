@@ -29,3 +29,4 @@ export const linkAccountsSchema = z.object({
 
 export type DiscoverAccountsInput = z.infer<typeof discoverAccountsSchema>['body'];
 export type LinkAccountsInput = z.infer<typeof linkAccountsSchema>['body'];
+

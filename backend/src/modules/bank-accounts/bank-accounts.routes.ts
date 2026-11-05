@@ -14,3 +14,4 @@ router.post('/accounts/link', validateRequest(linkAccountsSchema), BankAccountsC
 router.delete('/accounts/:id', BankAccountsController.delinkAccount);
 
 export default router;
+

@@ -58,3 +58,4 @@ export interface CallbackPayload {
   accounts?: DiscoveredAccount[];
   metadata?: Record<string, any>;
 }
+

@@ -10,6 +10,7 @@ router.use(requireAuth);
 
 router.get('/', TransactionController.listTransactions);
 router.post('/', validateRequest(createTransactionSchema), TransactionController.createTransaction);
+router.get('/analytics', TransactionController.getAnalytics);
+router.post('/sync', TransactionController.syncBankTransactions);
 
 export default router;
-

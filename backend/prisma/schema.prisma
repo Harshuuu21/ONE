@@ -279,6 +279,8 @@ model LinkedBankAccount {
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
 
+  transactions        Transaction[]
+
   @@unique([userId, fipId, accountNumberMasked])
   @@index([userId, status])
   @@map("linked_bank_accounts")
@@ -367,19 +369,25 @@ model Account {
 }
 
 model Transaction {
-  id          String          @id @default(uuid())
-  userId      String
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId   String?
-  account     Account?        @relation(fields: [accountId], references: [id], onDelete: SetNull)
-  title       String
-  amount      Decimal
-  category    String
-  type        TransactionType @default(EXPENSE)
-  date        DateTime        @default(now())
-  note        String?
-  createdAt   DateTime        @default(now())
+  id                  String             @id @default(uuid())
+  userId              String
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId           String?
+  account             Account?           @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  linkedBankAccountId String?
+  linkedBankAccount   LinkedBankAccount? @relation(fields: [linkedBankAccountId], references: [id], onDelete: SetNull)
+  transactionRef      String?            // External provider transaction reference for deduplication
+  source              String             @default("MANUAL") // "ACCOUNT_AGGREGATOR" | "MANUAL"
+  title               String
+  amount              Decimal
+  category            String
+  type                TransactionType    @default(EXPENSE)
+  date                DateTime           @default(now())
+  note                String?
+  createdAt           DateTime           @default(now())
 
+  @@unique([userId, transactionRef])
+  @@index([userId, date])
   @@map("transactions")
 }
 

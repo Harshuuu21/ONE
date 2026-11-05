@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Send, Sparkles, UserCircle, Bot, ArrowRight, CornerDownLeft } from 'lucide-react'
 import { OneOrb } from '@/components/common/one-mark'
 import { SceneHeader } from '@/components/common/scene-header'
+import { useAuth } from '@/hooks/useAuth'
+import { useBankAccounts } from '@/features/bank-accounts'
 
 type Message = {
   id: string
@@ -30,6 +32,8 @@ const QUICK_PROMPTS = [
 ]
 
 export function ChatView() {
+  const { user } = useAuth()
+  const { linkedAccounts, totalBalance } = useBankAccounts()
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES)
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -49,15 +53,19 @@ export function ChatView() {
     if (!textToSend) setInput('')
     setIsTyping(true)
 
-    // Simulate AI response
+    // Dynamic AI response based on real accounts and user profile
     setTimeout(() => {
-      let replyContent = "I've reviewed your latest data. Your cash reserves are strong, you're currently 9% under your target burn rate, and your trajectory remains positive. Would you like me to model how this impacts your savings goals?"
-      if (text.toLowerCase().includes('dining') || text.toLowerCase().includes('spend')) {
-        replyContent = "Based on your recurring subscriptions and planned bills for this cycle, you have $185 in safe discretionary spend for dining this weekend without dipping into your emergency buffer."
-      } else if (text.toLowerCase().includes('tokyo') || text.toLowerCase().includes('trip')) {
-        replyContent = "You're 54% funded for Tokyo and currently 3 weeks ahead of schedule. At your current pace of $420/month, you'll hit your full $3,800 target by April with room for flight upgrades."
-      } else if (text.toLowerCase().includes('lend') || text.toLowerCase().includes('community')) {
-        replyContent = "Yes! You have sufficient liquidity, and backing Daniel's tool purchase ($170) would keep you well within your community allocation while earning 4 reputation points."
+      let replyContent = `I've analyzed your portfolio, ${user?.firstName || 'Harsh'}. You have ₹${totalBalance.toLocaleString('en-IN')} across ${linkedAccounts.length} linked accounts under active RBI Account Aggregator consent.`
+      const lower = text.toLowerCase()
+      if (lower.includes('balance') || lower.includes('bank') || lower.includes('account')) {
+        const bankSummary = linkedAccounts.map((a) => `${a.bankName} (${a.accountNumberMasked}): ₹${a.balance.toLocaleString('en-IN')}`).join(', ')
+        replyContent = `You have ${linkedAccounts.length} connected bank account(s) totaling ₹${totalBalance.toLocaleString('en-IN')}: ${bankSummary || 'No banks linked yet'}.`
+      } else if (lower.includes('dining') || lower.includes('spend')) {
+        replyContent = `Based on your recurring subscriptions and planned bills for this cycle, you have ₹${Math.round(totalBalance * 0.05).toLocaleString('en-IN')} in safe discretionary spend without dipping into your emergency buffer.`
+      } else if (lower.includes('tokyo') || lower.includes('trip')) {
+        replyContent = "You're 54% funded for Tokyo and currently 3 weeks ahead of schedule. At your current pace, you'll hit your full target comfortably before departure."
+      } else if (lower.includes('lend') || lower.includes('community')) {
+        replyContent = `Yes! You have sufficient liquidity, and backing a peer in the community pool would strengthen your trust circle while maintaining your reputation score (${user?.reputationScore || 780}).`
       }
 
       setMessages((prev) => [

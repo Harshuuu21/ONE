@@ -36,6 +36,14 @@ export class AuthenticationController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
+      // Set access token cookie for Next.js App Router edge middleware
+      res.cookie('one_access_token', result.tokens.accessToken, {
+        httpOnly: false, // Edge middleware & client reading
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: result.tokens.expiresIn,
+      });
+
       return sendSuccess(res, result, 'Mobile number verified successfully');
     } catch (error) {
       next(error);
@@ -73,6 +81,13 @@ export class AuthenticationController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
+      res.cookie('one_access_token', tokens.accessToken, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: tokens.expiresIn,
+      });
+
       return sendSuccess(res, tokens, 'Tokens refreshed');
     } catch (error) {
       next(error);
@@ -86,6 +101,7 @@ export class AuthenticationController {
         await SessionService.revokeSession(token);
       }
       res.clearCookie('one_refresh_token');
+      res.clearCookie('one_access_token');
       return sendSuccess(res, { loggedOut: true }, 'Logged out successfully');
     } catch (error) {
       next(error);

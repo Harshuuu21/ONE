@@ -21,5 +21,22 @@ export class TransactionController {
       next(error);
     }
   }
-}
 
+  static async getAnalytics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const analytics = await TransactionService.getSpendingAnalytics(req.user!.id);
+      return sendSuccess(res, analytics, 'Spending analytics calculated');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async syncBankTransactions(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await TransactionService.syncBankTransactions(req.user!.id, req.body.transactions || []);
+      return sendSuccess(res, result, 'Bank transactions synchronized successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+}

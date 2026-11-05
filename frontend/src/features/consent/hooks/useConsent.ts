@@ -90,3 +90,4 @@ export function useConsent(autoFetch = true) {
     getConsentDetails,
   };
 }
+

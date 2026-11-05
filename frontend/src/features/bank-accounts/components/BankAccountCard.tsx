@@ -69,3 +69,4 @@ export function BankAccountCard({ account, onDelink }: BankAccountCardProps) {
     </div>
   );
 }
+
