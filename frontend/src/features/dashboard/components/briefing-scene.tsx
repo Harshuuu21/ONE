@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { ArrowUpRight, TrendingUp, AlertCircle, Trophy } from 'lucide-react'
 import { briefing, insights, currency, goals, conversations, trip } from '@/lib/one-data'
@@ -16,20 +17,48 @@ const ICONS = {
   nudge: TrendingUp,
 }
 
+function getTimeGreeting() {
+  const hour = new Date().getHours()
+  if (hour >= 5 && hour < 12) {
+    return {
+      salutation: 'Good morning',
+      eyebrow: 'Your morning briefing',
+    }
+  }
+  if (hour >= 12 && hour < 17) {
+    return {
+      salutation: 'Good afternoon',
+      eyebrow: 'Your afternoon briefing',
+    }
+  }
+  return {
+    salutation: 'Good evening',
+    eyebrow: 'Your evening briefing',
+  }
+}
+
 export function BriefingScene() {
   const { user } = useAuth()
   const { linkedAccounts, totalBalance } = useBankAccounts()
+  const [timeContext, setTimeContext] = useState(getTimeGreeting)
 
-  const greeting = user?.firstName
-    ? `Good morning, ${user.firstName}`
-    : briefing.greeting
+  useEffect(() => {
+    setTimeContext(getTimeGreeting())
+    const interval = setInterval(() => {
+      setTimeContext(getTimeGreeting())
+    }, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const displayName = user?.firstName || 'Maya'
+  const greeting = `${timeContext.salutation}, ${displayName}`
 
   const displaySafeToSpend = linkedAccounts.length > 0
     ? Math.round(totalBalance * 0.05) // Safe 5% liquid threshold
     : briefing.safeToSpend
   return (
     <div>
-      <SceneHeader eyebrow="Your morning briefing" title={greeting} />
+      <SceneHeader eyebrow={timeContext.eyebrow} title={greeting} />
 
       {/* the headline insight */}
       <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-7 md:p-9">
