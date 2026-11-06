@@ -63,7 +63,12 @@ export function useBankAccounts() {
     setError(null);
     try {
       const result = await BankAccountsApi.linkAccounts(providerId, selectedAccounts, aaConnectionId);
-      await fetchLinked();
+      try {
+        await fetchLinked();
+      } catch {
+        setLinkedAccounts(result.accounts);
+        setTotalBalance(result.accounts.reduce((sum, a) => sum + (Number(a.balance) || 0), 0));
+      }
       return result;
     } catch (err: any) {
       setError(err.message || 'Failed to link accounts');
