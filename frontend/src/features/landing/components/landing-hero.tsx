@@ -66,10 +66,10 @@ export function LandingHero() {
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </Link>
         <a
-          href="#intelligence"
+          href="#pillars"
           className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-7 py-3.5 text-base font-medium text-foreground backdrop-blur transition-colors hover:bg-card"
         >
-          See the first briefing
+          Explore the seven pillars
         </a>
       </motion.div>
 

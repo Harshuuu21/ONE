@@ -36,9 +36,6 @@ export function LandingNav() {
           <a href="#belief" className="transition-colors hover:text-foreground">
             Belief
           </a>
-          <a href="#intelligence" className="transition-colors hover:text-foreground">
-            Intelligence
-          </a>
           <a href="#pillars" className="transition-colors hover:text-foreground">
             The seven pillars
           </a>
