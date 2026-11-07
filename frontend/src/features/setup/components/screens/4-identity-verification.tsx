@@ -28,9 +28,6 @@ export function IdentityVerificationScreen({ onNext }: { onNext: () => void }) {
         <h2 className="text-3xl font-serif font-semibold tracking-tight">
           Identity Verification
         </h2>
-        <p className="text-muted-foreground text-lg">
-          Optional, but mandatory for Community Lending.
-        </p>
       </div>
 
       <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex gap-3 items-start max-w-md mx-auto">
@@ -74,14 +71,6 @@ export function IdentityVerificationScreen({ onNext }: { onNext: () => void }) {
         >
           {loading ? 'Verifying with UIDAI...' : 'Verify Identity'}
           {!loading && <BadgeCheck className="size-4" />}
-        </button>
-        
-        <button
-          onClick={onNext}
-          disabled={loading}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium py-2"
-        >
-          Skip for now (Disables Lending)
         </button>
       </div>
     </div>
