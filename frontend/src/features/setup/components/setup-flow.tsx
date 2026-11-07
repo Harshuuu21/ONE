@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
 
 import { WelcomeScreen } from './screens/1-welcome'
-import { WhyDataScreen } from './screens/2-why-data'
 import { BasicProfileScreen } from './screens/3-basic-profile'
 import { IdentityVerificationScreen } from './screens/4-identity-verification'
 import { ConnectBankScreen } from './screens/5-connect-bank'
@@ -21,7 +20,6 @@ import { PasskeyApi } from '@/features/authentication/services/passkeyApi'
 
 type SetupStep =
   | 'welcome'
-  | 'why-data'
   | 'basic-profile'
   | 'identity'
   | 'connect-bank'
@@ -36,7 +34,6 @@ type SetupStep =
 
 const STEPS: SetupStep[] = [
   'welcome',
-  'why-data',
   'basic-profile',
   'identity',
   'connect-bank',
@@ -68,8 +65,6 @@ export function SetupFlow() {
     switch (currentStep) {
       case 'welcome':
         return <WelcomeScreen onNext={nextStep} />
-      case 'why-data':
-        return <WhyDataScreen onNext={nextStep} />
       case 'basic-profile':
         return <BasicProfileScreen onNext={nextStep} />
       case 'identity':
