@@ -41,3 +41,4 @@ export function shuffle<T>(array: readonly T[]): T[] {
 export function round2(num: number): number {
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
+

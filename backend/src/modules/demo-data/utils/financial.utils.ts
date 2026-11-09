@@ -120,3 +120,4 @@ export function verifyBalanceReconciliation(
   const calculated = round2(openingBalance + credits - debits);
   return Math.abs(calculated - closingBalance) < 0.05;
 }
+

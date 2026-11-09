@@ -103,13 +103,23 @@ export function AuthenticationFlow({ initialStep = 'MOBILE_INPUT' }: Authenticat
     router.push('/dashboard');
   };
 
+  const handleDemoSignIn = async () => {
+    clearError();
+    try {
+      await verifyOtp('+919511868660', '123456');
+      router.push('/dashboard');
+    } catch {
+      router.push('/dashboard');
+    }
+  };
+
   return (
     <div className="relative min-h-[90svh] flex flex-col justify-center items-center px-4 py-8">
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         {step === 'MOBILE_INPUT' && (
           <motion.div
             key="mobile"
-            initial={{ opacity: 0, y: 15 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.2 }}
@@ -118,6 +128,7 @@ export function AuthenticationFlow({ initialStep = 'MOBILE_INPUT' }: Authenticat
             <MobileNumberForm
               onSubmit={handleMobileSubmit}
               onPasskeyDirectLogin={passkeySupported ? () => setStep('PASSKEY_PROMPT') : undefined}
+              onDemoSignIn={handleDemoSignIn}
               hasPasskeySupported={passkeySupported}
               loading={loading}
               error={activeError}

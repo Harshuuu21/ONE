@@ -21,3 +21,4 @@ export const resetDemoDataSchema = z.object({
 
 export type InitializeDemoDataInput = z.infer<typeof initializeDemoDataSchema>;
 export type ResetDemoDataInput = z.infer<typeof resetDemoDataSchema>;
+

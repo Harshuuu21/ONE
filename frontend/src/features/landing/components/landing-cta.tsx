@@ -47,14 +47,14 @@ export function LandingCta() {
           className="mt-12"
         >
           <Link
-            href="/login"
+            href="/dashboard"
             className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-lg font-medium text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95"
           >
             Enter ONE
             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </Link>
           <p className="mt-4 text-sm text-muted-foreground">
-            Encrypted bank-grade privacy &amp; data sovereignty
+            A guided, simulated experience. No account needed.
           </p>
         </motion.div>
       </div>

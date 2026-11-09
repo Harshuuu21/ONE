@@ -15,3 +15,4 @@ router.get('/summary', DemoDataController.getSummary);
 router.post('/reset', validateRequest(resetDemoDataSchema), DemoDataController.reset);
 
 export default router;
+

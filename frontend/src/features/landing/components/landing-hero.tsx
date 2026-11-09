@@ -59,7 +59,7 @@ export function LandingHero() {
         className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
       >
         <Link
-          href="/os"
+          href="/dashboard"
           className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-medium text-primary-foreground transition-transform hover:scale-[1.03] active:scale-95"
         >
           Meet your ONE

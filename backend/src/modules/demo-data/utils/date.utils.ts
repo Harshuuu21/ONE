@@ -64,3 +64,4 @@ export function distributeDatesOverDays(count: number, daysSpan: number = 75): D
   // Sort ascending
   return dates.sort((a, b) => a.getTime() - b.getTime());
 }
+

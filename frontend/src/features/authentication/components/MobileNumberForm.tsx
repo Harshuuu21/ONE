@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Smartphone, ArrowRight, ShieldCheck, KeyRound, Loader2 } from 'lucide-react';
+import { Smartphone, ArrowRight, ShieldCheck, KeyRound, Loader2, Sparkles } from 'lucide-react';
 import { OneOrb } from '@/components/common/one-mark';
 import { validateIndianMobile, formatMobileDisplay } from '../utils/phone';
 
 interface MobileNumberFormProps {
   onSubmit: (mobileNumber: string) => Promise<void>;
   onPasskeyDirectLogin?: () => void;
+  onDemoSignIn?: () => void;
   hasPasskeySupported?: boolean;
   loading?: boolean;
   error?: string | null;
@@ -16,6 +17,7 @@ interface MobileNumberFormProps {
 export function MobileNumberForm({
   onSubmit,
   onPasskeyDirectLogin,
+  onDemoSignIn,
   hasPasskeySupported = false,
   loading = false,
   error = null,
@@ -141,6 +143,19 @@ export function MobileNumberForm({
             </>
           )}
         </button>
+
+        {/* Quick Demo Access Button */}
+        {onDemoSignIn && (
+          <button
+            type="button"
+            onClick={onDemoSignIn}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border border-border bg-card hover:bg-secondary/70 text-foreground font-medium text-xs transition-all active:scale-[0.99]"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Instant Demo Sign In (Enter Dashboard)</span>
+          </button>
+        )}
 
         {/* Security Assurance */}
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-1">

@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { OneWordmark } from '@/components/common/one-mark'
+import { useAuth } from '@/hooks/useAuth'
 
 export function LandingNav() {
+  const { user } = useAuth()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -42,10 +44,10 @@ export function LandingNav() {
         </nav>
         <div className="flex items-center gap-4">
           <Link
-            href="/login"
+            href="/dashboard"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            Log In
+            {user ? 'Dashboard' : 'Log In'}
           </Link>
           <Link
             href="/setup"

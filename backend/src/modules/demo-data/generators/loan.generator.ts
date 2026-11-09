@@ -167,3 +167,4 @@ export function generateLoans(userId: string, persona: UserPersona): GeneratedLo
 
   return loans;
 }
+

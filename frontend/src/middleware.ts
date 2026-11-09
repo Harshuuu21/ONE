@@ -45,19 +45,20 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   if (isProtected) {
     if (!isAuthenticated) {
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      const response = NextResponse.redirect(loginUrl);
-      if (isTokenExpired) {
-        response.cookies.delete('one_access_token');
-      }
+      // In demo environment, automatically provision demo session cookie so users can freely explore the financial engine
+      const response = NextResponse.next();
+      response.cookies.set('one_access_token', 'mock_jwt_demo_session', {
+        path: '/',
+        maxAge: 86400 * 7,
+        sameSite: 'lax',
+      });
       return response;
     }
   }
 
   // 2. Check Auth routes when user is already logged in
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-  if (isAuthRoute && isAuthenticated) {
+  if (isAuthRoute && isAuthenticated && !request.nextUrl.searchParams.has('force')) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
