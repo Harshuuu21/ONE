@@ -13,7 +13,6 @@ import { DevicePermissionsScreen } from './screens/7-device-permissions'
 import { CommunityLendingScreen } from './screens/8-community-lending'
 import { RepaymentAuthScreen } from './screens/9-repayment-auth'
 import { PrivacyControlsScreen } from './screens/10-privacy-controls'
-import { AiConsentScreen } from './screens/11-ai-consent'
 import { SetupCompleteScreen } from './screens/12-setup-complete'
 import { PasskeyRegistration } from '@/features/authentication/components/PasskeyRegistration'
 import { PasskeyApi } from '@/features/authentication/services/passkeyApi'
@@ -28,7 +27,6 @@ type SetupStep =
   | 'community-lending'
   | 'repayment-auth'
   | 'privacy-controls'
-  | 'ai-consent'
   | 'setup-complete'
   | 'passkey'
 
@@ -42,7 +40,6 @@ const STEPS: SetupStep[] = [
   'community-lending',
   'repayment-auth',
   'privacy-controls',
-  'ai-consent',
   'setup-complete',
   'passkey',
 ]
@@ -81,8 +78,6 @@ export function SetupFlow() {
         return <RepaymentAuthScreen onNext={nextStep} />
       case 'privacy-controls':
         return <PrivacyControlsScreen onNext={nextStep} />
-      case 'ai-consent':
-        return <AiConsentScreen onNext={nextStep} />
       case 'setup-complete':
         return <SetupCompleteScreen onNext={nextStep} />
       case 'passkey':
