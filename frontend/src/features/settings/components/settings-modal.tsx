@@ -2,13 +2,15 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Settings, X, Shield, Moon, Bell, CreditCard, User, Database, Building2 } from 'lucide-react'
+import { Settings, X, Shield, Moon, Bell, CreditCard, User, Database, Building2, Sparkles } from 'lucide-react'
+import { DemoDataSettings } from './DemoDataSettings'
 
 export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [activeTab, setActiveTab] = useState('Account')
   
   const TABS = [
     { label: 'Account', icon: User },
+    { label: 'Demo Data', icon: Sparkles },
     { label: 'Preferences', icon: Moon },
     { label: 'Notifications', icon: Bell },
     { label: 'Security', icon: Shield },
@@ -153,7 +155,11 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   </div>
                 )}
                 
-                {activeTab !== 'Account' && activeTab !== 'Permissions & Data' && (
+                {activeTab === 'Demo Data' && (
+                  <DemoDataSettings />
+                )}
+
+                {activeTab !== 'Account' && activeTab !== 'Demo Data' && activeTab !== 'Permissions & Data' && (
                   <div className="text-sm text-muted-foreground">
                     Settings for {activeTab} will appear here.
                   </div>

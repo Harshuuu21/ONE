@@ -356,6 +356,8 @@ export type Transaction = {
   date: string
   category: string
   type: 'expense' | 'income'
+  paymentMethod?: string
+  isDemo?: boolean
   aiInsight?: string
 }
 

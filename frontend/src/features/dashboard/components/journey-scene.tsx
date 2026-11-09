@@ -3,18 +3,31 @@
 import { motion } from 'motion/react'
 import { journey, currency } from '@/lib/one-data'
 import { SceneHeader } from '@/components/common/scene-header'
+import { useDemoData } from '@/hooks/useDemoData'
 
 export function JourneyScene() {
-  const growth = Math.round(
-    ((journey.netWorthNow - journey.netWorthStart) / journey.netWorthStart) * 100,
-  )
-  const values = journey.points.map((p) => p.value)
+  const { summary } = useDemoData()
+
+  const netWorthNow = summary?.financials?.closingBalance ?? journey.netWorthNow
+  const netWorthStart = summary?.financials?.initialBalance ?? journey.netWorthStart
+  const growth = netWorthStart > 0
+    ? Math.round(((netWorthNow - netWorthStart) / netWorthStart) * 100)
+    : 15
+
+  const points = summary?.recentTransactions && summary.recentTransactions.length > 0
+    ? summary.recentTransactions.slice(0, 7).map((t, idx) => ({
+        month: new Date(t.date).toLocaleDateString(undefined, { month: 'short' }),
+        value: Math.round(netWorthStart + (idx + 1) * ((netWorthNow - netWorthStart) / 7)),
+      }))
+    : journey.points
+
+  const values = points.map((p) => p.value)
   const min = Math.min(...values)
-  const max = Math.max(...values)
+  const max = Math.max(...values, min + 1)
   const w = 600
   const h = 200
-  const pts = journey.points.map((p, i) => {
-    const x = (i / (journey.points.length - 1)) * w
+  const pts = points.map((p, i) => {
+    const x = (i / Math.max(1, points.length - 1)) * w
     const y = h - ((p.value - min) / (max - min)) * (h - 24) - 12
     return [x, y] as const
   })
@@ -34,17 +47,17 @@ export function JourneyScene() {
         <div>
           <p className="text-sm text-muted-foreground">Net worth today</p>
           <p className="font-serif text-4xl font-medium tracking-tight">
-            {currency(journey.netWorthNow)}
+            ₹{netWorthNow.toLocaleString('en-IN')}
           </p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">Since {journey.startYear}</p>
+          <p className="text-sm text-muted-foreground">Since start</p>
           <p className="font-serif text-2xl font-medium tracking-tight text-primary">
             +{growth}%
           </p>
         </div>
         <p className="ml-auto max-w-xs text-sm leading-relaxed text-muted-foreground">
-          That&apos;s {currency(journey.netWorthNow - journey.netWorthStart)} of growth — but
+          That&apos;s ₹{Math.abs(netWorthNow - netWorthStart).toLocaleString('en-IN')} of liquid momentum — but
           the streak behind it matters more.
         </p>
       </div>

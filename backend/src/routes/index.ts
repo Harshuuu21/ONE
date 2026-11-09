@@ -10,6 +10,7 @@ import transactionRoutes from '../modules/transactions/transaction.routes.js';
 import goalRoutes from '../modules/goals/goal.routes.js';
 import tripRoutes from '../modules/trips/trip.routes.js';
 import communityRoutes from '../modules/community/community.routes.js';
+import demoDataRoutes from '../modules/demo-data/demo-data.routes.js';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/transactions', transactionRoutes);
 router.use('/goals', goalRoutes);
 router.use('/trips', tripRoutes);
 router.use('/community', communityRoutes);
+router.use('/demo-data', demoDataRoutes);
 
 export default router;

@@ -16,11 +16,13 @@ import {
   Fingerprint,
   Smartphone,
   Key,
+  Sparkles,
 } from 'lucide-react';
 import { SceneHeader } from '@/components/common/scene-header';
 import { AuthService } from '@/services/auth.service';
 import { useRouter } from 'next/navigation';
 import { ConnectedBanksSettings } from './ConnectedBanksSettings';
+import { DemoDataSettings } from './DemoDataSettings';
 import { PasskeyApi } from '@/features/authentication/services/passkeyApi';
 
 export function SettingsView() {
@@ -34,6 +36,7 @@ export function SettingsView() {
   const TABS = [
     { label: 'Account', icon: User, desc: 'Manage your profile and credentials' },
     { label: 'Connections', icon: CreditCard, desc: 'Connected bank accounts & balances' },
+    { label: 'Demo Data', icon: Sparkles, desc: 'Personalized demo data engine and simulation reset' },
     { label: 'Permissions & Data', icon: Database, desc: 'ReBIT AA consent records and data controls' },
     { label: 'Security', icon: Shield, desc: 'Passkeys, biometrics and session security' },
     { label: 'Preferences', icon: Moon, desc: 'Appearance and interface settings' },
@@ -150,6 +153,12 @@ export function SettingsView() {
           {(activeTab === 'Connections' || activeTab === 'Permissions & Data') && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <ConnectedBanksSettings />
+            </motion.div>
+          )}
+
+          {activeTab === 'Demo Data' && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+              <DemoDataSettings />
             </motion.div>
           )}
 

@@ -9,6 +9,8 @@ import { SceneHeader } from '@/components/common/scene-header'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useBankAccounts } from '@/features/bank-accounts'
+import { useDemoData } from '@/hooks/useDemoData'
+import { DemoDataBanner } from '@/components/demo-data/DemoDataBanner'
 
 const ICONS = {
   opportunity: TrendingUp,
@@ -40,6 +42,7 @@ function getTimeGreeting() {
 export function BriefingScene() {
   const { user } = useAuth()
   const { linkedAccounts, totalBalance } = useBankAccounts()
+  const { summary, isResetting, resetDemoData } = useDemoData()
   const [timeContext, setTimeContext] = useState(getTimeGreeting)
 
   useEffect(() => {
@@ -55,9 +58,41 @@ export function BriefingScene() {
 
   const displaySafeToSpend = linkedAccounts.length > 0
     ? Math.round(totalBalance * 0.05) // Safe 5% liquid threshold
+    : summary?.financials?.closingBalance
+    ? Math.round(summary.financials.closingBalance * 0.08)
     : briefing.safeToSpend
+
+  const headlineText = summary
+    ? `You're ₹${Math.abs(summary.financials.netSavings).toLocaleString('en-IN')} ahead of where you were last month.`
+    : briefing.headline
+
+  const summaryText = summary
+    ? `Spending settled at ₹${summary.financials.totalExpenses.toLocaleString('en-IN')} across ${summary.metrics.transactionsCount} transactions. Your ${summary.goals[0]?.title || 'top savings goal'} is at ${summary.goals[0]?.progressPercentage || 50}% progress.`
+    : briefing.summary
+
+  const topGoal = summary?.goals?.[0] || {
+    title: goals[0].title,
+    currentAmount: goals[0].saved,
+    targetAmount: goals[0].target,
+    progressPercentage: Math.round((goals[0].saved / goals[0].target) * 100),
+  }
+
+  const topCommunity = summary?.communities?.[0] || {
+    name: 'Top 12% Contributor',
+    progress: 57,
+  }
+
   return (
     <div>
+      {/* Demo Data Environment Banner */}
+      {summary && (
+        <DemoDataBanner
+          persona={summary.persona}
+          onReset={resetDemoData}
+          isResetting={isResetting}
+        />
+      )}
+
       <SceneHeader eyebrow={timeContext.eyebrow} title={greeting} />
 
       {/* the headline insight */}
@@ -67,10 +102,10 @@ export function BriefingScene() {
           <OneOrb size={40} />
           <div>
             <p className="font-serif text-2xl font-medium leading-snug text-balance md:text-3xl">
-              {briefing.headline}
+              {headlineText}
             </p>
             <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
-              {briefing.summary}
+              {summaryText}
             </p>
           </div>
         </div>
@@ -86,6 +121,8 @@ export function BriefingScene() {
           <p className="mt-1 text-sm text-muted-foreground">
             {linkedAccounts.length > 0
               ? `Calculated from ₹${totalBalance.toLocaleString('en-IN')} across ${linkedAccounts.length} linked accounts`
+              : summary
+              ? `Reconciled from ₹${summary.financials.closingBalance.toLocaleString('en-IN')} closing balance`
               : briefing.safeToSpendNote}
           </p>
         </div>
@@ -95,11 +132,13 @@ export function BriefingScene() {
             <motion.div
               className="h-full rounded-full bg-primary"
               initial={{ width: 0 }}
-              animate={{ width: `${briefing.momentum * 100}%` }}
+              animate={{ width: `${(summary?.financials?.savingsRatePercentage || briefing.momentum * 100)}%` }}
               transition={{ duration: 1.1, ease: 'easeOut' }}
             />
           </div>
-          <p className="mt-2 text-sm font-medium text-primary">Strong and steady</p>
+          <p className="mt-2 text-sm font-medium text-primary">
+            {summary ? `${summary.financials.savingsRatePercentage}% Savings Rate` : 'Strong and steady'}
+          </p>
         </div>
       </div>
 
@@ -111,15 +150,16 @@ export function BriefingScene() {
         {/* Goals Summary */}
         <div className="rounded-2xl border border-border bg-card p-5">
           <p className="text-xs text-muted-foreground mb-1">Top Goal</p>
-          <p className="font-medium truncate">{goals[0].title}</p>
+          <p className="font-medium truncate">{topGoal.title}</p>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
             <motion.div
               className="h-full rounded-full bg-primary"
               initial={{ width: 0 }}
-              animate={{ width: `${Math.round((goals[0].saved / goals[0].target) * 100)}%` }}
+              animate={{ width: `${topGoal.progressPercentage}%` }}
               transition={{ duration: 1, ease: 'easeOut' }}
             />
           </div>
+          <p className="mt-1.5 text-[11px] text-muted-foreground">{topGoal.progressPercentage}% completed</p>
         </div>
 
         {/* Trips Summary */}
@@ -134,13 +174,22 @@ export function BriefingScene() {
               transition={{ duration: 1, ease: 'easeOut' }}
             />
           </div>
+          <p className="mt-1.5 text-[11px] text-muted-foreground">{Math.round((trip.saved / trip.budget) * 100)}% funded</p>
         </div>
 
         {/* Community Summary */}
         <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground mb-1">Community</p>
-          <p className="font-medium truncate">Top 12% Contributor</p>
-          <p className="mt-1 text-xs text-primary">{conversations[0].replies} new replies</p>
+          <p className="text-xs text-muted-foreground mb-1">Community Circle</p>
+          <p className="font-medium truncate">{topCommunity.name}</p>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+            <motion.div
+              className="h-full rounded-full bg-emerald-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${topCommunity.progress}%` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            />
+          </div>
+          <p className="mt-1.5 text-[11px] text-emerald-600 dark:text-emerald-400">{topCommunity.progress}% pooled</p>
         </div>
       </div>
 

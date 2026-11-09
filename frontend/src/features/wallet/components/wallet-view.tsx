@@ -8,7 +8,9 @@ import { useAccountAggregator } from '@/features/account-aggregator';
 import { AAProviderSelector } from '@/features/account-aggregator/components/AAProviderSelector';
 import { AccountDiscoveryList } from '@/features/bank-accounts/components/AccountDiscoveryList';
 import { AAProvider } from '@/features/account-aggregator/types';
-import { ShieldCheck, X } from 'lucide-react';
+import { ShieldCheck, X, Sparkles } from 'lucide-react';
+import { useDemoData } from '@/hooks/useDemoData';
+import { DemoDataBadge } from '@/components/demo-data/DemoDataBadge';
 
 export function WalletView() {
   const {
@@ -31,6 +33,8 @@ export function WalletView() {
     loading: aaLoading,
     error: aaError,
   } = useAccountAggregator();
+
+  const { summary } = useDemoData();
 
   const [connectModalOpen, setConnectModalOpen] = useState(false);
   const [connectStep, setConnectStep] = useState<'SELECT_PROVIDER' | 'SELECT_ACCOUNTS'>('SELECT_PROVIDER');
@@ -73,7 +77,7 @@ export function WalletView() {
       {/* Main Multi-Bank Accounts View */}
       <LinkedAccountsView
         accounts={linkedAccounts}
-        totalBalance={totalBalance}
+        totalBalance={linkedAccounts.length > 0 ? totalBalance : (summary?.financials?.closingBalance || 0)}
         loading={bankLoading}
         onRefresh={fetchLinked}
         onDelink={delink}

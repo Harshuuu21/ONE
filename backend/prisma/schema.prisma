@@ -83,6 +83,34 @@ enum CallbackStatus {
   INVALID_SIGNATURE
 }
 
+enum UserPersona {
+  STUDENT
+  WORKING_PROFESSIONAL
+  FREELANCER
+  BUSINESS_OWNER
+}
+
+enum DemoDataStatus {
+  NOT_INITIALIZED
+  INITIALIZING
+  COMPLETED
+  FAILED
+}
+
+enum LoanType {
+  PERSONAL
+  EDUCATION
+  VEHICLE
+  BUSINESS
+  HOME
+}
+
+enum LoanStatus {
+  ACTIVE
+  REPAID
+  DEFAULTED
+}
+
 model User {
   id                 String                   @id @default(uuid())
   mobileNumber       String?                  @unique
@@ -112,6 +140,9 @@ model User {
   passkeys           PasskeyCredential[]
   sessions           UserSession[]
   authAuditLogs      AuthenticationAuditLog[]
+  demoProfile        DemoDataProfile?
+  loans              Loan[]
+  communities        Community[]
 
   @@map("users")
 }
@@ -382,12 +413,17 @@ model Transaction {
   amount              Decimal
   category            String
   type                TransactionType    @default(EXPENSE)
+  merchant            String?
+  paymentMethod       String?            // "UPI" | "CARD" | "BANK_TRANSFER" | "CASH"
+  status              String             @default("COMPLETED") // "COMPLETED" | "PENDING" | "FAILED"
+  isDemo              Boolean            @default(false)
   date                DateTime           @default(now())
   note                String?
   createdAt           DateTime           @default(now())
 
   @@unique([userId, transactionRef])
   @@index([userId, date])
+  @@index([userId, isDemo])
   @@map("transactions")
 }
 
@@ -396,14 +432,18 @@ model Goal {
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title         String
+  description   String?
   targetAmount  Decimal
   currentAmount Decimal   @default(0.0)
   category      String
   deadline      DateTime?
+  status        String    @default("IN_PROGRESS") // "IN_PROGRESS" | "COMPLETED"
   isCompleted   Boolean   @default(false)
+  isDemo        Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  @@index([userId, isDemo])
   @@map("goals")
 }
 
@@ -452,3 +492,105 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+model DemoDataProfile {
+  id               String         @id @default(uuid())
+  userId           String         @unique
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  persona          UserPersona    @default(WORKING_PROFESSIONAL)
+  status           DemoDataStatus @default(NOT_INITIALIZED)
+  generatorVersion String         @default("1.0.0")
+  generatedAt      DateTime       @default(now())
+  initialBalance   Decimal        @default(0.0)
+  closingBalance   Decimal        @default(0.0)
+  totalIncome      Decimal        @default(0.0)
+  totalExpenses    Decimal        @default(0.0)
+  metadata         Json?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("demo_data_profiles")
+}
+
+model Loan {
+  id                 String          @id @default(uuid())
+  userId             String
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type               LoanType
+  lenderName         String
+  principal          Decimal
+  interestRate       Decimal         // Annual rate in % (e.g. 10.5)
+  tenureMonths       Int
+  monthlyEmi         Decimal
+  startDate          DateTime
+  endDate            DateTime
+  outstandingBalance Decimal
+  nextPaymentDate    DateTime?
+  status             LoanStatus      @default(ACTIVE)
+  isDemo             Boolean         @default(true)
+  repayments         LoanRepayment[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([userId, isDemo])
+  @@map("loans")
+}
+
+model LoanRepayment {
+  id                 String    @id @default(uuid())
+  loanId             String
+  loan               Loan      @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  installmentNumber  Int
+  amount             Decimal
+  principalComponent Decimal
+  interestComponent  Decimal
+  remainingBalance   Decimal
+  dueDate            DateTime
+  paidDate           DateTime?
+  status             String    @default("PAID") // "PAID" | "SCHEDULED" | "OVERDUE"
+  isDemo             Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+
+  @@index([loanId])
+  @@map("loan_repayments")
+}
+
+model Community {
+  id                 String                  @id @default(uuid())
+  userId             String
+  user               User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  description        String
+  category           String
+  adminName          String
+  memberCount        Int                     @default(1)
+  membersSnapshot    Json                    // Array of fictional members [{ id, name, role, avatar, joinedAt, totalContributed }]
+  sharedGoal         String
+  targetAmount       Decimal
+  totalContributions Decimal                 @default(0.0)
+  progress           Decimal                 @default(0.0) // Percentage 0 - 100
+  isDemo             Boolean                 @default(true)
+  contributions      CommunityContribution[]
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  @@index([userId, isDemo])
+  @@map("communities")
+}
+
+model CommunityContribution {
+  id                 String    @id @default(uuid())
+  communityId        String
+  community          Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  contributorName    String
+  isUserContribution Boolean   @default(false)
+  amount             Decimal
+  date               DateTime  @default(now())
+  note               String?
+  isDemo             Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+
+  @@index([communityId])
+  @@map("community_contributions")
+}
+

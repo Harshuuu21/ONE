@@ -1,6 +1,7 @@
 import { transactions } from '@/lib/one-data';
 import type { Transaction } from '../types';
 import { AuthApi } from '@/features/authentication/services/authApi';
+import { DemoDataService } from '@/services/demoDataService';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -16,18 +17,36 @@ export class SavingsService {
       if (res.ok && json.success && Array.isArray(json.data) && json.data.length > 0) {
         return json.data.map((tx: any) => ({
           id: tx.id,
-          merchant: tx.title,
+          merchant: tx.merchant || tx.title,
           amount: Number(tx.amount),
           date: new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
           category: tx.category,
           type: tx.type === 'INCOME' ? 'income' : 'expense',
+          paymentMethod: tx.paymentMethod || undefined,
+          isDemo: tx.isDemo !== undefined ? Boolean(tx.isDemo) : true,
+          aiInsight: tx.note || undefined,
+        }));
+      }
+
+      // If /transactions has no records, fetch from Demo Data Service
+      const demoSummary = await DemoDataService.getSummary();
+      if (demoSummary && demoSummary.recentTransactions && demoSummary.recentTransactions.length > 0) {
+        return demoSummary.recentTransactions.map((tx) => ({
+          id: tx.id,
+          merchant: tx.merchant || tx.title,
+          amount: Number(tx.amount),
+          date: new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+          category: tx.category,
+          type: tx.type === 'INCOME' ? 'income' : 'expense',
+          paymentMethod: tx.paymentMethod,
+          isDemo: true,
           aiInsight: tx.note || undefined,
         }));
       }
     } catch {
       // Offline fallback
     }
-    return transactions;
+    return transactions.map((t) => ({ ...t, isDemo: true }));
   }
 
   static async getAnalytics() {

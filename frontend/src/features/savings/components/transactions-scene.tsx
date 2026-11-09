@@ -7,6 +7,7 @@ import { SceneHeader } from '@/components/common/scene-header';
 import { Search, Sparkles, RefreshCw } from 'lucide-react';
 import { OneOrb } from '@/components/common/one-mark';
 import { SavingsService } from '../services/savings.service';
+import { DemoDataBadge } from '@/components/demo-data/DemoDataBadge';
 
 export function TransactionsScene() {
   const [txList, setTxList] = useState<Transaction[]>([]);
@@ -112,6 +113,12 @@ export function TransactionsScene() {
                   <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wider text-secondary-foreground">
                     {tx.category}
                   </span>
+                  {tx.paymentMethod && (
+                    <span className="rounded-full bg-secondary/60 px-2 py-0.5 text-[10px] uppercase font-mono tracking-wider text-muted-foreground">
+                      {tx.paymentMethod}
+                    </span>
+                  )}
+                  {tx.isDemo && <DemoDataBadge />}
                 </div>
               </div>
               <p className={`font-serif text-lg font-medium ${tx.type === 'income' ? 'text-emerald-400' : 'text-foreground'}`}>
