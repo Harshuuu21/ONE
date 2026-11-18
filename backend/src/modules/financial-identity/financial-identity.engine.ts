@@ -200,30 +200,33 @@ export function calculateCommunityRelevance(
   community: CommunityCatalogItem,
   observedInteractions = 0
 ): CommunityRecommendation {
-  // 1. Occupation Relevance: 100 * MatchingOccupationTags / ApplicableOccupationTags
-  const occMatches = community.applicableOccupationTags.includes(user.occupation.category) ? 1 : 0;
-  const occupationScore = Math.round(
-    (occMatches / Math.max(1, community.applicableOccupationTags.length)) * 100
-  );
+  // 1. Occupation Relevance: 100 if user occupation category is applicable, else 0
+  const occMatches = community.applicableOccupationTags.includes(user.occupation.category);
+  const occupationScore = occMatches ? 100 : 0;
 
-  // 2. Goal Relevance: 100 * MatchingGoalTags / TotalUserGoalTags
+  // 2. Goal Relevance: 100 * MatchingUserGoals / TotalUserGoals
   const userGoalWords = user.goals.map((g) => g.name.toLowerCase()).join(' ');
   let goalMatches = 0;
-  for (const tag of community.goalTags) {
-    if (userGoalWords.includes(tag)) goalMatches++;
+  for (const goal of user.goals) {
+    const goalLower = goal.name.toLowerCase();
+    if (community.goalTags.some((tag) => goalLower.includes(tag))) {
+      goalMatches++;
+    }
   }
   const goalScore = user.goals.length > 0
-    ? Math.min(100, Math.round((goalMatches / Math.max(1, community.goalTags.length)) * 100))
+    ? Math.min(100, Math.round((goalMatches / Math.max(1, user.goals.length)) * 100))
     : 50;
 
-  // 3. Interest Relevance: 100 * MatchingInterestTags / TotalUserInterestTags
-  const userInterestWords = user.interests.map((i) => i.toLowerCase()).join(' ');
+  // 3. Interest Relevance: 100 * MatchingUserInterests / TotalUserInterests
   let interestMatches = 0;
-  for (const tag of community.interestTags) {
-    if (userInterestWords.includes(tag)) interestMatches++;
+  for (const interest of user.interests) {
+    const interestLower = interest.toLowerCase();
+    if (community.interestTags.some((tag) => interestLower.includes(tag) || tag.includes(interestLower))) {
+      interestMatches++;
+    }
   }
   const interestScore = user.interests.length > 0
-    ? Math.min(100, Math.round((interestMatches / Math.max(1, community.interestTags.length)) * 100))
+    ? Math.min(100, Math.round((interestMatches / Math.max(1, user.interests.length)) * 100))
     : 50;
 
   // 4. Activity Relevance: 100 * MIN(1, RelevantInteractions / InteractionThreshold)

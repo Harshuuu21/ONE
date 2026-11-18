@@ -12,6 +12,7 @@ import tripRoutes from '../modules/trips/trip.routes.js';
 import communityRoutes from '../modules/community/community.routes.js';
 import demoDataRoutes from '../modules/demo-data/demo-data.routes.js';
 import financialIdentityRoutes from '../modules/financial-identity/financial-identity.routes.js';
+import categorizationRoutes from '../modules/spending-categorization/spending-categorization.routes.js';
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use('/trips', tripRoutes);
 router.use('/community', communityRoutes);
 router.use('/demo-data', demoDataRoutes);
 router.use('/financial-identity', financialIdentityRoutes);
+router.use('/categorization', categorizationRoutes);
 
 export default router;
