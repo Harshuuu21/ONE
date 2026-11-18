@@ -11,6 +11,7 @@ import goalRoutes from '../modules/goals/goal.routes.js';
 import tripRoutes from '../modules/trips/trip.routes.js';
 import communityRoutes from '../modules/community/community.routes.js';
 import demoDataRoutes from '../modules/demo-data/demo-data.routes.js';
+import financialIdentityRoutes from '../modules/financial-identity/financial-identity.routes.js';
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/goals', goalRoutes);
 router.use('/trips', tripRoutes);
 router.use('/community', communityRoutes);
 router.use('/demo-data', demoDataRoutes);
+router.use('/financial-identity', financialIdentityRoutes);
 
 export default router;

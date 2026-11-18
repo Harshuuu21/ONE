@@ -64,8 +64,8 @@ export function AuthenticationFlow({ initialStep = 'MOBILE_INPUT' }: Authenticat
     setVerifiedResponse(result);
 
     if (result.isNewUser) {
-      // New User Flow: Redirect to AA Provider Onboarding
-      router.push('/setup');
+      // New User Flow: Redirect to Financial Identity Onboarding Wizard
+      router.push('/onboarding');
       return;
     }
 

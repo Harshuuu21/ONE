@@ -17,12 +17,14 @@ import {
   Smartphone,
   Key,
   Sparkles,
+  Briefcase,
 } from 'lucide-react';
 import { SceneHeader } from '@/components/common/scene-header';
 import { AuthService } from '@/services/auth.service';
 import { useRouter } from 'next/navigation';
 import { ConnectedBanksSettings } from './ConnectedBanksSettings';
 import { DemoDataSettings } from './DemoDataSettings';
+import { FinancialProfileSettings } from './FinancialProfileSettings';
 import { PasskeyApi } from '@/features/authentication/services/passkeyApi';
 
 export function SettingsView() {
@@ -35,6 +37,7 @@ export function SettingsView() {
 
   const TABS = [
     { label: 'Account', icon: User, desc: 'Manage your profile and credentials' },
+    { label: 'Financial Profile', icon: Briefcase, desc: 'Professional situation, income profile, targets' },
     { label: 'Connections', icon: CreditCard, desc: 'Connected bank accounts & balances' },
     { label: 'Demo Data', icon: Sparkles, desc: 'Personalized demo data engine and simulation reset' },
     { label: 'Permissions & Data', icon: Database, desc: 'ReBIT AA consent records and data controls' },
@@ -147,6 +150,12 @@ export function SettingsView() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'Financial Profile' && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+              <FinancialProfileSettings />
             </motion.div>
           )}
 

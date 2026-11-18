@@ -141,6 +141,7 @@ model User {
   sessions           UserSession[]
   authAuditLogs      AuthenticationAuditLog[]
   demoProfile        DemoDataProfile?
+  financialProfile   FinancialProfile?
   loans              Loan[]
   communities        Community[]
 
@@ -592,5 +593,47 @@ model CommunityContribution {
 
   @@index([communityId])
   @@map("community_contributions")
+}
+
+// ---------------------------------------------------------------------------
+// Financial Identity & Personalization Engine Models
+// ---------------------------------------------------------------------------
+
+enum OccupationType {
+  STUDENT
+  WORKING_PROFESSIONAL
+  FREELANCER
+  BUSINESS_OWNER
+  ENTREPRENEUR
+  HOMEMAKER
+  RETIRED
+  OTHER
+}
+
+model FinancialProfile {
+  id                          String         @id @default(uuid())
+  userId                      String         @unique
+  user                        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  occupation                  OccupationType @default(WORKING_PROFESSIONAL)
+  occupationDetails           String?        // Specialization (e.g. "Postgraduate", "Private Sector", "Software Engineering")
+  incomeSource                String?        // Primary income stream
+  monthlyIncomeRange          String?        // Range label (e.g. "50000-100000", "prefer-not-to-disclose")
+  monthlyIncomeMin            Decimal?       // Lower bound in INR
+  monthlyIncomeMax            Decimal?       // Upper bound in INR
+  incomeFrequency             String?        // "MONTHLY" | "IRREGULAR" | "WEEKLY" | "ANNUAL"
+  incomeStability             String?        // "HIGH" | "MODERATE" | "VARIABLE"
+  financialResponsibilities   String?        // Optional responsibilities description
+  financialGoals              Json?          // Array of goals [{ id, name, targetAmount, currentSavings, targetDate, priority }]
+  interests                   String[]       @default([]) // Financial interests array
+  onboardingStep              Int            @default(1)  // Current wizard step 1-5
+  onboardingComplete          Boolean        @default(false)
+  profileScore                Decimal?       // Normalized compatibility score 0-100
+  classifiedCategory          String?        // Inferred identity category
+  metadata                    Json?          // Flexible scoring features vector { O, I, G, P, B }
+  createdAt                   DateTime       @default(now())
+  updatedAt                   DateTime       @updatedAt
+
+  @@index([userId, onboardingComplete])
+  @@map("financial_profiles")
 }
 
