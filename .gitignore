@@ -36,3 +36,8 @@ __v0_jsx-dev-runtime.ts
 .v0-trash/
 .vercel/
 backend_prompt.md
+
+# Personal Documents
+*.docx
+ONE_Document_Correction_Report.md
+ONE_Master_Technical_Documentation_Part1.md

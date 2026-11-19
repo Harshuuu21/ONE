@@ -156,8 +156,15 @@ export class TransactionClassificationService {
       };
     }
 
-    // Sort candidates descending by confidence score
-    candidateScores.sort((a, b) => b.score - a.score);
+    // Sort candidates descending by confidence score; tie-break in favor of explicit user confirmed mapping
+    candidateScores.sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      if (b.supportingSignals.includes('HISTORY')) return 1;
+      if (a.supportingSignals.includes('HISTORY')) return -1;
+      return 0;
+    });
     const topCandidate = candidateScores[0];
 
     // 7. Evaluate Decision Thresholds & Corroborating Evidence
@@ -172,7 +179,9 @@ export class TransactionClassificationService {
     // 8. Determine Specific Classification Method for Provenance Tracking
     let method: ClassificationResult['classificationMethod'] = 'FALLBACK_MISCELLANEOUS';
     if (finalCategory !== 'MISCELLANEOUS') {
-      if (topCandidate.supportingSignals.length > 1) {
+      if (topCandidate.supportingSignals.includes('HISTORY')) {
+        method = 'USER_CONFIRMED_MAPPING';
+      } else if (topCandidate.supportingSignals.length > 1) {
         method = 'MULTI_SIGNAL';
       } else if (topCandidate.supportingSignals.includes('VERIFIED_IDENTIFIER')) {
         method = 'VERIFIED_IDENTIFIER';
@@ -180,8 +189,6 @@ export class TransactionClassificationService {
         method = 'MCC_MATCH';
       } else if (topCandidate.supportingSignals.includes('NAME')) {
         method = 'NAME_MATCH';
-      } else if (topCandidate.supportingSignals.includes('HISTORY')) {
-        method = 'HISTORY_MATCH';
       }
     }
 

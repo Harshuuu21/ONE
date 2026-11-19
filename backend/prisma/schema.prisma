@@ -144,6 +144,7 @@ model User {
   financialProfile   FinancialProfile?
   loans              Loan[]
   communities        Community[]
+  merchantCorrections UserMerchantCorrection[]
 
   @@map("users")
 }
@@ -401,30 +402,49 @@ model Account {
 }
 
 model Transaction {
-  id                  String             @id @default(uuid())
-  userId              String
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId           String?
-  account             Account?           @relation(fields: [accountId], references: [id], onDelete: SetNull)
-  linkedBankAccountId String?
-  linkedBankAccount   LinkedBankAccount? @relation(fields: [linkedBankAccountId], references: [id], onDelete: SetNull)
-  transactionRef      String?            // External provider transaction reference for deduplication
-  source              String             @default("MANUAL") // "ACCOUNT_AGGREGATOR" | "MANUAL"
-  title               String
-  amount              Decimal
-  category            String
-  type                TransactionType    @default(EXPENSE)
-  merchant            String?
-  paymentMethod       String?            // "UPI" | "CARD" | "BANK_TRANSFER" | "CASH"
-  status              String             @default("COMPLETED") // "COMPLETED" | "PENDING" | "FAILED"
-  isDemo              Boolean            @default(false)
-  date                DateTime           @default(now())
-  note                String?
-  createdAt           DateTime           @default(now())
+  id                        String                     @id @default(uuid())
+  userId                    String
+  user                      User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId                 String?
+  account                   Account?                   @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  linkedBankAccountId       String?
+  linkedBankAccount         LinkedBankAccount?         @relation(fields: [linkedBankAccountId], references: [id], onDelete: SetNull)
+  transactionRef            String?                    // External provider transaction reference for deduplication
+  sourceTransactionId       String?                    // Explicit source transaction identifier
+  source                    String                     @default("MANUAL") // "ACCOUNT_AGGREGATOR" | "BANK_FEED" | "MANUAL" | "PAYMENT_GATEWAY"
+  title                     String
+  amount                    Decimal                    @db.Decimal(12, 2)
+  category                  String                     // Final assigned category
+  type                      TransactionType            @default(EXPENSE)
+  merchant                  String?                    // Display merchant name
+  merchantName              String?                    // Raw merchant name
+  normalizedMerchantName    String?                    // Normalized merchant name
+  upiId                     String?                    // UPI VPA if available
+  merchantId                String?                    // Verified merchant identifier
+  mcc                       String?                    // ISO 18245 MCC code
+  paymentMethod             String?                    // "UPI" | "CARD" | "BANK_TRANSFER" | "CASH"
+  status                    String                     @default("COMPLETED") // "COMPLETED" | "PENDING" | "FAILED" | "REVERSED" | "REFUNDED"
+  isDemo                    Boolean                    @default(false)
+  date                      DateTime                   @default(now())
+  note                      String?
+  
+  // Categorization & Machine Learning Audit Provenance
+  originalPredictedCategory String?                    // Preserved original predicted category
+  confidenceScore           Decimal?                   @db.Decimal(5, 2) // 0.00 to 100.00
+  classificationMethod      String?                    // VERIFIED_IDENTIFIER | MCC_MATCH | NAME_MATCH | HISTORY_MATCH | MULTI_SIGNAL | USER_CONFIRMED_MAPPING | FALLBACK_MISCELLANEOUS
+  isManuallyCorrected       Boolean                    @default(false)
+  correctionTimestamp       DateTime?
+  
+  classificationRecord      TransactionClassification?
+  
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @default(now()) @updatedAt
 
   @@unique([userId, transactionRef])
   @@index([userId, date])
+  @@index([userId, category])
   @@index([userId, isDemo])
+  @@index([userId, status])
   @@map("transactions")
 }
 
@@ -635,5 +655,74 @@ model FinancialProfile {
 
   @@index([userId, onboardingComplete])
   @@map("financial_profiles")
+}
+
+// ---------------------------------------------------------------------------
+// Smart Spending Intelligence & Categorization Models
+// ---------------------------------------------------------------------------
+
+model SpendingCategoryModel {
+  id           String   @id @default(uuid())
+  categoryCode String   @unique // e.g. "INVESTMENT", "MEDICINE", "FOOD", etc.
+  displayName  String
+  description  String
+  icon         String   // Lucide icon name, e.g. "Stethoscope", "Utensils"
+  chartColor   String   // Hex color, e.g. "#EF4444"
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("spending_categories")
+}
+
+model MerchantMapping {
+  id                     String   @id @default(uuid())
+  merchantIdentifier     String   @unique // e.g. "MERCH_APOLLO"
+  normalizedMerchantName String
+  categoryId             String   // e.g. "MEDICINE"
+  mcc                    String?
+  verificationStatus     String   @default("VERIFIED") // "VERIFIED" | "COMMUNITY_VERIFIED" | "PROVISIONAL"
+  mappingSource          String   @default("OFFICIAL_REGISTRY") // "OFFICIAL_REGISTRY" | "SYSTEM"
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([normalizedMerchantName])
+  @@map("merchant_mappings")
+}
+
+model UserMerchantCorrection {
+  id                    String   @id @default(uuid())
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchantIdentifier    String?  // If a stable merchant ID exists
+  normalizedMerchantKey String   // Normalized merchant name or clean UPI handle
+  correctedCategoryId   String   // e.g. "MEDICINE"
+  verificationStatus    String   @default("USER_CONFIRMED")
+  isAmbiguousPersonalVpa Boolean @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([userId, normalizedMerchantKey])
+  @@index([userId, merchantIdentifier])
+  @@map("user_merchant_corrections")
+}
+
+model TransactionClassification {
+  id                   String      @id @default(uuid())
+  transactionId        String      @unique
+  transaction          Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  predictedCategoryId  String
+  finalCategoryId      String
+  confidenceScore      Decimal     @db.Decimal(5, 2)
+  classificationMethod String
+  matchedSignals       Json?       // Details of supporting signals { verifiedIdentifierUsed, mccUsed, etc. }
+  conflictsDetected    Json?       // Array of conflict strings
+  manuallyCorrected    Boolean     @default(false)
+  correctedByUserId    String?
+  classifiedAt         DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@map("transaction_classifications")
 }
 

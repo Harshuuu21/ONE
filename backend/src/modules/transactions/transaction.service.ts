@@ -2,13 +2,19 @@ import { prisma } from '../../config/database.js';
 import { CreateTransactionInput } from './transaction.schema.js';
 import { ConsentStatus, TransactionType } from '@prisma/client';
 import { BadRequestError } from '../../shared/errors/index.js';
+import { SpendingAnalyticsService } from '../spending-analytics/services/spending-analytics.service.js';
+import { IngestTransactionInput } from '../spending-analytics/spending-analytics.types.js';
 
 export interface NormalizedBankTransaction {
   transactionRef: string;
   linkedBankAccountId: string;
   title: string;
   amount: number;
-  category: string;
+  category?: string;
+  merchantName?: string;
+  upiId?: string;
+  mcc?: string | number;
+  bankDescription?: string;
   type: 'INCOME' | 'EXPENSE' | 'TRANSFER';
   date: string | Date;
   note?: string;
@@ -34,19 +40,25 @@ export class TransactionService {
   }
 
   static async createTransaction(userId: string, input: CreateTransactionInput) {
-    return prisma.transaction.create({
-      data: {
-        userId,
-        accountId: input.accountId,
-        title: input.title,
-        amount: input.amount,
-        category: input.category,
-        type: input.type,
-        date: input.date ? new Date(input.date) : new Date(),
-        note: input.note,
-        source: 'MANUAL',
-      },
+    // If category is not provided or manual entry, run through intelligent ingestion
+    const ingested = await SpendingAnalyticsService.ingestTransaction(userId, {
+      amount: input.amount,
+      title: input.title,
+      type: input.type as any,
+      source: 'MANUAL',
+      date: input.date,
+      note: input.note,
+      accountId: input.accountId,
     });
+
+    return ingested.transaction;
+  }
+
+  /**
+   * Unified ingestion pipeline for transactions from any provider or feed
+   */
+  static async ingestTransaction(userId: string, input: IngestTransactionInput) {
+    return SpendingAnalyticsService.ingestTransaction(userId, input);
   }
 
   /**
@@ -71,35 +83,28 @@ export class TransactionService {
     let duplicateCount = 0;
 
     for (const tx of transactions) {
-      // Check for duplicate by (userId, transactionRef)
-      const existing = await prisma.transaction.findFirst({
-        where: {
-          userId,
-          transactionRef: tx.transactionRef,
-        },
+      const result = await SpendingAnalyticsService.ingestTransaction(userId, {
+        transactionRef: tx.transactionRef,
+        linkedBankAccountId: tx.linkedBankAccountId,
+        source: 'ACCOUNT_AGGREGATOR',
+        title: tx.title,
+        merchantName: tx.merchantName,
+        upiId: tx.upiId,
+        mcc: tx.mcc,
+        bankDescription: tx.bankDescription,
+        amount: tx.amount,
+        type: tx.type === 'INCOME' ? 'INCOME' : tx.type === 'TRANSFER' ? 'TRANSFER' : 'EXPENSE',
+        date: tx.date,
+        note: tx.note,
+        status: 'COMPLETED',
+        isConfirmedPayment: true,
       });
 
-      if (existing) {
+      if (result.duplicate) {
         duplicateCount++;
-        continue;
+      } else {
+        syncedCount++;
       }
-
-      await prisma.transaction.create({
-        data: {
-          userId,
-          linkedBankAccountId: tx.linkedBankAccountId,
-          transactionRef: tx.transactionRef,
-          source: 'ACCOUNT_AGGREGATOR',
-          title: tx.title,
-          amount: tx.amount,
-          category: tx.category || 'General',
-          type: tx.type === 'INCOME' ? TransactionType.INCOME : TransactionType.EXPENSE,
-          date: new Date(tx.date),
-          note: tx.note,
-        },
-      });
-
-      syncedCount++;
     }
 
     // Update lastSyncedAt on linked accounts

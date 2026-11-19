@@ -13,6 +13,7 @@ import communityRoutes from '../modules/community/community.routes.js';
 import demoDataRoutes from '../modules/demo-data/demo-data.routes.js';
 import financialIdentityRoutes from '../modules/financial-identity/financial-identity.routes.js';
 import categorizationRoutes from '../modules/spending-categorization/spending-categorization.routes.js';
+import spendingRoutes from '../modules/spending-analytics/spending.routes.js';
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use('/community', communityRoutes);
 router.use('/demo-data', demoDataRoutes);
 router.use('/financial-identity', financialIdentityRoutes);
 router.use('/categorization', categorizationRoutes);
+router.use('/spending', spendingRoutes);
 
 export default router;

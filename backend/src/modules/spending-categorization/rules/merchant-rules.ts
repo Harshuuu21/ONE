@@ -479,3 +479,4 @@ export const GLOBAL_VERIFIED_MERCHANTS: VerifiedMerchantRecord[] = [
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
 ];
+

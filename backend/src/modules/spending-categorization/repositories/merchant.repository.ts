@@ -176,4 +176,43 @@ export class MerchantRepository {
     this.userMappings.set(key, record);
     return record;
   }
+
+  /**
+   * Lists all user-confirmed merchant mappings for a user
+   */
+  static listUserConfirmedMappings(userId: string): UserMerchantMappingRecord[] {
+    const results: UserMerchantMappingRecord[] = [];
+    const prefix = `${userId.toLowerCase()}:`;
+    for (const [k, v] of this.userMappings.entries()) {
+      if (k.startsWith(prefix)) {
+        results.push(v);
+      }
+    }
+    return results;
+  }
+
+  /**
+   * Deletes a user-confirmed merchant mapping
+   */
+  static deleteUserConfirmedMapping(userId: string, idOrKey: string): boolean {
+    const uLower = userId.toLowerCase();
+    const searchTarget = idOrKey.toLowerCase().trim();
+
+    // Check by exact key first
+    const directKey = `${uLower}:${searchTarget}`;
+    if (this.userMappings.has(directKey)) {
+      this.userMappings.delete(directKey);
+      return true;
+    }
+
+    // Check by id
+    for (const [k, v] of this.userMappings.entries()) {
+      if (k.startsWith(`${uLower}:`) && (v.id === idOrKey || v.merchantKey.toLowerCase() === searchTarget)) {
+        this.userMappings.delete(k);
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

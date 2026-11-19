@@ -219,3 +219,4 @@ export function lookupMcc(mcc: string | number | undefined): MCCMappingRecord | 
   const normalized = String(mcc).trim().padStart(4, '0');
   return MCC_MAPPINGS[normalized] || null;
 }
+

@@ -46,3 +46,4 @@ export const overrideCategorySchema = z.object({
 export type RawTransactionInputDto = z.infer<typeof rawTransactionInputSchema>;
 export type BatchClassifyDto = z.infer<typeof batchClassifySchema>;
 export type OverrideCategoryDto = z.infer<typeof overrideCategorySchema>;
+

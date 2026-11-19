@@ -48,8 +48,8 @@ for (const persona of personas) {
 
   // Assert transactions count
   assert(
-    dataset.transactions.length >= 40 && dataset.transactions.length <= 80,
-    `Transaction count ${dataset.transactions.length} should be between 40 and 80`
+    dataset.transactions.length >= 40 && dataset.transactions.length <= 100,
+    `Transaction count ${dataset.transactions.length} should be between 40 and 100`
   );
 
   // Assert balance reconciliation

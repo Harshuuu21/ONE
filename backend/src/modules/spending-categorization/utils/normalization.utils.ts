@@ -124,3 +124,42 @@ export function normalizeUpiId(rawUpi: string | undefined | null): {
     domain,
   };
 }
+
+/**
+ * Identifies if a UPI VPA belongs to an ambiguous personal consumer account
+ * (e.g. mobile phone numbers or common personal P2P handles on consumer PSPs).
+ * Used to prevent auto-learning merchant rules on personal transfers.
+ */
+export function isAmbiguousPersonalVpa(rawUpi: string | undefined | null): boolean {
+  if (!rawUpi) return false;
+  const { normalized, handle, domain } = normalizeUpiId(rawUpi);
+  if (!normalized || !handle) return false;
+
+  // Check for 10-digit phone number handle (or 12-digit with 91 country code)
+  const digitsOnly = handle.replace(/\D/g, '');
+  if (digitsOnly.length === 10 || (digitsOnly.length === 12 && digitsOnly.startsWith('91'))) {
+    return true;
+  }
+
+  // Personal consumer PSP domains
+  const consumerDomains = new Set([
+    'paytm',
+    'okaxis',
+    'oksbi',
+    'okhdfcbank',
+    'okicici',
+    'ybl',
+    'ibl',
+    'axl',
+    'apl',
+    'postbank',
+  ]);
+
+  if (domain && consumerDomains.has(domain.toLowerCase())) {
+    // If handle is a simple personal name/alphanumeric without merchant keyword
+    return true;
+  }
+
+  return false;
+}
+

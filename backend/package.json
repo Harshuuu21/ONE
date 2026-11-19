@@ -9,9 +9,10 @@
     "start": "node dist/server.js",
     "test": "tsx src/modules/spending-categorization/tests/categorization.test.ts",
     "test:categorization": "tsx src/modules/spending-categorization/tests/categorization.test.ts",
+    "test:spending": "tsx src/modules/spending-analytics/tests/spending-intelligence-part2.test.ts",
     "test:demo-data": "tsx src/modules/demo-data/demo-data.test.ts",
     "test:financial-identity": "tsx src/modules/financial-identity/financial-identity.test.ts",
-    "test:all": "tsx src/modules/spending-categorization/tests/categorization.test.ts && tsx src/modules/demo-data/demo-data.test.ts && tsx src/modules/financial-identity/financial-identity.test.ts",
+    "test:all": "tsx src/modules/spending-categorization/tests/categorization.test.ts && tsx src/modules/spending-analytics/tests/spending-intelligence-part2.test.ts && tsx src/modules/demo-data/demo-data.test.ts && tsx src/modules/financial-identity/financial-identity.test.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },

@@ -46,32 +46,33 @@ export class MerchantIdentificationService {
     // --- Priority 2: MCC Matching ---
     const mccRecord = lookupMcc(info.mcc);
 
-    // --- Priority 3: Merchant Name Matching ---
+    // --- Priority 3: User-Specific Previously Confirmed Merchant History ---
+    // Checked before keyword matching to respect user overrides
+    let userHistoryRecord: UserMerchantMappingRecord | null = null;
+    if (info.userId) {
+      const historyKey = info.merchantIdentifier || info.normalizedUpiId || info.normalizedMerchantName;
+      if (historyKey) {
+        userHistoryRecord = MerchantRepository.findUserConfirmedMapping(info.userId, historyKey);
+      }
+    }
+
+    // --- Priority 4: Merchant Name Matching (Checked only if no user-confirmed history) ---
     let nameMatchMerchant: VerifiedMerchantRecord | null = null;
     let nameMatchStrength = 0;
 
     if (info.normalizedMerchantName) {
-      // 3a. Exact normalized name, alias, or phrase containment match
+      // 4a. Exact normalized name, alias, or phrase containment match
       const matched = MerchantRepository.findVerifiedByName(info.normalizedMerchantName);
       if (matched) {
         nameMatchMerchant = matched.merchant;
         nameMatchStrength = matched.strength;
-      } else if (info.extractedKeywords.length > 0) {
-        // 3b. Keyword / Token match
+      } else if (info.extractedKeywords.length > 0 && (!userHistoryRecord || userHistoryRecord.isAmbiguousPersonalVpa)) {
+        // 4b. Keyword / Token match (bypassed if user confirmed mapping exists)
         const keywordMatches = MerchantRepository.searchVerifiedByKeywords(info.extractedKeywords);
         if (keywordMatches.length > 0 && keywordMatches[0].matchScore >= 0.5) {
           nameMatchMerchant = keywordMatches[0].merchant;
           nameMatchStrength = keywordMatches[0].matchScore >= 0.7 ? 0.9 : 0.6;
         }
-      }
-    }
-
-    // --- Priority 4: Previously Confirmed Merchant History ---
-    let userHistoryRecord: UserMerchantMappingRecord | null = null;
-    if (info.userId) {
-      const historyKey = info.normalizedUpiId || info.normalizedMerchantName;
-      if (historyKey) {
-        userHistoryRecord = MerchantRepository.findUserConfirmedMapping(info.userId, historyKey);
       }
     }
 
@@ -181,6 +182,10 @@ export class MerchantIdentificationService {
         supporting.push('HISTORY');
       }
 
+      const isUserConfirmedCat = Boolean(
+        userHistoryRecord && userHistoryRecord.assignedCategory === cat && !verifiedMerchant
+      );
+
       detectedCandidateCategories.set(cat, {
         signals: {
           verifiedIdentifierStrength: sI,
@@ -190,8 +195,8 @@ export class MerchantIdentificationService {
         },
         availability: {
           hasVerifiedIdentifier: hasVerifiedSignal,
-          hasMcc: hasMccSignal,
-          hasNameMatch: hasNameSignal,
+          hasMcc: isUserConfirmedCat ? false : hasMccSignal,
+          hasNameMatch: isUserConfirmedCat ? false : hasNameSignal,
           hasHistory: hasHistorySignal,
         },
         supportingSignals: supporting,

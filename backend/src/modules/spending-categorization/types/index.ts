@@ -140,6 +140,7 @@ export interface ClassificationResult {
     | 'MCC_MATCH'
     | 'NAME_MATCH'
     | 'HISTORY_MATCH'
+    | 'USER_CONFIRMED_MAPPING'
     | 'MULTI_SIGNAL'
     | 'FALLBACK_MISCELLANEOUS';
   matchedRules: string[];
@@ -155,3 +156,4 @@ export interface ClassificationResult {
   isManuallyCorrected: boolean;
   timestamp: string;
 }
+

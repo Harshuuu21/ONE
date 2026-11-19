@@ -136,3 +136,4 @@ export const ORDERED_CATEGORIES: SpendingCategoryConfig[] = Object.values(SPENDI
 export function getCategoryConfig(id: SpendingCategory): SpendingCategoryConfig {
   return SPENDING_CATEGORIES[id] || SPENDING_CATEGORIES.MISCELLANEOUS;
 }
+

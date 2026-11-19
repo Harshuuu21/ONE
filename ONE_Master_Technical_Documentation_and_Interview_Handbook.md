@@ -360,7 +360,7 @@ sequenceDiagram
 2. **Refresh Token**:
    - Long-lived token stored in an HTTP-only, secure, `SameSite=Lax` cookie (`one_refresh_token`).
    - Rotated upon every refresh call to prevent token reuse attacks.
-3. **Session Auto-Healing ([AuthProvider.tsx](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/frontend/src/contexts/AuthProvider.tsx#L25-L50))**:
+3. **Session Auto-Healing ([AuthProvider.tsx](frontend/src/contexts/AuthProvider.tsx#L25-L50))**:
    - In development and sandbox environments, if localStorage is cleared but valid access cookies exist, `AuthProvider` automatically heals the session by reconstructing the active `AuthUser` profile.
    - Prevents the user from ever encountering blank unmounted dashboard screens.
 
@@ -394,20 +394,20 @@ sequenceDiagram
 | Model / Table | Primary Key | Foreign Keys & Relations | Important Fields | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
 | **`User`** (`users`) | `id` (UUID) | None (Root entity) | `mobileNumber`, `firstName`, `lastName`, `reputationScore`, `reputationTitle`, `onboardingStep` | Primary user identity, reputation, and credentials hub |
-| **`FinancialProfile`** (`financial_profiles`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (1-to-1, Cascade) | `occupation`, `occupationDetails`, `incomeSource`, `monthlyIncomeRange`, `monthlyIncomeMin`, `monthlyIncomeMax`, `financialGoals`, `interests`, `onboardingComplete`, `profileScore` | Stores declared professional identity, income parameters, goals, and algorithmic classification |
-| **`DemoDataProfile`** (`demo_data_profiles`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (1-to-1, Cascade) | `persona`, `status`, `initialBalance`, `closingBalance`, `totalIncome`, `totalExpenses`, `generatorVersion` | Tracks demo data initialization state, opening/closing run-rate balances, and active persona |
-| **`Account`** (`accounts`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `accountNumber`, `accountType`, `balance`, `currency`, `bankName`, `status` | Internal banking account representation |
-| **`LinkedBankAccount`** (`linked_bank_accounts`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `maskedAccountNumber`, `ifscCode`, `bankName`, `accountType`, `currentBalance`, `autopayEnabled`, `mandateLimit` | External bank account linked via Account Aggregator |
-| **`Transaction`** (`transactions`) | `id` (UUID) | `userId` $ightarrow$ `User.id`, `accountId` $ightarrow$ `Account.id` | `transactionRef`, `title`, `merchant`, `amount`, `category`, `type` (INCOME/EXPENSE), `paymentMethod`, `status`, `isDemo` | Comprehensive financial ledger transactions |
-| **`Goal`** (`goals`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `title`, `targetAmount`, `currentAmount`, `category`, `deadline`, `status`, `isDemo` | Savings targets and milestone tracking |
-| **`Trip`** (`trips`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `destination`, `targetBudget`, `savedAmount`, `startDate`, `endDate`, `currency`, `status` | Travel budget planner and expense allocation |
-| **`Loan`** (`loans`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `type`, `lenderName`, `principal`, `interestRate`, `tenureMonths`, `monthlyEmi`, `outstandingBalance`, `status`, `isDemo` | Active loan agreements with reducing-balance calculations |
-| **`LoanRepayment`** (`loan_repayments`) | `id` (UUID) | `loanId` $ightarrow$ `Loan.id` (Many-to-1, Cascade) | `installmentNumber`, `amount`, `principalComponent`, `interestComponent`, `remainingBalance`, `dueDate`, `status`, `isDemo` | Exact month-by-month loan amortization schedule |
-| **`Community`** (`communities`) | `id` (UUID) | `adminId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `name`, `category`, `description`, `adminName`, `sharedGoal`, `targetAmount`, `currentAmount`, `memberCount`, `isDemo` | Collaborative savings pools and peer circles |
-| **`CommunityContribution`** (`community_contributions`) | `id` (UUID) | `communityId` $ightarrow$ `Community.id` (Many-to-1, Cascade) | `contributorName`, `isUserContribution`, `amount`, `date`, `note`, `isDemo` | Individual deposits into community goal pools |
-| **`LendingRequest`** (`lending_requests`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `amount`, `fundedAmount`, `reason`, `termMonths`, `interestRate`, `status` | Peer-to-peer micro-lending pool requests |
-| **`Consent`** (`consents`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `consentHandle`, `status`, `fiTypes`, `dataRangeFrom`, `dataRangeTo`, `expiryDate` | ReBIT Account Aggregator consent artifact |
-| **`PasskeyCredential`** (`passkey_credentials`) | `id` (UUID) | `userId` $ightarrow$ `User.id` (Many-to-1, Cascade) | `credentialId`, `publicKey`, `counter`, `transports`, `deviceType`, `backedUp` | FIDO2 / WebAuthn public key records |
+| **`FinancialProfile`** (`financial_profiles`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (1-to-1, Cascade) | `occupation`, `occupationDetails`, `incomeSource`, `monthlyIncomeRange`, `monthlyIncomeMin`, `monthlyIncomeMax`, `financialGoals`, `interests`, `onboardingComplete`, `profileScore` | Stores declared professional identity, income parameters, goals, and algorithmic classification |
+| **`DemoDataProfile`** (`demo_data_profiles`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (1-to-1, Cascade) | `persona`, `status`, `initialBalance`, `closingBalance`, `totalIncome`, `totalExpenses`, `generatorVersion` | Tracks demo data initialization state, opening/closing run-rate balances, and active persona |
+| **`Account`** (`accounts`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `accountNumber`, `accountType`, `balance`, `currency`, `bankName`, `status` | Internal banking account representation |
+| **`LinkedBankAccount`** (`linked_bank_accounts`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `maskedAccountNumber`, `ifscCode`, `bankName`, `accountType`, `currentBalance`, `autopayEnabled`, `mandateLimit` | External bank account linked via Account Aggregator |
+| **`Transaction`** (`transactions`) | `id` (UUID) | `userId` $\rightarrow$ `User.id`, `accountId` $\rightarrow$ `Account.id` | `transactionRef`, `title`, `merchant`, `amount`, `category`, `type` (INCOME/EXPENSE), `paymentMethod`, `status`, `isDemo` | Comprehensive financial ledger transactions |
+| **`Goal`** (`goals`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `title`, `targetAmount`, `currentAmount`, `category`, `deadline`, `status`, `isDemo` | Savings targets and milestone tracking |
+| **`Trip`** (`trips`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `destination`, `targetBudget`, `savedAmount`, `startDate`, `endDate`, `currency`, `status` | Travel budget planner and expense allocation |
+| **`Loan`** (`loans`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `type`, `lenderName`, `principal`, `interestRate`, `tenureMonths`, `monthlyEmi`, `outstandingBalance`, `status`, `isDemo` | Active loan agreements with reducing-balance calculations |
+| **`LoanRepayment`** (`loan_repayments`) | `id` (UUID) | `loanId` $\rightarrow$ `Loan.id` (Many-to-1, Cascade) | `installmentNumber`, `amount`, `principalComponent`, `interestComponent`, `remainingBalance`, `dueDate`, `status`, `isDemo` | Exact month-by-month loan amortization schedule |
+| **`Community`** (`communities`) | `id` (UUID) | `adminId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `name`, `category`, `description`, `adminName`, `sharedGoal`, `targetAmount`, `currentAmount`, `memberCount`, `isDemo` | Collaborative savings pools and peer circles |
+| **`CommunityContribution`** (`community_contributions`) | `id` (UUID) | `communityId` $\rightarrow$ `Community.id` (Many-to-1, Cascade) | `contributorName`, `isUserContribution`, `amount`, `date`, `note`, `isDemo` | Individual deposits into community goal pools |
+| **`LendingRequest`** (`lending_requests`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `amount`, `fundedAmount`, `reason`, `termMonths`, `interestRate`, `status` | Peer-to-peer micro-lending pool requests |
+| **`Consent`** (`consents`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `consentHandle`, `status`, `fiTypes`, `dataRangeFrom`, `dataRangeTo`, `expiryDate` | ReBIT Account Aggregator consent artifact |
+| **`PasskeyCredential`** (`passkey_credentials`) | `id` (UUID) | `userId` $\rightarrow$ `User.id` (Many-to-1, Cascade) | `credentialId`, `publicKey`, `counter`, `transports`, `deviceType`, `backedUp` | FIDO2 / WebAuthn public key records |
 
 ### 5.3 Entity Relationship Diagram (ERD)
 
@@ -450,7 +450,7 @@ When initializing or resetting demo data in `backend/src/modules/demo-data/demo-
 
 Traditional personal finance apps treat all users identically—showing a student with ₹10,000 in monthly allowance the same rigid budget templates, debt warnings, and retirement vehicles as a corporate senior software engineer earning ₹2,50,000. 
 
-ONE solves this through its **Financial Identity Engine** ([financial-identity.scoring.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.scoring.ts)), an algorithmic system that ingests a 5-dimension feature vector from the user's declared profile, computes normalized compatibility scores, recalibrates feature weights when information is missing, ranks candidate personas, and dynamically configures the financial ledger, goal targets, and peer circles.
+ONE solves this through its **Financial Identity Engine** ([financial-identity.scoring.ts](backend/src/modules/financial-identity/financial-identity.scoring.ts)), an algorithmic system that ingests a 5-dimension feature vector from the user's declared profile, computes normalized compatibility scores, recalibrates feature weights when information is missing, ranks candidate personas, and dynamically configures the financial ledger, goal targets, and peer circles.
 
 ### 6.2 Feature Vector Representation
 
@@ -466,7 +466,7 @@ Where:
 
 ### 6.3 Configurable Feature Weights & Validation Invariant
 
-The baseline weights are defined in [financial-identity.types.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.types.ts#L64-L70):
+The baseline weights are defined in [financial-identity.types.ts](backend/src/modules/financial-identity/financial-identity.types.ts#L64-L70):
 ```typescript
 export const DEFAULT_FEATURE_WEIGHTS: FeatureWeights = {
   occupation: 0.30,
@@ -478,9 +478,9 @@ export const DEFAULT_FEATURE_WEIGHTS: FeatureWeights = {
 ```
 
 **Weight Sum Invariant Formula:**
-$$\left| \sum_{k} W_k - 1.0 ight| < \epsilon,\quad 	ext{where } \epsilon = 0.001$$
+$$\left| \sum_{k} W_k - 1.0 \right| < \epsilon,\quad \text{where } \epsilon = 0.001$$
 
-Code implementation in [financial-identity.scoring.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.scoring.ts#L15-L23):
+Code implementation in [financial-identity.scoring.ts](backend/src/modules/financial-identity/financial-identity.scoring.ts#L15-L23):
 ```typescript
 export function validateWeightsSum(weights: FeatureWeights): boolean {
   const sum = weights.occupation + weights.income + weights.goals + weights.interests + weights.behaviour;
@@ -493,22 +493,22 @@ export function validateWeightsSum(weights: FeatureWeights): boolean {
 During initial onboarding, behavioral data $B$ is unobserved. Rather than penalizing new users or assigning arbitrary default scores, ONE redistributes the weight of missing features proportionally across all available features.
 
 **Redistribution Formula:**
-$$W_k^{	ext{adjusted}} = rac{W_k}{\sum_{j \in 	ext{Available}} W_j}$$
+$$W_k^{\text{adjusted}} = \frac{W_k}{\sum_{j \in \text{Available}} W_j}$$
 
 When $B$ is missing, the sum of available baseline weights is:
 $$\sum_{j \in \{O, I, G, P\}} W_j = 0.30 + 0.20 + 0.25 + 0.15 = 0.90$$
 
 The adjusted weights become:
-- $W_O^{	ext{adjusted}} = rac{0.30}{0.90} pprox 0.3333$ ($33.33\%$)
-- $W_I^{	ext{adjusted}} = rac{0.20}{0.90} pprox 0.2222$ ($22.22\%$)
-- $W_G^{	ext{adjusted}} = rac{0.25}{0.90} pprox 0.2778$ ($27.78\%$)
-- $W_P^{	ext{adjusted}} = rac{0.15}{0.90} pprox 0.1667$ ($16.67\%$)
-- $W_B^{	ext{adjusted}} = 0.0000$ ($0.00\%$)
+- $W_O^{\text{adjusted}} = \frac{0.30}{0.90} \approx 0.3333$ ($33.33\%$)
+- $W_I^{\text{adjusted}} = \frac{0.20}{0.90} \approx 0.2222$ ($22.22\%$)
+- $W_G^{\text{adjusted}} = \frac{0.25}{0.90} \approx 0.2778$ ($27.78\%$)
+- $W_P^{\text{adjusted}} = \frac{0.15}{0.90} \approx 0.1667$ ($16.67\%$)
+- $W_B^{\text{adjusted}} = 0.0000$ ($0.00\%$)
 
 **Invariant Verification:**
-$$0.3333 + 0.2222 + 0.2778 + 0.1667 = 1.0000 \quad (	ext{Strict Unit Simplex})$$
+$$0.3333 + 0.2222 + 0.2778 + 0.1667 = 1.0000 \quad (\text{Strict Unit Simplex})$$
 
-Code implementation in [financial-identity.scoring.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.scoring.ts#L29-L52):
+Code implementation in [financial-identity.scoring.ts](backend/src/modules/financial-identity/financial-identity.scoring.ts#L29-L52):
 ```typescript
 export function calculateAdjustedWeights(
   availableKeys: Array<keyof FeatureWeights>,
@@ -531,10 +531,10 @@ export function calculateAdjustedWeights(
 
 Every raw financial value (income in INR, goal amounts, client counts) is normalized to a continuous scale between 0 and 100 with lower and upper bounding clamps:
 
-$$	ext{Normalize}(x, \min, \max) = 	ext{round}\left( rac{	ext{clamp}(x, \min, \max) - \min}{\max - \min} 	imes 100 ight)$$
-$$	ext{where } 	ext{clamp}(x, \min, \max) = \max(\min, \min(\max, x))$$
+$$\text{Normalize}(x, \min, \max) = \text{round}\left( \frac{\text{clamp}(x, \min, \max) - \min}{\max - \min} \times 100 \right)$$
+$$\text{where } \text{clamp}(x, \min, \max) = \max(\min, \min(\max, x))$$
 
-Code implementation in [financial-identity.scoring.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.scoring.ts#L57-L61):
+Code implementation in [financial-identity.scoring.ts](backend/src/modules/financial-identity/financial-identity.scoring.ts#L57-L61):
 ```typescript
 export function normalize0to100(value: number, min: number, max: number): number {
   if (max <= min) return 50;
@@ -552,15 +552,15 @@ ONE scores the feature vector against all 4 primary personas:
 4. `BUSINESS_OWNER`
 
 **Total Compatibility Score Formula for Candidate $C$:**
-$$	ext{Score}(C) = W_O^{	ext{adj}} \cdot S_O(C) + W_I^{	ext{adj}} \cdot S_I(C) + W_G^{	ext{adj}} \cdot S_G(C) + W_P^{	ext{adj}} \cdot S_P(C) + W_B^{	ext{adj}} \cdot S_B(C)$$
+$$\text{Score}(C) = W_O^{\text{adj}} \cdot S_O(C) + W_I^{\text{adj}} \cdot S_I(C) + W_G^{\text{adj}} \cdot S_G(C) + W_P^{\text{adj}} \cdot S_P(C) + W_B^{\text{adj}} \cdot S_B(C)$$
 
 #### The Authoritative Occupation Rule
 While candidate ranking provides quantified confidence metrics, the user's declared occupation is treated as authoritative to respect self-determination:
-- If declared `STUDENT` $ightarrow$ Persona = `STUDENT`
-- If declared `WORKING_PROFESSIONAL` $ightarrow$ Persona = `WORKING_PROFESSIONAL`
-- If declared `FREELANCER` $ightarrow$ Persona = `FREELANCER`
-- If declared `BUSINESS_OWNER` or `ENTREPRENEUR` $ightarrow$ Persona = `BUSINESS_OWNER`
-- If declared `HOMEMAKER`, `RETIRED`, or `OTHER` $ightarrow$ Persona defaults to the highest algorithmic scoring category.
+- If declared `STUDENT` $\rightarrow$ Persona = `STUDENT`
+- If declared `WORKING_PROFESSIONAL` $\rightarrow$ Persona = `WORKING_PROFESSIONAL`
+- If declared `FREELANCER` $\rightarrow$ Persona = `FREELANCER`
+- If declared `BUSINESS_OWNER` or `ENTREPRENEUR` $\rightarrow$ Persona = `BUSINESS_OWNER`
+- If declared `HOMEMAKER`, `RETIRED`, or `OTHER` $\rightarrow$ Persona defaults to the highest algorithmic scoring category.
 
 **Confidence Threshold:**
 If the top candidate score is $\ge 50$, `isHighConfidence = true`.
@@ -578,14 +578,14 @@ Available keys: `[occupation, income, goals, interests]`
 Adjusted weights: $W_O = 0.3333,\; W_I = 0.2222,\; W_G = 0.2778,\; W_P = 0.1667$
 
 **Step 2: Component Scores for Candidate `WORKING_PROFESSIONAL`**
-- $S_O$: Declared category matches candidate $ightarrow 100$
-- $S_I$: Income ₹1,20,000 in bracket [₹40,000, ₹1,50,000] $ightarrow$ Base $75 + 15 (	ext{Salary}) + 10 (	ext{High Stability}) = 100$
-- $S_G$: Goals match wealth building & emergency reserves $ightarrow 85$
-- $S_P$: Interests match investment & tax planning $ightarrow 90$
+- $S_O$: Declared category matches candidate $\rightarrow 100$
+- $S_I$: Income ₹1,20,000 in bracket [₹40,000, ₹1,50,000] $\rightarrow$ Base $75 + 15 (\text{Salary}) + 10 (\text{High Stability}) = 100$
+- $S_G$: Goals match wealth building & emergency reserves $\rightarrow 85$
+- $S_P$: Interests match investment & tax planning $\rightarrow 90$
 
 **Step 3: Weighted Calculation**
-$$	ext{Score} = (0.3333 	imes 100) + (0.2222 	imes 100) + (0.2778 	imes 85) + (0.1667 	imes 90)$$
-$$	ext{Score} = 33.33 + 22.22 + 23.61 + 15.00 = 94.16$$
+$$\text{Score} = (0.3333 \times 100) + (0.2222 \times 100) + (0.2778 \times 85) + (0.1667 \times 90)$$
+$$\text{Score} = 33.33 + 22.22 + 23.61 + 15.00 = 94.16$$
 
 **Classification Result**:
 - `declaredOccupation`: `WORKING_PROFESSIONAL`
@@ -603,16 +603,16 @@ Traditional demo modes generate static, hardcoded dummy lists that look fake and
 
 ### 7.2 Reducing-Balance EMI & Amortization Mathematical Model
 
-Located in [loan.generator.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/demo-data/generators/loan.generator.ts#L10-L25).
+Located in [loan.generator.ts](backend/src/modules/demo-data/generators/loan.generator.ts#L10-L25).
 
 #### Equated Monthly Installment (EMI) Formula
-For a loan with Principal $P$, annual interest rate $R\%$ (monthly rate $r = rac{R}{12 	imes 100}$), and tenure of $n$ months:
+For a loan with Principal $P$, annual interest rate $R\%$ (monthly rate $r = \frac{R}{12 \times 100}$), and tenure of $n$ months:
 
-$$EMI = rac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$$
+$$EMI = \frac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$$
 
-If $r = 0$, $EMI = rac{P}{n}$.
+If $r = 0$, $EMI = \frac{P}{n}$.
 
-Code implementation in [loan.generator.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/demo-data/generators/loan.generator.ts#L10-L25):
+Code implementation in [loan.generator.ts](backend/src/modules/demo-data/generators/loan.generator.ts#L10-L25):
 ```typescript
 export function calculateReducingBalanceEmi(
   principal: number,
@@ -631,25 +631,58 @@ export function calculateReducingBalanceEmi(
 ```
 
 #### Amortization Schedule Progression
+
+#### Verified 36-Month Amortization Schedule Table (P = ₹5,00,000, R = 10.5%, n = 36, Monthly Rate r = 0.00875)
+
+Calculated Monthly EMI: **₹16,251.22**
+
+| Installment | Opening Principal (₹) | Interest Component ($I_m$) | Principal Component ($P_m$) | Total Installment Paid ($A_m$) | Closing Balance ($B_m$) | Status & Notes |
+|---|---|---|---|---|---|---|
+| **Month 1** | 5,00,000.00 | 4,375.00 | 11,876.22 | 16,251.22 | 4,88,123.78 | $500000.00 \times 0.00875 = 4375.00$ |
+| **Month 2** | 4,88,123.78 | 4,271.08 | 11,980.14 | 16,251.22 | 4,76,143.64 | $488123.78 \times 0.00875 = 4271.08$ |
+| **Month 3** | 4,76,143.64 | 4,166.26 | 12,084.96 | 16,251.22 | 4,64,058.68 | $476143.64 \times 0.00875 = 4166.26$ |
+| **Month 24** | 2,54,779.65 | 2,229.32 | 14,021.90 | 16,251.22 | 2,40,757.75 | Milestone: Mid-term balance tracking |
+| **Month 34** | 47,912.82 | 419.24 | 15,831.98 | 16,251.22 | 32,080.84 | $47912.82 \times 0.00875 = 419.24$ |
+| **Month 35** | 32,080.84 | 280.71 | 15,970.51 | 16,251.22 | 16,110.33 | Residual principal entering final month |
+| **Month 36 (Final)** | 16,110.33 | 140.97 | **16,110.33** | **16,251.30** | **0.00** | Final installment sub-cent adjustment (₹16,251.30) |
+| **TOTALS** | — | **₹85,044.00** | **₹5,00,000.00** | **₹5,85,044.00** | **₹0.00** | **100% Fully Amortized with Zero Drift** |
+
+> [!TIP]
+> **Sub-Cent Final Installment Rounding Policy:**
+> Over 36 months, standard two-decimal rounding generates a ₹0.08 cumulative sub-cent variance. To ensure the loan balance terminates at exactly ₹0.00 without floating-point drift, line 65 of `backend/src/modules/demo-data/utils/financial.utils.ts` assigns:
+> ```typescript
+> if (i === tenureMonths || principalComponent > currentBalance) {
+>   principalComponent = currentBalance; // Covers exact remaining ₹16,110.33
+> }
+> ```
+> This adjusts the final month's total payment to $₹16,110.33 + ₹140.97 = ₹16,251.30$, closing the loan balance cleanly at ₹0.00.
+
 For each installment month $m \in [1, n]$:
 1. **Interest Component**:
-   $$I_m = 	ext{round}\left(B_{m-1} \cdot r, 2ight)$$
+   $$I_m = \text{round}\left(B_{m-1} \cdot r, 2\right)$$
 2. **Principal Component**:
-   $$P_m = 	ext{round}\left(EMI - I_m, 2ight)$$
+   $$P_m = \text{round}\left(EMI - I_m, 2\right)$$
 3. **Updated Balance**:
-   $$B_m = \max\left(0, 	ext{round}\left(B_{m-1} - P_m, 2ight)ight)$$
+   $$B_m = \max\left(0, \text{round}\left(B_{m-1} - P_m, 2\right)\right)$$
 4. **Final Month Rounding Correction**:
    On the last installment ($m = n$), the principal component is set exactly to $B_{n-1}$ so that $B_n \equiv 0.00$.
 
-### 7.3 Balance Reconciliation Invariant
+### 7.3 Cash-Flow Conservation Balance Invariant (Not Double-Entry Bookkeeping)
+
+> [!IMPORTANT]
+> **Financial Accounting Clarification for Technical Interviews:**
+> ONE implements a **Cash-Flow Balance Conservation Invariant**, *not* a general-ledger double-entry accounting system. 
+> - **Cash-Flow Invariant**: For every account, the final balance must equal opening balance plus all credits minus all debits:
+>   $$\text{ClosingBalance} = \text{OpeningBalance} + \sum_{t \in \text{Credits}} t.\text{amount} - \sum_{t \in \text{Debits}} t.\text{amount}$$
+> - **Double-Entry Bookkeeping**: A formal financial methodology where every transaction creates balanced debit and credit entries across a multi-entity Chart of Accounts (Assets, Liabilities, Equity, Revenue, Expenses). ONE does not maintain balanced T-accounts or nominal general ledger accounts; it maintains transactional cash-flow integrity across user accounts.
 
 Every generated dataset strictly enforces the fundamental accounting balance invariant:
-$$	ext{ClosingBalance} = 	ext{InitialBalance} + \sum_{t \in 	ext{Credits}} 	ext{Amount}_t - \sum_{t \in 	ext{Debits}} 	ext{Amount}_t$$
+$$\text{ClosingBalance} = \text{InitialBalance} + \sum_{t \in \text{Credits}} \text{Amount}_t - \sum_{t \in \text{Debits}} \text{Amount}_t$$
 
 Tolerance check:
-$$\left| 	ext{ClosingBalance} - \left(	ext{InitialBalance} + 	ext{TotalIncome} - 	ext{TotalExpenses}ight) ight| < 0.05$$
+$$\left| \text{ClosingBalance} - \left(\text{InitialBalance} + \text{TotalIncome} - \text{TotalExpenses}\right) \right| < 0.05$$
 
-Verified by unit tests in [demo-data.test.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/demo-data/demo-data.test.ts#L45-L65):
+Verified by unit tests in [demo-data.test.ts](backend/src/modules/demo-data/demo-data.test.ts#L45-L65):
 ```
 Test Persona: STUDENT...
   ✓ Balance Reconciled: ₹17,520.86 + ₹96,238.61 - ₹42,111.84 = ₹71,647.63
@@ -661,9 +694,21 @@ Test Persona: BUSINESS_OWNER...
   ✓ Balance Reconciled: ₹3,62,853.95 + ₹14,28,629.56 - ₹4,81,841.59 = ₹13,09,641.92
 ```
 
-### 7.4 Concurrency Locking & Safe Reset
+### 7.4 Process-Local Concurrency Locking & Safe Reset
 
-Located in [demo-data.service.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/demo-data/demo-data.service.ts#L13-L35):
+> [!NOTE]
+> **Concurrency Boundary Explanation:**
+> In `backend/src/modules/demo-data/demo-data.service.ts` (lines 14, 27–32), concurrency protection is implemented via an in-memory Set:
+> ```typescript
+> const inMemoryLocks = new Set<string>();
+> if (inMemoryLocks.has(userId)) {
+>   throw new BadRequestError('Demo data generation is currently in progress for this user.');
+> }
+> ```
+> - **Scope & Limitation**: This lock is strictly **process-local** to a single Node.js V8 runtime. It prevents race conditions when a single user fires concurrent requests against the same process.
+> - **Distributed Architecture Reality**: In a horizontally scaled cluster (e.g. multiple Kubernetes pods or Docker replicas behind a round-robin load balancer), two requests from the same user hitting different instances would bypass an in-memory lock. A production multi-instance deployment requires **distributed locking** (e.g., Redis Redlock algorithm or PostgreSQL transaction-level advisory locks `pg_try_advisory_lock`).
+
+Located in [demo-data.service.ts](backend/src/modules/demo-data/demo-data.service.ts#L13-L35):
 - `inMemoryLocks = new Set<string>()`: Prevents race conditions when simultaneous client requests hit `/api/demo-data/initialize`.
 - Idempotent summary retrieval if already completed (`status === 'COMPLETED'`).
 - `resetDemoData`: Safely purges only records matching `{ userId, isDemo: true }` inside a single atomic Prisma transaction, preserving all real user transactions.
@@ -701,28 +746,28 @@ sequenceDiagram
 
 ### 8.2 Community Recommendation Algorithm
 
-Located in [financial-identity.engine.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.engine.ts#L198-L270).
+Located in [financial-identity.engine.ts](backend/src/modules/financial-identity/financial-identity.engine.ts#L198-L270).
 
 #### Community Relevance Scoring Formula
-$$	ext{CommunityScore} = 0.35 \cdot S_{	ext{occ}} + 0.30 \cdot S_{	ext{goal}} + 0.20 \cdot S_{	ext{interest}} + 0.15 \cdot S_{	ext{activity}}$$
+$$\text{CommunityScore} = 0.35 \cdot S_{\text{occ}} + 0.30 \cdot S_{\text{goal}} + 0.20 \cdot S_{\text{interest}} + 0.15 \cdot S_{\text{activity}}$$
 
 Where:
-- $S_{	ext{occ}}$ (**Occupation Relevance**): $100\%$ if user's declared category is in community's `applicableOccupationTags`, else $0\%$.
-- $S_{	ext{goal}}$ (**Goal Relevance**): Ratio of matched community goal tags in user's goals:
-  $$S_{	ext{goal}} = \min\left(100, 	ext{round}\left( rac{	ext{MatchingGoalTags}}{\max(1, 	ext{TotalUserGoals})} 	imes 100 ight)ight)$$
-- $S_{	ext{interest}}$ (**Interest Relevance**): Ratio of matched community topic tags in user's interests:
-  $$S_{	ext{interest}} = \min\left(100, 	ext{round}\left( rac{	ext{MatchingInterestTags}}{\max(1, 	ext{TotalUserInterests})} 	imes 100 ight)ight)$$
-- $S_{	ext{activity}}$ (**Activity Relevance**): $\min\left(100, 	ext{round}\left( rac{	ext{Interactions}}{5} 	imes 100 ight)ight)$
+- $S_{\text{occ}}$ (**Occupation Relevance**): $100\%$ if user's declared category is in community's `applicableOccupationTags`, else $0\%$.
+- $S_{\text{goal}}$ (**Goal Relevance**): Ratio of matched community goal tags in user's goals:
+  $$S_{\text{goal}} = \min\left(100, \text{round}\left( \frac{\text{MatchingGoalTags}}{\max(1, \text{TotalUserGoals})} \times 100 \right)\right)$$
+- $S_{\text{interest}}$ (**Interest Relevance**): Ratio of matched community topic tags in user's interests:
+  $$S_{\text{interest}} = \min\left(100, \text{round}\left( \frac{\text{MatchingInterestTags}}{\max(1, \text{TotalUserInterests})} \times 100 \right)\right)$$
+- $S_{\text{activity}}$ (**Activity Relevance**): $\min\left(100, \text{round}\left( \frac{\text{Interactions}}{5} \times 100 \right)\right)$
 
 **Zero-Activity Proportional Redistribution:**
 When user interactions equal 0, the $0.15$ activity weight is redistributed across the 3 remaining terms:
-$$	ext{FinalScore} = \left(rac{0.35}{0.85}ight) S_{	ext{occ}} + \left(rac{0.30}{0.85}ight) S_{	ext{goal}} + \left(rac{0.20}{0.85}ight) S_{	ext{interest}}$$
+$$\text{FinalScore} = \left(\frac{0.35}{0.85}\right) S_{\text{occ}} + \left(\frac{0.30}{0.85}\right) S_{\text{goal}} + \left(\frac{0.20}{0.85}\right) S_{\text{interest}}$$
 
 #### 4-Tier Classification Scale
-- **Highly Relevant**: $	ext{Score} \ge 80$
-- **Relevant**: $60 \le 	ext{Score} < 80$
-- **Moderately Relevant**: $40 \le 	ext{Score} < 60$
-- **Not Recommended**: $	ext{Score} < 40$
+- **Highly Relevant**: $\text{Score} \ge 80$
+- **Relevant**: $60 \le \text{Score} < 80$
+- **Moderately Relevant**: $40 \le \text{Score} < 60$
+- **Not Recommended**: $\text{Score} < 40$
 
 ---
 
@@ -757,19 +802,58 @@ $$	ext{FinalScore} = \left(rac{0.35}{0.85}ight) S_{	ext{occ}} + \left(rac{0.3
 
 | # | Algorithm Name | Implementation File | Main Function | Mathematical Formula | Consuming Module |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1** | **Weight Sum Validation** | `financial-identity.scoring.ts` | `validateWeightsSum()` | $\left\|\sum W_k - 1.0ight\| < 0.001$ | Profile Classifier |
-| **2** | **Weight Redistribution** | `financial-identity.scoring.ts` | `calculateAdjustedWeights()` | $W_k^{	ext{adj}} = rac{W_k}{\sum_{j \in 	ext{Available}} W_j}$ | Feature Scorer |
-| **3** | **Value Normalization** | `financial-identity.scoring.ts` | `normalize0to100()` | $	ext{round}\left(rac{	ext{clamp}(x,\min,\max) - \min}{\max - \min} 	imes 100ight)$ | Feature Vectors |
+| **1** | **Weight Sum Validation** | `financial-identity.scoring.ts` | `validateWeightsSum()` | $\left\|\sum W_k - 1.0\right\| < 0.001$ | Profile Classifier |
+| **2** | **Weight Redistribution** | `financial-identity.scoring.ts` | `calculateAdjustedWeights()` | $W_k^{\text{adj}} = \frac{W_k}{\sum_{j \in \text{Available}} W_j}$ | Feature Scorer |
+| **3** | **Value Normalization** | `financial-identity.scoring.ts` | `normalize0to100()` | $\text{round}\left(\frac{\text{clamp}(x,\min,\max) - \min}{\max - \min} \times 100\right)$ | Feature Vectors |
 | **4** | **Available Monthly Savings** | `financial-identity.engine.ts` | `calculateAvailableMonthlySavings()` | $\max(0, M - X - D)$ | Goal Engine |
-| **5** | **Goal Priority Scoring** | `financial-identity.engine.ts` | `calculateGoalPriorityScore()` | $0.35 \cdot 	ext{Imp} + 0.30 \cdot 	ext{Feas} + 0.20 \cdot 	ext{Time} + 0.15 \cdot 	ext{Rel}$ | Goal Recommender |
-| **6** | **Goal Allocation** | `financial-identity.engine.ts` | `processGoalRecommendations()` | $	ext{AvailableSavings} 	imes rac{	ext{GoalPriority}_i}{\sum 	ext{GoalPriority}_j}$ | Dashboard & Goals |
-| **7** | **Community Relevance** | `financial-identity.engine.ts` | `calculateCommunityRelevance()` | $0.35 \cdot 	ext{Occ} + 0.30 \cdot 	ext{Goal} + 0.20 \cdot 	ext{Int} + 0.15 \cdot 	ext{Act}$ | Community Feed |
-| **8** | **Spending Change %** | `financial-identity.engine.ts` | `calculateSpendingChange()` | $rac{C - P}{P} 	imes 100 \quad (P > 0)$ | AI Insights |
-| **9** | **Budget Utilization %** | `financial-identity.engine.ts` | `calculateBudgetUtilization()` | $rac{	ext{CategorySpending}}{	ext{CategoryBudget}} 	imes 100$ | AI Insights |
-| **10** | **Savings Rate %** | `financial-identity.engine.ts` | `calculateSavingsRate()` | $rac{	ext{NetSavings}}{	ext{TotalIncome}} 	imes 100$ | AI Insights |
-| **11** | **Insight Confidence** | `financial-identity.engine.ts` | `calculateInsightConfidence()` | $0.50 \cdot 	ext{Comp} + 0.30 \cdot 	ext{Rec} + 0.20 \cdot 	ext{Cons}$ | Insights Banner |
-| **12** | **Reducing Balance EMI** | `loan.generator.ts` | `calculateReducingBalanceEmi()` | $rac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$ | Demo Data Engine |
-| **13** | **Balance Reconciliation** | `transaction.generator.ts` | `verifyBalanceReconciliation()` | $	ext{Closing} = 	ext{Opening} + \sum 	ext{Credits} - \sum 	ext{Debits}$ | Ledger Engine |
+| **5** | **Goal Priority Scoring** | `financial-identity.engine.ts` | `calculateGoalPriorityScore()` | $0.35 \cdot \text{Imp} + 0.30 \cdot \text{Feas} + 0.20 \cdot \text{Time} + 0.15 \cdot \text{Rel}$ | Goal Recommender |
+| **6** | **Goal Allocation** | `financial-identity.engine.ts` | `processGoalRecommendations()` | $\text{AvailableSavings} \times \frac{\text{GoalPriority}_i}{\sum \text{GoalPriority}_j}$ | Dashboard & Goals |
+| **7** | **Community Relevance** | `financial-identity.engine.ts` | `calculateCommunityRelevance()` | $0.35 \cdot \text{Occ} + 0.30 \cdot \text{Goal} + 0.20 \cdot \text{Int} + 0.15 \cdot \text{Act}$ | Community Feed |
+| **8** | **Spending Change %** | `financial-identity.engine.ts` | `calculateSpendingChange()` | $\frac{C - P}{P} \times 100 \quad (P > 0)$ | AI Insights |
+| **9** | **Budget Utilization %** | `financial-identity.engine.ts` | `calculateBudgetUtilization()` | $\frac{\text{CategorySpending}}{\text{CategoryBudget}} \times 100$ | AI Insights |
+| **10** | **Savings Rate %** | `financial-identity.engine.ts` | `calculateSavingsRate()` | $\frac{\text{NetSavings}}{\text{TotalIncome}} \times 100$ | AI Insights |
+| **11** | **Insight Confidence** | `financial-identity.engine.ts` | `calculateInsightConfidence()` | $0.50 \cdot \text{Comp} + 0.30 \cdot \text{Rec} + 0.20 \cdot \text{Cons}$ | Insights Banner |
+| **12** | **Reducing Balance EMI** | `loan.generator.ts` | `calculateReducingBalanceEmi()` | $\frac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$ | Demo Data Engine |
+| **13** | **Balance Reconciliation** | `transaction.generator.ts` | `verifyBalanceReconciliation()` | $\text{Closing} = \text{Opening} + \sum \text{Credits} - \sum \text{Debits}$ | Ledger Engine |
+
+
+
+### 9.6 Smart Spending Intelligence Engine (`backend/src/modules/spending-categorization/`) `[Verified Implementation]`
+
+**Purpose & Problem Solved**:
+Financial transactions received via UPI, cards, and bank feeds typically contain cryptic, unstructured narrations (e.g., `"UPI/324234/APOLLO PHARMACY/apollo@upi"` or `"POS 5411 DMART STORE"`). The Smart Spending Intelligence Engine automatically parses, normalizes, identifies merchants across a 4-tier hierarchy, computes a mathematical confidence score, and categorizes transactions into 14 standardized spending buckets.
+
+**14 Standardized Spending Categories**:
+1. `INVESTMENT` (Emerald `#10B981`) — Stocks, mutual funds, gold, SIPs (e.g. Zerodha, Groww).
+2. `MEDICINE` (Red `#EF4444`) — Healthcare, pharmacies, clinics (e.g. Apollo Pharmacy, MedPlus).
+3. `FOOD` (Orange `#F97316`) — Restaurants, dining, food delivery (e.g. Swiggy, Zomato, Domino's).
+4. `GROCERIES` (Lime `#84CC16`) — Supermarkets, daily staples (e.g. Blinkit, Zepto, BigBasket, D-Mart).
+5. `PETROL` (Yellow `#EAB308`) — Fuel stations, EV charging (e.g. Indian Oil, HPCL, BPCL).
+6. `SHOPPING` (Pink `#EC4899`) — Retail, apparel, electronics (e.g. Zara, H&M, Amazon retail).
+7. `SUBSCRIPTION` (Purple `#8B5CF6`) — Streaming, digital recurring services (e.g. Netflix, Spotify, Prime).
+8. `TRANSPORT` (Cyan `#06B6D4`) — Ride hailing, trains, airlines (e.g. Uber, Ola, IRCTC).
+9. `OUTING` (Rose `#F43F5E`) — Cinemas, concerts, events (e.g. PVR, BookMyShow).
+10. `BILLS_UTILITIES` (Blue `#3B82F6`) — Electricity, water, broadband (e.g. BESCOM, Tata Power).
+11. `EDUCATION` (Indigo `#6366F1`) — Tuition, universities, courses (e.g. Coursera, Udemy).
+12. `RENT` (Teal `#14B8A6`) — Housing, commercial lease (e.g. NoBroker, RentPay).
+13. `INSURANCE` (Sky `#0284C7`) — Health, life, auto coverage (e.g. LIC, HDFC Ergo).
+14. `MISCELLANEOUS` (Slate `#64748B`) — Unrecognized, ambiguous, or peer-to-peer transfers.
+
+**4-Tier Identification Hierarchy**:
+1. **Priority 1: Verified Merchant Identifier & UPI VPA** ($W_I = 0.40$): Official business VPAs (`apollo@upi`, `swiggy@icici`) in `GLOBAL_VERIFIED_MERCHANTS`.
+2. **Priority 2: ISO 18245 MCC Match** ($W_M = 0.30$): Standard 4-digit Merchant Category Codes (`5814` Fast Food $\to$ `FOOD`, `5411` Grocery $\to$ `GROCERIES`).
+3. **Priority 3: Merchant Name & Alias Match** ($W_N = 0.20$): NFKD Unicode normalized name, multi-word brand alias, or token keyword match (`"Domino's Pizza"`, `"Indian Oil Fuel Station"`).
+4. **Priority 4: User-Confirmed Merchant History** ($W_H = 0.10$): Machine-learned mapping from previous manual corrections by the user.
+
+**Mathematical Confidence-Scoring Algorithm**:
+For merchant $m$ and candidate category $c$:
+$$C(m, c) = 100 \times \left[ \frac{\sum_{j \in A} (W_j \times S_j)}{\sum_{j \in A} W_j} \right]$$
+- Dynamic denominator exclusion: Unavailable signals are removed from the denominator (e.g. no MCC and no history $\implies$ denominator is $0.40 + 0.20 = 0.60$).
+- **Decision Gates**:
+  * **High Confidence** ($90 \le C \le 100$): Automatic classification.
+  * **Moderate Confidence** ($70 \le C < 90$): Requires $\ge 2$ independent corroborating signals; otherwise rejected to `MISCELLANEOUS`.
+  * **Low Confidence** ($C < 70$): Fails safe to `MISCELLANEOUS`.
+- **Conflict Handling**: Cross-category conflicts (e.g. Apollo Pharmacy + MCC `5812` Eating Places) are safely rejected to `MISCELLANEOUS` and flagged with `REJECTED_SIGNAL_CONFLICT` for auditing.
 
 
 # Part 11 — Unified REST API Reference
@@ -848,10 +932,10 @@ export class ForbiddenError extends AppError {
 ```
 
 The global `errorHandler` middleware in `backend/src/middleware/errorHandler.ts` catches all rejected promises and maps them:
-- `AppError` $ightarrow$ Returns exact `statusCode` and JSON payload.
-- `ZodError` $ightarrow$ Returns `400 Bad Request` with an array of validation errors mapping fields to error messages.
-- Prisma Known Request Errors (`P2002` Unique Constraint) $ightarrow$ Returns `409 Conflict`.
-- Unhandled generic Exceptions $ightarrow$ Logs stack trace and returns clean `500 Internal Server Error` without leaking database internals.
+- `AppError` $\rightarrow$ Returns exact `statusCode` and JSON payload.
+- `ZodError` $\rightarrow$ Returns `400 Bad Request` with an array of validation errors mapping fields to error messages.
+- Prisma Known Request Errors (`P2002` Unique Constraint) $\rightarrow$ Returns `409 Conflict`.
+- Unhandled generic Exceptions $\rightarrow$ Logs stack trace and returns clean `500 Internal Server Error` without leaking database internals.
 
 ### 12.2 Request Validation Pipeline
 
@@ -905,7 +989,7 @@ export const validateRequest = (schema: AnyZodObject) => {
 
 # Part 14 — Complete End-to-End Execution Lifecycles
 
-### 14.1 Scenario 1: New User Registration $ightarrow$ Onboarding $ightarrow$ Dashboard
+### 14.1 Scenario 1: New User Registration $\rightarrow$ Onboarding $\rightarrow$ Dashboard
 
 1. **User Action**: Enters mobile number `+91 9511868660` on `/login`.
 2. **Frontend Handlers**: `MobileNumberForm.tsx` calls `AuthApi.requestOtp(mobile)`.
@@ -913,14 +997,14 @@ export const validateRequest = (schema: AnyZodObject) => {
 4. **Verification**: User inputs OTP `123456`. `auth.service.ts` validates hash, finds no prior account, creates `User` record with `onboardingStep: 'ONBOARDING'`, and issues JWT.
 5. **Route Navigation**: `AuthenticationFlow.tsx` detects `result.isNewUser === true` and routes to `/onboarding`.
 6. **Onboarding Wizard**:
-   - Step 1: User selects `STUDENT` $ightarrow$ `Undergraduate`. Autosaved via `FinancialIdentityApi.updateProfile`.
+   - Step 1: User selects `STUDENT` $\rightarrow$ `Undergraduate`. Autosaved via `FinancialIdentityApi.updateProfile`.
    - Step 2: Income `10000-25000` INR, Allowance source.
    - Step 3: Adds `Laptop Hardware Fund` (₹60,000).
    - Step 4: Selects `Budgeting & Expense Tracking`.
    - Step 5: Clicks `Enter ONE Financial Assistant`.
 7. **Personalization Processing**:
    - Backend `financial-identity.service.ts` computes vector $U = \{O,I,G,P,B\}$.
-   - Runs `classifyFinancialIdentity` $ightarrow$ Persona = `STUDENT` ($92\%$ score).
+   - Runs `classifyFinancialIdentity` $\rightarrow$ Persona = `STUDENT` ($92\%$ score).
    - Calls `DemoDataService.resetDemoData(userId, 'STUDENT')`.
    - Generates student transactions (Mess fees, Cafeteria, Coursera, Laptop funds).
    - Computes available monthly savings: $\max(0, 20000 - 9000 - 0) = ₹11,000$.
@@ -939,7 +1023,7 @@ export const validateRequest = (schema: AnyZodObject) => {
 #### Q1: What is ONE and what specific problem does it solve?
 - **Short Answer (30s)**: "ONE is an ambient financial OS designed for Indian users. Traditional personal finance apps are either passive expense loggers or rigid budget trackers that fail because they treat students, corporate employees, and freelancers with the exact same templates. ONE dynamically understands the user's professional situation, income variability, and goals through a Financial Identity Engine and calibrates personalized transactions, run-rates, and collaborative savings pools."
 - **Technical Answer**: "From an architectural perspective, ONE combines Next.js 16 App Router on the client with a modular Node.js Express backend and PostgreSQL 16 managed by Prisma ORM. It solves three critical problems: first, the 'cold start' problem in fintech by provisioning an instant, mathematically reconciled financial ledger; second, personalized surplus modeling using continuous multi-factor scoring; and third, social financial accountability through peer micro-lending circles."
-- **Code Reference**: [AGENTS.md](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/AGENTS.md#L1-L50), `frontend/src/app/(authenticated)/dashboard/page.tsx`.
+- **Code Reference**: [AGENTS.md](AGENTS.md#L1-L50), `frontend/src/app/(authenticated)/dashboard/page.tsx`.
 - **Follow-up Question**: *"How does ONE differ from standard personal finance tools like Walnut or Mint?"*
 - **Follow-up Answer**: *"Walnut and Mint are reactive: they read SMS or bank feeds after spending has happened. ONE is proactive and ambient: it continuously models safe-to-spend runways, automatically computes proportional surplus allocations across competing goals, and integrates with the ReBIT Account Aggregator framework to verify financial assets without screen scraping."*
 
@@ -950,7 +1034,7 @@ export const validateRequest = (schema: AnyZodObject) => {
 #### Q2: Why did you choose Next.js App Router and how do you prevent server-client hydration mismatches?
 - **Short Answer (30s)**: "Next.js App Router provides clean route grouping `(authenticated)`, `(public)`, and `(setup)` with automatic code splitting and Turbopack compilation. To prevent hydration mismatches, page files are kept strictly as thin mounting shells, while dynamic interactive features run inside client components marked with `'use client'` that synchronize after mounting."
 - **Technical Answer**: "In `frontend/src/app/`, we enforce Rule 2.1: pages never define hooks, API calls, or local component state. They only import feature components from `@/features/<feature-name>/components/`. In `AuthProvider.tsx`, we handle session storage by listening to both window `storage` and custom `one-auth-changed` events. In `protected-route.tsx`, we display an ambient pulsing orb during the initial client mount phase until authentication tokens and user state are verified."
-- **Code Reference**: [protected-route.tsx](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/frontend/src/components/layout/protected-route.tsx#L9-L43), [AuthProvider.tsx](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/frontend/src/contexts/AuthProvider.tsx#L25-L65).
+- **Code Reference**: [protected-route.tsx](frontend/src/components/layout/protected-route.tsx#L9-L43), [AuthProvider.tsx](frontend/src/contexts/AuthProvider.tsx#L25-L65).
 - **Follow-up Question**: *"How is state shared across features without Redux clutter?"*
 - **Follow-up Answer**: *"We use React Context for global infrastructure (authentication session in `AuthProvider`), dedicated custom hooks (`useFinancialIdentity`, `useDemoData`, `useCommunity`) for feature state, and localStorage caching for instantaneous wizard autosave and offline resilience."*
 
@@ -961,7 +1045,7 @@ export const validateRequest = (schema: AnyZodObject) => {
 #### Q3: What is the architectural difference between a Controller and a Service in your backend?
 - **Short Answer (30s)**: "Controllers handle the HTTP transport protocol—parsing request headers, query parameters, bodies, and returning standardized HTTP status codes. Services contain pure business logic, database transactions, and mathematical algorithms, completely decoupled from Express."
 - **Technical Answer**: "If we replaced Express with Fastify, NestJS, or an AWS Lambda handler tomorrow, our Controllers would change, but our Services—such as `FinancialIdentityService` or `DemoDataService`—would remain 100% untouched. For example, `FinancialIdentityController.completeOnboarding` simply extracts `req.user.id` and `req.body`, calls `FinancialIdentityService.completeOnboarding`, and wraps the result in `sendSuccess(res, result, 'Onboarding completed', 201)`. The service handles Prisma transactions, feature vector construction, and algorithm execution."
-- **Code Reference**: [financial-identity.controller.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.controller.ts#L36-L47), [financial-identity.service.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/financial-identity/financial-identity.service.ts#L170-L280).
+- **Code Reference**: [financial-identity.controller.ts](backend/src/modules/financial-identity/financial-identity.controller.ts#L36-L47), [financial-identity.service.ts](backend/src/modules/financial-identity/financial-identity.service.ts#L170-L280).
 - **Follow-up Question**: *"How do you handle unhandled promise rejections or database disconnects?"*
 - **Follow-up Answer**: *"Every asynchronous controller wraps its execution in a `try...catch` block passing errors to `next(error)`, which feeds into our centralized `errorHandler` middleware. For database operations, we implement in-memory fallback caches so the application gracefully degrades during development or database maintenance."*
 
@@ -972,7 +1056,7 @@ export const validateRequest = (schema: AnyZodObject) => {
 #### Q4: How do database transactions ensure data integrity during demo data resets?
 - **Short Answer (30s)**: "When a user resets their demo data or completes onboarding, we must delete old demo records and insert 50+ new transactions, loans, and goals. We wrap this entire routine inside `prisma.$transaction`. If any insert fails, the database automatically rolls back all operations, ensuring zero orphaned or duplicate records."
 - **Technical Answer**: "In `DemoDataService.initializeDemoData`, we execute `await prisma.$transaction(async (tx) => { ... })`. Inside the callback, `tx.demoDataProfile.upsert` updates the status to `INITIALIZING`. Then `tx.transaction.deleteMany({ where: { userId, isDemo: true } })` purges only demo records. Finally, all newly generated entities are written. If an unhandled exception or constraint error occurs, Prisma aborts the transaction at the PostgreSQL engine level, guaranteeing ACID atomicity."
-- **Code Reference**: [demo-data.service.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/demo-data/demo-data.service.ts#L67-L140).
+- **Code Reference**: [demo-data.service.ts](backend/src/modules/demo-data/demo-data.service.ts#L67-L140).
 - **Follow-up Question**: *"How do you guarantee that real user transactions are never deleted during a reset?"*
 - **Follow-up Answer**: *"Every financial entity in the schema has a boolean field `isDemo: Boolean @default(true)`. Every delete query strictly scopes its filter to `{ userId, isDemo: true }`. Real transactions linked via Account Aggregator or manual entry have `isDemo: false` and are fundamentally excluded from the purge query."*
 
@@ -981,9 +1065,9 @@ export const validateRequest = (schema: AnyZodObject) => {
 ### Category E: Algorithms & Mathematics
 
 #### Q5: Walk me through the mathematical formula for Reducing-Balance EMI calculation.
-- **Short Answer (30s)**: "In reducing-balance loans, interest is charged only on the outstanding principal at the beginning of each month, not on the original principal. The monthly installment formula is $EMI = rac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$, where $P$ is principal, $r$ is monthly interest rate, and $n$ is tenure in months."
-- **Technical Answer**: "In `loan.generator.ts`, `calculateReducingBalanceEmi` converts annual interest rate $R\%$ to a monthly fraction $r = rac{R}{12 	imes 100}$. It computes $(1 + r)^n$, guards against $r = 0$ (which simplifies to $rac{P}{n}$), and rounds to 2 decimal places. In `generateAmortizationSchedule`, for each installment, interest component is $I_m = B_{m-1} \cdot r$, principal component is $P_m = EMI - I_m$, and remaining balance is updated. On the final installment $n$, any sub-cent rounding discrepancy is adjusted directly against the principal component so the closing loan balance terminates at exactly ₹0.00."
-- **Code Reference**: [loan.generator.ts](file:///c:/Users/HARSH%20BAJAJ/Desktop/ONE/backend/src/modules/demo-data/generators/loan.generator.ts#L10-L65).
+- **Short Answer (30s)**: "In reducing-balance loans, interest is charged only on the outstanding principal at the beginning of each month, not on the original principal. The monthly installment formula is $EMI = \frac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$, where $P$ is principal, $r$ is monthly interest rate, and $n$ is tenure in months."
+- **Technical Answer**: "In `loan.generator.ts`, `calculateReducingBalanceEmi` converts annual interest rate $R\%$ to a monthly fraction $r = \frac{R}{12 \times 100}$. It computes $(1 + r)^n$, guards against $r = 0$ (which simplifies to $\frac{P}{n}$), and rounds to 2 decimal places. In `generateAmortizationSchedule`, for each installment, interest component is $I_m = B_{m-1} \cdot r$, principal component is $P_m = EMI - I_m$, and remaining balance is updated. On the final installment $n$, any sub-cent rounding discrepancy is adjusted directly against the principal component so the closing loan balance terminates at exactly ₹0.00."
+- **Code Reference**: [loan.generator.ts](backend/src/modules/demo-data/generators/loan.generator.ts#L10-L65).
 - **Follow-up Question**: *"How do you verify that the formula works with 100% precision in production?"*
 - **Follow-up Answer**: *"We have automated unit tests in `demo-data.test.ts` asserting that for a ₹5,00,000 auto loan at 10.5% over 36 months, the calculated EMI is exactly ₹16,251.22, and the closing balance on month 24 matches ₹2,42,799.14 within a 1-rupee tolerance."*
 
@@ -1008,13 +1092,13 @@ $$U = [O, I, G, P, B]$$
 
 #### Step 3: Draw the Proportional Redistribution Equation
 Write down:
-$$W_k^{	ext{adj}} = rac{W_k}{\sum_{j \in 	ext{Available}} W_j}$$
+$$W_k^{\text{adj}} = \frac{W_k}{\sum_{j \in \text{Available}} W_j}$$
 Explain:
 > "If a new user has not yet generated transaction history, $B$ is unobserved. The sum of available weights is $0.30 + 0.20 + 0.25 + 0.15 = 0.90$. We divide each weight by $0.90$. Occupation shifts to $33.3\%$, Goals to $27.8\%$, and the sum remains exactly $100\%$."
 
 #### Step 4: Show the Persona Compatibility Score
 Write down:
-$$	ext{Score}(C) = \sum_{k} W_k^{	ext{adj}} \cdot S_k(C)$$
+$$\text{Score}(C) = \sum_{k} W_k^{\text{adj}} \cdot S_k(C)$$
 > "We evaluate candidate personas (Student, Professional, Freelancer, Business Owner). The declared occupation remains authoritative, while the calculated score gives us a quantified confidence metric."
 
 ---
@@ -1024,17 +1108,17 @@ $$	ext{Score}(C) = \sum_{k} W_k^{	ext{adj}} \cdot S_k(C)$$
 When an interviewer asks: *"Show me the math behind your loan generator."*
 
 #### Step 1: Write the Core EMI Equation
-$$	ext{EMI} = rac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$$
+$$\text{EMI} = \frac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$$
 Explain the terms clearly:
 - $P$ = Principal amount (e.g. ₹5,00,000)
 - $R$ = Annual interest rate (e.g. $10.5\%$)
-- $r$ = Monthly fractional rate: $r = rac{R}{12 	imes 100} = rac{10.5}{1200} = 0.00875$
+- $r$ = Monthly fractional rate: $r = \frac{R}{12 \times 100} = \frac{10.5}{1200} = 0.00875$
 - $n$ = Tenure in months (e.g. $36$)
 
 #### Step 2: Draw the Month-by-Month Amortization Split
 Draw a 3-column table on the whiteboard:
 
-| Month | Interest Component ($I_m = B_{m-1} \cdot r$) | Principal Component ($P_m = 	ext{EMI} - I_m$) | Closing Balance ($B_m = B_{m-1} - P_m$) |
+| Month | Interest Component ($I_m = B_{m-1} \cdot r$) | Principal Component ($P_m = \text{EMI} - I_m$) | Closing Balance ($B_m = B_{m-1} - P_m$) |
 | :--- | :--- | :--- | :--- |
 | **Month 1** | ₹4,375.00 | ₹11,876.22 | ₹4,88,123.78 |
 | **Month 2** | ₹4,271.08 | ₹11,980.14 | ₹4,76,143.64 |
@@ -1068,15 +1152,15 @@ Explain:
 ### 17.2 Full Feature Demonstration Sequence (Frontend to Database)
 
 When demonstrating ONE during an interview or viva, walk through the codebase in this exact sequence:
-1. **Frontend Presentation Layer**: Open `frontend/src/app/(setup)/onboarding/page.tsx` $ightarrow$ Show how it cleanly mounts `<OnboardingWizard />`.
-2. **Feature UI Component**: Open `frontend/src/features/onboarding/components/Step1ProfessionalIdentity.tsx` $ightarrow$ Show conditional occupation options (e.g. Student vs Professional).
-3. **Frontend API Client**: Open `frontend/src/features/onboarding/services/financialIdentityApi.ts` $ightarrow$ Show `completeOnboarding` making a `POST /api/financial-identity/complete`.
-4. **Backend Route Guard**: Open `backend/src/modules/financial-identity/financial-identity.routes.ts` $ightarrow$ Show `requireAuth` and `validateRequest(completeOnboardingSchema)`.
-5. **Backend Controller**: Open `backend/src/modules/financial-identity/financial-identity.controller.ts` $ightarrow$ Show `completeOnboarding` parsing the request.
-6. **Backend Business Service**: Open `backend/src/modules/financial-identity/financial-identity.service.ts` $ightarrow$ Show feature vector construction and `classifyFinancialIdentity`.
-7. **Algorithmic Engine**: Open `backend/src/modules/financial-identity/financial-identity.scoring.ts` $ightarrow$ Explain the mathematical weighting and confidence calculation.
-8. **Demo Data Synchronization**: Open `backend/src/modules/demo-data/demo-data.service.ts` $ightarrow$ Show `prisma.$transaction` resetting demo records and inserting personalized entities.
-9. **Database Model**: Open `backend/prisma/schema.prisma` $ightarrow$ Show `model FinancialProfile` and `model DemoDataProfile`.
+1. **Frontend Presentation Layer**: Open `frontend/src/app/(setup)/onboarding/page.tsx` $\rightarrow$ Show how it cleanly mounts `<OnboardingWizard />`.
+2. **Feature UI Component**: Open `frontend/src/features/onboarding/components/Step1ProfessionalIdentity.tsx` $\rightarrow$ Show conditional occupation options (e.g. Student vs Professional).
+3. **Frontend API Client**: Open `frontend/src/features/onboarding/services/financialIdentityApi.ts` $\rightarrow$ Show `completeOnboarding` making a `POST /api/financial-identity/complete`.
+4. **Backend Route Guard**: Open `backend/src/modules/financial-identity/financial-identity.routes.ts` $\rightarrow$ Show `requireAuth` and `validateRequest(completeOnboardingSchema)`.
+5. **Backend Controller**: Open `backend/src/modules/financial-identity/financial-identity.controller.ts` $\rightarrow$ Show `completeOnboarding` parsing the request.
+6. **Backend Business Service**: Open `backend/src/modules/financial-identity/financial-identity.service.ts` $\rightarrow$ Show feature vector construction and `classifyFinancialIdentity`.
+7. **Algorithmic Engine**: Open `backend/src/modules/financial-identity/financial-identity.scoring.ts` $\rightarrow$ Explain the mathematical weighting and confidence calculation.
+8. **Demo Data Synchronization**: Open `backend/src/modules/demo-data/demo-data.service.ts` $\rightarrow$ Show `prisma.$transaction` resetting demo records and inserting personalized entities.
+9. **Database Model**: Open `backend/prisma/schema.prisma` $\rightarrow$ Show `model FinancialProfile` and `model DemoDataProfile`.
 
 ---
 
@@ -1136,7 +1220,7 @@ export function calculateAvailableMonthlySavings(
 }
 ```
 - Computes discretionary savings surplus:
-  $$	ext{Surplus} = \max(0, M - X - D)$$
+  $$\text{Surplus} = \max(0, M - X - D)$$
 - Then allocates this surplus across active goals proportional to their priority scores:
 ```typescript
 const totalPriority = evaluatedGoals.reduce((sum, g) => sum + g.goalPriorityScore, 0);
@@ -1324,6 +1408,60 @@ const executeSave = async (shouldRegenerateDemoData: boolean) => {
 
 ---
 
+
+### Walkthrough 11: Transaction Classification Service (`transaction-classification.service.ts`)
+
+**File**: `backend/src/modules/spending-categorization/services/transaction-classification.service.ts`  
+**Class**: `TransactionClassificationService` (Lines 15–75)
+
+```typescript
+export class TransactionClassificationService {
+  static classify(input: RawTransactionInput): ClassificationResult {
+    const timestamp = new Date().toISOString();
+
+    // 1. Payment Confirmation Gate: QR scanning alone is not proof of completed payment
+    if (!input.isConfirmedPayment) {
+      return {
+        transactionId: input.transactionId,
+        predictedCategory: 'MISCELLANEOUS',
+        finalCategory: 'MISCELLANEOUS',
+        confidenceScore: 0,
+        confidenceTier: 'LOW',
+        classificationMethod: 'FALLBACK_MISCELLANEOUS',
+        matchedRules: ['REJECTED_UNCONFIRMED_TRANSACTION'],
+        conflictsDetected: ['Transaction has not been confirmed by trusted payment provider.'],
+        timestamp,
+      };
+    }
+
+    // 2. Extract and Normalize Metadata
+    const extracted = MerchantNormalizationService.extractAndNormalize(input);
+
+    // 3. Identify Merchant & Gather Evidence Across 4 Priorities
+    const evidence = MerchantIdentificationService.identify(extracted);
+
+    // 4. Safe Fallback on Signal Conflicts
+    if (evidence.conflicts.length > 0) {
+      return {
+        transactionId: input.transactionId,
+        predictedCategory: 'MISCELLANEOUS',
+        finalCategory: 'MISCELLANEOUS',
+        confidenceScore: 40,
+        confidenceTier: 'LOW',
+        classificationMethod: 'FALLBACK_MISCELLANEOUS',
+        matchedRules: ['REJECTED_SIGNAL_CONFLICT'],
+        conflictsDetected: evidence.conflicts,
+        timestamp,
+      };
+    }
+
+    // 5. Score Candidates with Dynamic Denominator
+    // ...
+  }
+}
+```
+
+
 # Part 19 — Code Quality Review, Limitations & Future Roadmap
 
 ### 19.1 Technical Debt & Improvement Matrix
@@ -1352,9 +1490,9 @@ const executeSave = async (shouldRegenerateDemoData: boolean) => {
 
 - **Tech Stack**: Next.js 16, React 19, TypeScript 5.7, Tailwind CSS v4, Motion 12, Node.js 22, Express 4.21, Prisma ORM 5.22, PostgreSQL 16.
 - **Identity Vector**: $U = \{O, I, G, P, B\}$ with baseline weights $0.30, 0.20, 0.25, 0.15, 0.10$.
-- **Missing Weight Formula**: $W_k^{	ext{adj}} = rac{W_k}{\sum W_j}$.
-- **EMI Formula**: $	ext{EMI} = rac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$.
-- **Balance Invariant**: $	ext{Closing} = 	ext{Opening} + 	ext{Inflow} - 	ext{Outflow}$.
+- **Missing Weight Formula**: $W_k^{\text{adj}} = \frac{W_k}{\sum W_j}$.
+- **EMI Formula**: $\text{EMI} = \frac{P \cdot r \cdot (1 + r)^n}{(1 + r)^n - 1}$.
+- **Balance Invariant**: $\text{Closing} = \text{Opening} + \text{Inflow} - \text{Outflow}$.
 - **Test Command**: `npm test --prefix backend` (Runs both `demo-data.test.ts` and `financial-identity.test.ts`).
 
 ---

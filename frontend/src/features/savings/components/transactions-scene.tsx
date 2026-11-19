@@ -8,12 +8,18 @@ import { Search, Sparkles, RefreshCw } from 'lucide-react';
 import { OneOrb } from '@/components/common/one-mark';
 import { SavingsService } from '../services/savings.service';
 import { DemoDataBadge } from '@/components/demo-data/DemoDataBadge';
+import {
+  TransactionCategoryEditor,
+  EditableTransaction,
+} from '@/features/spending/components/TransactionCategoryEditor';
+import { Edit2 } from 'lucide-react';
 
 export function TransactionsScene() {
   const [txList, setTxList] = useState<Transaction[]>([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all');
   const [loading, setLoading] = useState(true);
+  const [selectedTxForEdit, setSelectedTxForEdit] = useState<EditableTransaction | null>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -110,9 +116,24 @@ export function TransactionsScene() {
                 <p className="font-medium text-foreground">{tx.merchant}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-muted-foreground">{tx.date}</span>
-                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wider text-secondary-foreground">
-                    {tx.category}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelectedTxForEdit({
+                        id: tx.id,
+                        merchant: tx.merchant,
+                        amount: tx.amount,
+                        date: tx.date,
+                        category: tx.category,
+                        type: tx.type,
+                      })
+                    }
+                    className="group/badge inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-wider text-secondary-foreground hover:bg-primary/20 hover:text-primary transition"
+                    title="Click to edit category"
+                  >
+                    <span>{tx.category}</span>
+                    <Edit2 className="h-2.5 w-2.5 opacity-60 group-hover/badge:opacity-100" />
+                  </button>
                   {tx.paymentMethod && (
                     <span className="rounded-full bg-secondary/60 px-2 py-0.5 text-[10px] uppercase font-mono tracking-wider text-muted-foreground">
                       {tx.paymentMethod}
@@ -134,6 +155,22 @@ export function TransactionsScene() {
           </motion.div>
         ))}
       </div>
+
+      {/* Interactive Category Editor Dialog */}
+      <TransactionCategoryEditor
+        isOpen={Boolean(selectedTxForEdit)}
+        transaction={selectedTxForEdit}
+        onClose={() => setSelectedTxForEdit(null)}
+        onSuccess={(updated) => {
+          setTxList((prev) =>
+            prev.map((t) =>
+              t.id === updated.transactionId
+                ? { ...t, category: updated.finalCategory }
+                : t
+            )
+          );
+        }}
+      />
     </div>
   );
 }
