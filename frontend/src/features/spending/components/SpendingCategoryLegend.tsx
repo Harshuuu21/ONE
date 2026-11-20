@@ -1,0 +1,113 @@
+'use client';
+
+import React from 'react';
+import {
+  TrendingUp,
+  Activity,
+  Utensils,
+  Film,
+  Fuel,
+  Tag,
+  CreditCard,
+  HelpCircle,
+} from 'lucide-react';
+import { DashboardCategorySlice } from '../types';
+
+const ICONS_MAP: Record<string, React.ElementType> = {
+  TrendingUp,
+  Activity,
+  Utensils,
+  Film,
+  Fuel,
+  Tag,
+  CreditCard,
+  HelpCircle,
+};
+
+interface SpendingCategoryLegendProps {
+  slices: DashboardCategorySlice[];
+  hoveredCategory: string | null;
+  onHoverCategory: (categoryName: string | null) => void;
+  selectedCategory: string | null;
+  onSelectCategory: (categoryName: string | null) => void;
+}
+
+export function SpendingCategoryLegend({
+  slices,
+  hoveredCategory,
+  onHoverCategory,
+  selectedCategory,
+  onSelectCategory,
+}: SpendingCategoryLegendProps) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+      {slices.map((slice) => {
+        const IconComponent = ICONS_MAP[slice.iconName] || HelpCircle;
+        const isHovered = hoveredCategory === slice.name;
+        const isSelected = selectedCategory === slice.name;
+        const isDimmed =
+          (hoveredCategory || selectedCategory) &&
+          hoveredCategory !== slice.name &&
+          selectedCategory !== slice.name;
+
+        return (
+          <button
+            key={slice.id}
+            type="button"
+            onMouseEnter={() => onHoverCategory(slice.name)}
+            onMouseLeave={() => onHoverCategory(null)}
+            onClick={() => {
+              if (selectedCategory === slice.name) {
+                onSelectCategory(null);
+              } else {
+                onSelectCategory(slice.name);
+              }
+            }}
+            className={`group relative flex items-center justify-between gap-3 rounded-2xl border px-3 py-2.5 text-left transition-all duration-200 ${
+              isHovered || isSelected
+                ? 'border-white/20 bg-white/[0.08] shadow-md ring-1 ring-white/10'
+                : 'border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.05]'
+            } ${isDimmed ? 'opacity-40' : 'opacity-100'}`}
+          >
+            {/* Color Dot & Category Info */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              {/* Category Color Indicator Pill */}
+              <div
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl"
+                style={{
+                  backgroundColor: `${slice.color}20`,
+                  color: slice.color,
+                }}
+              >
+                <IconComponent className="h-3.5 w-3.5" />
+              </div>
+
+              {/* Name */}
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-white truncate">
+                  {slice.name}
+                </p>
+                <p className="text-[10px] text-slate-400 truncate">
+                  {slice.transactionCount} {slice.transactionCount === 1 ? 'tx' : 'txs'}
+                </p>
+              </div>
+            </div>
+
+            {/* Percentage Display (STRICT: NO RUPEE AMOUNT) */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span
+                className="rounded-lg px-2 py-0.5 text-xs font-mono font-bold"
+                style={{
+                  backgroundColor: `${slice.color}15`,
+                  color: slice.color,
+                }}
+              >
+                {slice.percentage}%
+              </span>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}

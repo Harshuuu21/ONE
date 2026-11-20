@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useBankAccounts } from '@/features/bank-accounts'
 import { useDemoData } from '@/hooks/useDemoData'
 import { DemoDataBanner } from '@/components/demo-data/DemoDataBanner'
+import { SpendingDistribution } from '@/features/spending'
 
 const ICONS = {
   opportunity: TrendingUp,
@@ -67,7 +68,7 @@ export function BriefingScene() {
     : briefing.headline
 
   const summaryText = summary
-    ? `Spending settled at ₹${summary.financials.totalExpenses.toLocaleString('en-IN')} across ${summary.metrics.transactionsCount} transactions. Your ${summary.goals[0]?.title || 'top savings goal'} is at ${summary.goals[0]?.progressPercentage || 50}% progress.`
+    ? `Spending settled across ${summary.metrics.transactionsCount} transactions with steady pacing. Your ${summary.goals[0]?.title || 'top savings goal'} is at ${summary.goals[0]?.progressPercentage || 50}% progress.`
     : briefing.summary
 
   const topGoal = summary?.goals?.[0] || {
@@ -140,6 +141,11 @@ export function BriefingScene() {
             {summary ? `${summary.financials.savingsRatePercentage}% Savings Rate` : 'Strong and steady'}
           </p>
         </div>
+      </div>
+
+      {/* Spending Distribution Donut Chart & Category Intelligence */}
+      <div className="mt-8">
+        <SpendingDistribution />
       </div>
 
       {/* Command Center Summaries */}

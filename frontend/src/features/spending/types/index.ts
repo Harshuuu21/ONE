@@ -99,3 +99,25 @@ export interface UserMerchantMapping {
   lastConfirmedAt: string;
   isAmbiguousPersonalVpa: boolean;
 }
+
+export type DashboardCategoryName =
+  | 'Investment'
+  | 'Medicine'
+  | 'Food'
+  | 'Outing'
+  | 'Petrol'
+  | 'Shopping'
+  | 'Subscription'
+  | 'Miscellaneous';
+
+export interface DashboardCategorySlice {
+  id: string;
+  name: DashboardCategoryName;
+  percentage: number; // 0 - 100
+  color: string;
+  hoverColor: string;
+  glowColor: string;
+  iconName: string;
+  transactionCount: number;
+}
+
