@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { DashboardCategorySlice } from '../types';
+import { SpendingChartSlice } from '../types/spending.types';
 
 interface SpendingDonutChartProps {
-  slices: DashboardCategorySlice[];
+  slices: SpendingChartSlice[];
   hoveredCategory: string | null;
   onHoverCategory: (categoryName: string | null) => void;
   selectedCategory: string | null;
@@ -32,7 +32,9 @@ export function SpendingDonutChart({
 
   // Find currently active slice (hovered takes precedence, then selected)
   const activeCategoryName = hoveredCategory || selectedCategory;
-  const activeSlice = slices.find((s) => s.name === activeCategoryName) || null;
+  const activeSlice = slices.find(
+    (s) => s.name === activeCategoryName || s.categoryId === activeCategoryName
+  ) || null;
 
   // Calculate cumulative offsets and dash lengths
   const isSingleSegment = slices.length === 1;
@@ -85,6 +87,8 @@ export function SpendingDonutChart({
       <svg
         viewBox={`0 0 ${size} ${size}`}
         className="h-full w-full -rotate-90 transform overflow-visible"
+        role="img"
+        aria-label="Spending distribution donut chart"
       >
         <defs>
           {slices.map((slice) => (
@@ -119,14 +123,23 @@ export function SpendingDonutChart({
 
         {/* Donut Category Segments */}
         {segmentData.map(({ slice, dashLength, offset }) => {
-          const isHovered = hoveredCategory === slice.name;
-          const isSelected = selectedCategory === slice.name;
+          const isHovered = hoveredCategory === slice.name || hoveredCategory === slice.categoryId;
+          const isSelected = selectedCategory === slice.name || selectedCategory === slice.categoryId;
           const isDimmed = activeCategoryName && !isHovered && !isSelected;
 
           return (
             <g
               key={slice.id}
-              className="cursor-pointer transition-all duration-200"
+              className="cursor-pointer transition-all duration-200 outline-none"
+              tabIndex={0}
+              role="button"
+              aria-label={`${slice.name}: ${slice.percentage}%`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectCategory(selectedCategory === slice.name ? null : slice.name);
+                }
+              }}
               onMouseEnter={(e) => handleMouseMove(e, slice.name)}
               onMouseMove={(e) => handleMouseMove(e, slice.name)}
               onClick={() => {
@@ -188,7 +201,7 @@ export function SpendingDonutChart({
                 {activeSlice.name}
               </span>
               <span className="text-[10px] tracking-widest text-slate-500 uppercase">
-                {activeSlice.transactionCount} transactions
+                {activeSlice.transactionCount} {activeSlice.transactionCount === 1 ? 'transaction' : 'transactions'}
               </span>
             </motion.div>
           ) : (
@@ -207,7 +220,7 @@ export function SpendingDonutChart({
                 SPENDING DISTRIBUTION
               </span>
               <span className="mt-0.5 text-[10px] tracking-wider text-slate-500">
-                {slices.length} active categories
+                {slices.length} {slices.length === 1 ? 'active category' : 'active categories'}
               </span>
             </motion.div>
           )}

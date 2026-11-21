@@ -8,6 +8,10 @@ interface SpendingEmptyStateProps {
   periodLabel?: string;
 }
 
+/**
+ * Empty state for the Spending Distribution component
+ * Displays when no eligible transactions exist for the selected period
+ */
 export function SpendingEmptyState({ periodLabel = 'this period' }: SpendingEmptyStateProps) {
   return (
     <motion.div
@@ -15,8 +19,10 @@ export function SpendingEmptyState({ periodLabel = 'this period' }: SpendingEmpt
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
       className="flex flex-col items-center justify-center py-12 px-6 text-center"
+      role="status"
+      aria-label="No spending distribution data available"
     >
-      {/* Decorative Dashed Ring Placeholder */}
+      {/* Subtle Dashed Ring Placeholder */}
       <div className="relative mb-5 flex h-40 w-40 items-center justify-center">
         <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
           <circle
@@ -49,10 +55,10 @@ export function SpendingEmptyState({ periodLabel = 'this period' }: SpendingEmpt
       </div>
 
       <h3 className="font-serif text-lg font-medium text-white">
-        No spending recorded for {periodLabel}
+        Your spending insights will appear here.
       </h3>
       <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-400">
-        Eligible outgoing transactions will automatically be classified and visualized across your financial categories.
+        Complete your first eligible transaction to see your spending distribution for {periodLabel}.
       </p>
 
       <div className="mt-4 flex items-center gap-1.5 rounded-full bg-white/[0.03] border border-white/5 px-3 py-1 text-[11px] text-slate-400">

@@ -5,27 +5,39 @@ import {
   TrendingUp,
   Activity,
   Utensils,
-  Film,
+  ShoppingBag,
   Fuel,
   Tag,
   CreditCard,
+  Compass,
+  Film,
+  Zap,
+  GraduationCap,
+  Home,
+  Shield,
   HelpCircle,
 } from 'lucide-react';
-import { DashboardCategorySlice } from '../types';
+import { SpendingChartSlice } from '../types/spending.types';
 
 const ICONS_MAP: Record<string, React.ElementType> = {
   TrendingUp,
   Activity,
   Utensils,
-  Film,
+  ShoppingBag,
   Fuel,
   Tag,
   CreditCard,
+  Compass,
+  Film,
+  Zap,
+  GraduationCap,
+  Home,
+  Shield,
   HelpCircle,
 };
 
 interface SpendingCategoryLegendProps {
-  slices: DashboardCategorySlice[];
+  slices: SpendingChartSlice[];
   hoveredCategory: string | null;
   onHoverCategory: (categoryName: string | null) => void;
   selectedCategory: string | null;
@@ -40,7 +52,11 @@ export function SpendingCategoryLegend({
   onSelectCategory,
 }: SpendingCategoryLegendProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+    <div
+      className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full"
+      role="list"
+      aria-label="Spending category legend"
+    >
       {slices.map((slice) => {
         const IconComponent = ICONS_MAP[slice.iconName] || HelpCircle;
         const isHovered = hoveredCategory === slice.name;
@@ -54,8 +70,13 @@ export function SpendingCategoryLegend({
           <button
             key={slice.id}
             type="button"
+            role="listitem"
+            aria-selected={isSelected}
+            aria-label={`${slice.name}: ${slice.percentage}% across ${slice.transactionCount} transactions`}
             onMouseEnter={() => onHoverCategory(slice.name)}
             onMouseLeave={() => onHoverCategory(null)}
+            onFocus={() => onHoverCategory(slice.name)}
+            onBlur={() => onHoverCategory(null)}
             onClick={() => {
               if (selectedCategory === slice.name) {
                 onSelectCategory(null);
@@ -63,7 +84,7 @@ export function SpendingCategoryLegend({
                 onSelectCategory(slice.name);
               }
             }}
-            className={`group relative flex items-center justify-between gap-3 rounded-2xl border px-3 py-2.5 text-left transition-all duration-200 ${
+            className={`group relative flex items-center justify-between gap-3 rounded-2xl border px-3 py-2.5 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
               isHovered || isSelected
                 ? 'border-white/20 bg-white/[0.08] shadow-md ring-1 ring-white/10'
                 : 'border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.05]'
@@ -93,7 +114,7 @@ export function SpendingCategoryLegend({
               </div>
             </div>
 
-            {/* Percentage Display (STRICT: NO RUPEE AMOUNT) */}
+            {/* Percentage Display (STRICT RULE: NO RUPEE AMOUNT) */}
             <div className="flex items-center gap-1.5 shrink-0">
               <span
                 className="rounded-lg px-2 py-0.5 text-xs font-mono font-bold"
