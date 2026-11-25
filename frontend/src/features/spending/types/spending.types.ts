@@ -12,6 +12,8 @@ export type SpendingCategory =
   | 'EDUCATION'
   | 'RENT'
   | 'INSURANCE'
+  | 'ENTERTAINMENT'
+  | 'TRAVEL'
   | 'MISCELLANEOUS';
 
 export type PeriodFilter =
@@ -52,6 +54,8 @@ export interface SpendingDistributionResponse {
   totalIncome: number;
   totalTransactions: number;
   categories: CategorySpendingItem[];
+  isDemo?: boolean;
+  dataSource?: 'DEMO_DATA' | 'REAL_TRANSACTION_DATA';
 }
 
 export interface SpendingSummaryResponse {
@@ -114,6 +118,8 @@ export type DashboardCategoryName =
   | 'Education'
   | 'Rent'
   | 'Insurance'
+  | 'Entertainment'
+  | 'Travel'
   | 'Miscellaneous';
 
 export interface SpendingCategoryVisualConfig {

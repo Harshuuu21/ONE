@@ -2,12 +2,13 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types/index.js';
 import { sendSuccess } from '../../../shared/utils/response.js';
 import { SpendingAnalyticsService } from '../services/spending-analytics.service.js';
+import { DemoDistributionService } from '../../spending-categorization/demo-distribution.service.js';
 import { PeriodFilter } from '../spending-analytics.types.js';
 
 export class SpendingController {
   /**
    * GET /api/spending/categories
-   * Returns all 14 active spending categories with color codes and Lucide icon names
+   * Returns all 16 active spending categories with color codes and Lucide icon names
    */
   static async listCategories(_req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
@@ -21,6 +22,7 @@ export class SpendingController {
   /**
    * GET /api/spending/distribution
    * Returns category-wise net spend (S_c), total net spend (S_T), and percentages (P_c)
+   * Supports seamless transition between DEMO_DATA and REAL_TRANSACTION_DATA
    */
   static async getDistribution(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
@@ -31,7 +33,7 @@ export class SpendingController {
         endDate?: string;
       };
 
-      const result = await SpendingAnalyticsService.getCategoryDistribution(
+      const result = await DemoDistributionService.getSpendingDistribution(
         userId,
         period,
         startDate,
@@ -39,6 +41,24 @@ export class SpendingController {
       );
 
       return sendSuccess(res, result, 'Spending distribution computed successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/spending/demo/regenerate
+   * Development-only regeneration of user synthetic spending transactions
+   */
+  static async regenerateDemoData(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user!.id;
+      const { period } = req.body || {};
+      const result = await DemoDistributionService.regenerateDemoDistribution(
+        userId,
+        period || 'THIS_MONTH'
+      );
+      return sendSuccess(res, result, 'Demo spending data regenerated successfully');
     } catch (error) {
       next(error);
     }

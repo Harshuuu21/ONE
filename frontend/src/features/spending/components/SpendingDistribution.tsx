@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, RefreshCw, X, AlertCircle } from 'lucide-react';
+import { Sparkles, RefreshCw, X, AlertCircle, Wand2 } from 'lucide-react';
 import { useSpendingDistribution } from '../hooks/useSpendingDistribution';
 import { PERIOD_LABELS } from '../utils/spendingChart.utils';
 import { SpendingDonutChart } from './SpendingDonutChart';
@@ -10,6 +10,7 @@ import { SpendingCategoryLegend } from './SpendingCategoryLegend';
 import { SpendingPeriodSelector } from './SpendingPeriodSelector';
 import { SpendingEmptyState } from './SpendingEmptyState';
 import { SpendingLoadingState } from './SpendingLoadingState';
+import { SpendingDemoLabel } from './SpendingDemoLabel';
 
 export function SpendingDistribution() {
   const {
@@ -23,7 +24,9 @@ export function SpendingDistribution() {
     selectedCategory,
     setSelectedCategory,
     activeSlice,
+    isDemo,
     refetch,
+    regenerateDemoData,
   } = useSpendingDistribution('THIS_MONTH');
 
   return (
@@ -35,11 +38,12 @@ export function SpendingDistribution() {
       {/* Header & Controls */}
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5 text-xs font-semibold text-teal-400 border border-teal-500/20">
               <Sparkles className="h-3 w-3" />
               Category Insights
             </span>
+            {isDemo && <SpendingDemoLabel />}
           </div>
           <h2 className="mt-2 text-xl md:text-2xl font-serif font-semibold text-white tracking-tight">
             Spending Distribution
@@ -49,23 +53,40 @@ export function SpendingDistribution() {
           </p>
         </div>
 
-        {/* Period Selector */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        {/* Period Selector & Controls */}
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
           <SpendingPeriodSelector
             selected={period}
             onChange={(newPeriod) => setPeriod(newPeriod)}
             disabled={loading}
           />
+
+          {/* Normal Refresh: Re-queries existing dataset without regenerating */}
           <button
             type="button"
             onClick={() => refetch()}
             disabled={loading}
             className="p-2 rounded-full border border-white/10 bg-white/[0.03] text-slate-400 hover:text-white transition disabled:opacity-50"
-            title="Refresh distribution"
+            title="Refresh current distribution (preserves existing dataset)"
             aria-label="Refresh spending distribution"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
           </button>
+
+          {/* Development-Only Demo Data Regeneration (Section 10B) */}
+          {isDemo && (
+            <button
+              type="button"
+              onClick={() => regenerateDemoData()}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 rounded-full border border-teal-500/20 bg-teal-500/10 px-2.5 py-1.5 text-xs font-medium text-teal-300 hover:bg-teal-500/20 transition disabled:opacity-50"
+              title="Development only: Regenerate synthetic demo transactions"
+              aria-label="Regenerate synthetic demo transactions"
+            >
+              <Wand2 className="h-3 w-3" />
+              <span className="hidden md:inline text-[11px]">Regenerate Demo</span>
+            </button>
+          )}
         </div>
       </div>
 

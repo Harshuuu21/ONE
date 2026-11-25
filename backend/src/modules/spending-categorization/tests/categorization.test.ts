@@ -341,15 +341,17 @@ console.log('13. Testing User-Confirmed Merchant History Learning...');
 console.log('14. Testing Centralized Extensible Category Configuration...');
 {
   const categories = CategorizationService.listCategories();
-  assert.equal(categories.length, 14);
+  assert.equal(categories.length, 16);
   const catIds = categories.map((c) => c.id);
   assert.ok(catIds.includes('MEDICINE'));
   assert.ok(catIds.includes('FOOD'));
   assert.ok(catIds.includes('GROCERIES'));
   assert.ok(catIds.includes('PETROL'));
   assert.ok(catIds.includes('INVESTMENT'));
+  assert.ok(catIds.includes('ENTERTAINMENT'));
+  assert.ok(catIds.includes('TRAVEL'));
   assert.ok(catIds.includes('MISCELLANEOUS'));
-  console.log(`  ✓ All 14 spending categories configured with active metadata & colors.`);
+  console.log(`  ✓ All 16 spending categories configured with active metadata & colors.`);
 }
 
 console.log('\n=== ALL 14 CATEGORIZATION TEST SUITES PASSED WITH 100% SUCCESS! ===');

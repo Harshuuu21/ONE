@@ -33,6 +33,8 @@ export interface SpendingDistributionResponse {
   totalIncome: number;
   totalTransactions: number;
   categories: CategorySpendingItem[];
+  isDemo?: boolean;
+  dataSource?: 'DEMO_DATA' | 'REAL_TRANSACTION_DATA';
 }
 
 export interface SpendingSummaryResponse {

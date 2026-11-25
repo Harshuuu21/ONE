@@ -1,9 +1,9 @@
-import { OnboardingWizard } from '@/features/onboarding/components/OnboardingWizard';
+import { redirect } from 'next/navigation';
 
+/**
+ * Occupation-based personalization system has been removed.
+ * Users proceed directly to the financial dashboard with automatic synthetic spending data.
+ */
 export default function OnboardingPage() {
-  return (
-    <div className="min-h-screen bg-[#06202B] text-foreground flex flex-col justify-center">
-      <OnboardingWizard />
-    </div>
-  );
+  redirect('/dashboard');
 }

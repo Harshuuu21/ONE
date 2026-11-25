@@ -12,6 +12,8 @@ export type SpendingCategory =
   | 'EDUCATION'
   | 'RENT'
   | 'INSURANCE'
+  | 'ENTERTAINMENT'
+  | 'TRAVEL'
   | 'MISCELLANEOUS';
 
 export interface SpendingCategoryConfig {

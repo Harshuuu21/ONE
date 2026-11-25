@@ -74,6 +74,30 @@ export class SpendingApi {
   }
 
   /**
+   * Development-only regeneration of user synthetic spending transactions
+   * POST /api/spending/demo/regenerate
+   */
+  static async regenerateDemoData(
+    period: PeriodFilter = 'THIS_MONTH'
+  ): Promise<SpendingDistributionResponse | null> {
+    try {
+      const res = await fetch(`${API_BASE}/spending/demo/regenerate`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ period }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        return json.data;
+      }
+    } catch {
+      // Fallback
+    }
+    return null;
+  }
+
+  /**
    * Computes period spending summary, savings rate, and top category
    * GET /api/spending/summary
    */

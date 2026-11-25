@@ -24,6 +24,13 @@ router.get(
   SpendingController.getDistribution
 );
 
+// 2b. Development-Only Demo Spending Data Regeneration
+router.post(
+  '/demo/regenerate',
+  requireAuth,
+  SpendingController.regenerateDemoData
+);
+
 // 3. Top-Level Spending & Savings Financial Summary
 router.get(
   '/summary',

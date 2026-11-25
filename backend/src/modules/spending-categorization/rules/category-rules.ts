@@ -114,9 +114,27 @@ export const SPENDING_CATEGORIES: Record<SpendingCategory, SpendingCategoryConfi
     displayName: 'Insurance & Policies',
     description: 'Life insurance, health cover, motor vehicle insurance premiums',
     icon: 'Shield',
-    chartColor: '#077A7D', // brand-teal
+    chartColor: '#0E7490', // blue-grey / cyan-700
     isActive: true,
     displayOrder: 13,
+  },
+  ENTERTAINMENT: {
+    id: 'ENTERTAINMENT',
+    displayName: 'Entertainment & Gaming',
+    description: 'Gaming, streaming, theme parks, hobby and digital entertainment',
+    icon: 'Gamepad2',
+    chartColor: '#D946EF', // fuchsia-500
+    isActive: true,
+    displayOrder: 14,
+  },
+  TRAVEL: {
+    id: 'TRAVEL',
+    displayName: 'Travel & Lodging',
+    description: 'Airlines, railway, hotel bookings, homestays, and tour packages',
+    icon: 'Plane',
+    chartColor: '#F59E0B', // amber-500
+    isActive: true,
+    displayOrder: 15,
   },
   MISCELLANEOUS: {
     id: 'MISCELLANEOUS',
@@ -125,7 +143,7 @@ export const SPENDING_CATEGORIES: Record<SpendingCategory, SpendingCategoryConfi
     icon: 'HelpCircle',
     chartColor: '#64748B', // slate-500
     isActive: true,
-    displayOrder: 14,
+    displayOrder: 16,
   },
 };
 

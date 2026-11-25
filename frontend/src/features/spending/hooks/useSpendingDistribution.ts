@@ -25,11 +25,15 @@ export interface UseSpendingDistributionReturn {
   selectedCategory: string | null;
   setSelectedCategory: (categoryName: string | null) => void;
   activeSlice: SpendingChartSlice | null;
+  isDemo: boolean;
+  dataSource: 'DEMO_DATA' | 'REAL_TRANSACTION_DATA';
   refetch: () => Promise<void>;
+  regenerateDemoData: () => Promise<void>;
 }
 
 /**
  * Custom hook to manage fetching and interactive state of the spending distribution donut chart
+ * Seamlessly handles transition between DEMO_DATA and REAL_TRANSACTION_DATA
  */
 export function useSpendingDistribution(
   initialPeriod: PeriodFilter = 'THIS_MONTH'
@@ -40,6 +44,8 @@ export function useSpendingDistribution(
   const [error, setError] = useState<string | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<'DEMO_DATA' | 'REAL_TRANSACTION_DATA'>('REAL_TRANSACTION_DATA');
 
   const fetchDistribution = useCallback(async (currentPeriod: PeriodFilter) => {
     setLoading(true);
@@ -59,6 +65,8 @@ export function useSpendingDistribution(
       ) {
         const computedSlices = calculateDonutSlices(backendDist.categories);
         setSlices(computedSlices);
+        setIsDemo(Boolean(backendDist.isDemo));
+        setDataSource(backendDist.dataSource || (backendDist.isDemo ? 'DEMO_DATA' : 'REAL_TRANSACTION_DATA'));
         setLoading(false);
         return;
       }
@@ -106,6 +114,8 @@ export function useSpendingDistribution(
 
           const computedSlices = calculateDonutSlices(mockBackendItems);
           setSlices(computedSlices);
+          setIsDemo(true);
+          setDataSource('DEMO_DATA');
           setLoading(false);
           return;
         }
@@ -113,6 +123,7 @@ export function useSpendingDistribution(
 
       // 3. No eligible spending for this period -> Empty state
       setSlices([]);
+      setIsDemo(false);
     } catch {
       setError('Unable to load spending distribution. Please try again.');
       setSlices([]);
@@ -135,6 +146,29 @@ export function useSpendingDistribution(
     await fetchDistribution(period);
   }, [fetchDistribution, period]);
 
+  const regenerateDemoData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setSelectedCategory(null);
+    setHoveredCategory(null);
+
+    try {
+      const regenerated = await SpendingApi.regenerateDemoData(period);
+      if (regenerated && regenerated.categories && regenerated.categories.length > 0) {
+        const computedSlices = calculateDonutSlices(regenerated.categories);
+        setSlices(computedSlices);
+        setIsDemo(true);
+        setDataSource('DEMO_DATA');
+      } else {
+        await fetchDistribution(period);
+      }
+    } catch {
+      setError('Failed to regenerate demo spending data.');
+    } finally {
+      setLoading(false);
+    }
+  }, [period, fetchDistribution]);
+
   return {
     period,
     setPeriod,
@@ -146,6 +180,9 @@ export function useSpendingDistribution(
     selectedCategory,
     setSelectedCategory,
     activeSlice,
+    isDemo,
+    dataSource,
     refetch,
+    regenerateDemoData,
   };
 }

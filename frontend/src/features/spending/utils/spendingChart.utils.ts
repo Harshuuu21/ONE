@@ -143,6 +143,24 @@ export const SPENDING_CATEGORY_CONFIGS: Record<SpendingCategory, SpendingCategor
     iconName: 'Shield',
     bgClass: 'bg-cyan-700/10 text-cyan-300 border-cyan-700/20',
   },
+  ENTERTAINMENT: {
+    id: 'ENTERTAINMENT',
+    name: 'Entertainment',
+    color: '#D946EF', // Fuchsia
+    hoverColor: '#E879F9',
+    glowColor: 'rgba(217, 70, 239, 0.5)',
+    iconName: 'Gamepad2',
+    bgClass: 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20',
+  },
+  TRAVEL: {
+    id: 'TRAVEL',
+    name: 'Travel',
+    color: '#F59E0B', // Amber
+    hoverColor: '#FBBF24',
+    glowColor: 'rgba(245, 158, 11, 0.5)',
+    iconName: 'Plane',
+    bgClass: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  },
   MISCELLANEOUS: {
     id: 'MISCELLANEOUS',
     name: 'Miscellaneous',
@@ -250,6 +268,18 @@ export function mapRawCategory(rawCategory?: string): SpendingCategory {
     case 'PREMIUM':
       return 'INSURANCE';
 
+    case 'ENTERTAINMENT':
+    case 'GAMING':
+    case 'THEMEPARK':
+      return 'ENTERTAINMENT';
+
+    case 'TRAVEL':
+    case 'FLIGHT':
+    case 'HOTEL':
+    case 'HOLIDAY':
+    case 'TRIP':
+      return 'TRAVEL';
+
     case 'MISCELLANEOUS':
     default:
       return 'MISCELLANEOUS';
@@ -265,7 +295,7 @@ export function calculateDonutSlices(
 ): SpendingChartSlice[] {
   if (!backendCategories || backendCategories.length === 0) return [];
 
-  // 1. Group net spend and transaction counts across all 14 categories
+  // 1. Group net spend and transaction counts across all 16 categories
   const aggregated: Record<SpendingCategory, { netSpend: number; count: number }> = {
     INVESTMENT: { netSpend: 0, count: 0 },
     MEDICINE: { netSpend: 0, count: 0 },
@@ -280,6 +310,8 @@ export function calculateDonutSlices(
     EDUCATION: { netSpend: 0, count: 0 },
     RENT: { netSpend: 0, count: 0 },
     INSURANCE: { netSpend: 0, count: 0 },
+    ENTERTAINMENT: { netSpend: 0, count: 0 },
+    TRAVEL: { netSpend: 0, count: 0 },
     MISCELLANEOUS: { netSpend: 0, count: 0 },
   };
 

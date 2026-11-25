@@ -15,6 +15,8 @@ import {
   GraduationCap,
   Home,
   Shield,
+  Gamepad2,
+  Plane,
   HelpCircle,
 } from 'lucide-react';
 import { SpendingChartSlice } from '../types/spending.types';
@@ -33,6 +35,8 @@ const ICONS_MAP: Record<string, React.ElementType> = {
   GraduationCap,
   Home,
   Shield,
+  Gamepad2,
+  Plane,
   HelpCircle,
 };
 

@@ -64,8 +64,8 @@ export function AuthenticationFlow({ initialStep = 'MOBILE_INPUT' }: Authenticat
     setVerifiedResponse(result);
 
     if (result.isNewUser) {
-      // New User Flow: Redirect to Financial Identity Onboarding Wizard
-      router.push('/onboarding');
+      // Occupation-based personalization removed completely: proceed directly to Dashboard
+      router.push('/dashboard');
       return;
     }
 

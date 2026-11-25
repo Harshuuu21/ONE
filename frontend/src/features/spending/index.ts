@@ -9,4 +9,5 @@ export * from './components/SpendingCategoryLegend';
 export * from './components/SpendingPeriodSelector';
 export * from './components/SpendingEmptyState';
 export * from './components/SpendingLoadingState';
+export * from './components/SpendingDemoLabel';
 export * from './components/TransactionCategoryEditor';
