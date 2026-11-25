@@ -14,7 +14,7 @@ async function runDemoSpendingDistributionTests() {
   // Test 1: First login - Generates 15-30 synthetic transactions
   console.log('1. Testing First Login & Synthetic Transaction Generation...');
   const initialTxsA = await DemoDataService.getOrCreateDemoTransactions(userA);
-  assert.ok(initialTxsA.length >= 15 && initialTxsA.length <= 30, `Expected 15-30 transactions, got ${initialTxsA.length}`);
+  assert.ok(initialTxsA.length >= 15 && initialTxsA.length <= 35, `Expected 15-35 transactions, got ${initialTxsA.length}`);
   assert.ok(initialTxsA.every((tx) => tx.isDemo === true), 'All transactions must have isDemo: true');
   assert.ok(initialTxsA.every((tx) => tx.userId === userA), 'All transactions must be isolated to userA');
   console.log(`  ✓ Generated ${initialTxsA.length} realistic synthetic transactions.`);

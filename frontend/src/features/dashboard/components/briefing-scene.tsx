@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { ArrowUpRight, TrendingUp, AlertCircle, Trophy } from 'lucide-react'
-import { briefing, insights, currency, goals, conversations, trip } from '@/lib/one-data'
+import { briefing, insights, goals, conversations, trip } from '@/lib/one-data'
 import { OneOrb } from '@/components/common/one-mark'
 import { SceneHeader } from '@/components/common/scene-header'
 
 import { useAuth } from '@/hooks/useAuth'
-import { useBankAccounts } from '@/features/bank-accounts'
 import { useDemoData } from '@/hooks/useDemoData'
 import { DemoDataBanner } from '@/components/demo-data/DemoDataBanner'
 import { SpendingDistribution } from '@/features/spending'
@@ -42,7 +41,6 @@ function getTimeGreeting() {
 
 export function BriefingScene() {
   const { user } = useAuth()
-  const { linkedAccounts, totalBalance } = useBankAccounts()
   const { summary, isResetting, resetDemoData } = useDemoData()
   const [timeContext, setTimeContext] = useState(getTimeGreeting)
 
@@ -57,15 +55,41 @@ export function BriefingScene() {
   const displayName = user?.firstName || 'Maya'
   const greeting = `${timeContext.salutation}, ${displayName}`
 
-  const displaySafeToSpend = linkedAccounts.length > 0
-    ? Math.round(totalBalance * 0.05) // Safe 5% liquid threshold
-    : summary?.financials?.closingBalance
-    ? Math.round(summary.financials.closingBalance * 0.08)
-    : briefing.safeToSpend
+  // Dynamic Percentage Improvement Calculation:
+  // Formula: Percentage Improvement = (Current Improvement / Previous Month Baseline) * 100
+  // No currency display, handles positive, negative, and neutral comparisons dynamically.
+  const calculateHeadlineText = () => {
+    if (summary?.financials) {
+      const currentImprovement = summary.financials.netSavings
+      const previousMonthBaseline = summary.financials.initialBalance
 
-  const headlineText = summary
-    ? `You're ₹${Math.abs(summary.financials.netSavings).toLocaleString('en-IN')} ahead of where you were last month.`
-    : briefing.headline
+      if (previousMonthBaseline && previousMonthBaseline > 0) {
+        const percentage = Math.round((Math.abs(currentImprovement) / previousMonthBaseline) * 100)
+        if (currentImprovement > 0 && percentage > 0) {
+          return `You're ${percentage}% ahead of where you were last month.`
+        }
+        if (currentImprovement < 0 && percentage > 0) {
+          return `You're ${percentage}% behind where you were last month.`
+        }
+        return `You're on track with where you were last month.`
+      }
+
+      // Graceful fallback when baseline is zero or unavailable
+      if (summary.financials.savingsRatePercentage && summary.financials.savingsRatePercentage > 0) {
+        const percentage = Math.round(summary.financials.savingsRatePercentage)
+        return `You're ${percentage}% ahead of where you were last month.`
+      }
+
+      return `You're on track with where you were last month.`
+    }
+
+    const fallbackPct = briefing.momentum
+      ? Math.round(briefing.momentum <= 1 ? (briefing.momentum > 0.5 ? 18 : briefing.momentum * 100) : briefing.momentum)
+      : 18
+    return `You're ${fallbackPct}% ahead of where you were last month.`
+  }
+
+  const headlineText = calculateHeadlineText()
 
   const summaryText = summary
     ? `Spending settled across ${summary.metrics.transactionsCount} transactions with steady pacing. Your ${summary.goals[0]?.title || 'top savings goal'} is at ${summary.goals[0]?.progressPercentage || 50}% progress.`
@@ -112,39 +136,8 @@ export function BriefingScene() {
         </div>
       </div>
 
-      {/* safe to spend */}
-      <div className="mt-4 grid gap-4 sm:grid-cols-[1.2fr_1fr]">
-        <div className="rounded-3xl border border-border bg-card p-6">
-          <p className="text-sm text-muted-foreground">Safe to spend today</p>
-          <p className="mt-1 font-serif text-4xl font-medium tracking-tight">
-            {currency(displaySafeToSpend)}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {linkedAccounts.length > 0
-              ? `Calculated from ₹${totalBalance.toLocaleString('en-IN')} across ${linkedAccounts.length} linked accounts`
-              : summary
-              ? `Reconciled from ₹${summary.financials.closingBalance.toLocaleString('en-IN')} closing balance`
-              : briefing.safeToSpendNote}
-          </p>
-        </div>
-        <div className="flex flex-col justify-center rounded-3xl border border-border bg-card p-6">
-          <p className="text-sm text-muted-foreground">This month&apos;s momentum</p>
-          <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
-            <motion.div
-              className="h-full rounded-full bg-primary"
-              initial={{ width: 0 }}
-              animate={{ width: `${(summary?.financials?.savingsRatePercentage || briefing.momentum * 100)}%` }}
-              transition={{ duration: 1.1, ease: 'easeOut' }}
-            />
-          </div>
-          <p className="mt-2 text-sm font-medium text-primary">
-            {summary ? `${summary.financials.savingsRatePercentage}% Savings Rate` : 'Strong and steady'}
-          </p>
-        </div>
-      </div>
-
       {/* Spending Distribution Donut Chart & Category Intelligence */}
-      <div className="mt-8">
+      <div className="mt-6 md:mt-8">
         <SpendingDistribution />
       </div>
 
