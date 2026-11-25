@@ -33,12 +33,12 @@ export interface DemoTransactionRecord {
  * Generates realistic synthetic transaction records spanning different date windows:
  * - This Week (0-6 days ago)
  * - This Month (7-25 days ago)
- * - Last Month (30-55 days ago)
+ * - Last Month (28-55 days ago)
  * - Last 3 Months (60-85 days ago)
  * - This Year (90-180 days ago)
  *
- * Designed to ensure that changing the period filter produces noticeably different
- * dynamic category distributions with 8-12 active categories initially and all 16 across the year.
+ * Balanced amounts ensure 8-12 colorful, distinct categories are displayed in the initial
+ * distribution rather than one single category dominating with 90%+.
  */
 export class DemoTransactionGenerator {
   private static readonly TEMPLATES: SyntheticTransactionTemplate[] = [
@@ -46,7 +46,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Swiggy Dinner Order',
       merchant: 'Swiggy',
-      amount: 420,
+      amount: 580,
       category: 'FOOD',
       paymentMethod: 'UPI',
       daysAgo: 1,
@@ -55,7 +55,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Quick Kirana Delivery',
       merchant: 'Blinkit',
-      amount: 680,
+      amount: 640,
       category: 'GROCERIES',
       paymentMethod: 'UPI',
       daysAgo: 2,
@@ -64,7 +64,7 @@ export class DemoTransactionGenerator {
     {
       title: 'City Commute Cab',
       merchant: 'Uber',
-      amount: 340,
+      amount: 320,
       category: 'TRANSPORT',
       paymentMethod: 'UPI',
       daysAgo: 2,
@@ -73,7 +73,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Fuel Station Refill',
       merchant: 'Indian Oil',
-      amount: 1500,
+      amount: 1400,
       category: 'PETROL',
       paymentMethod: 'CARD',
       daysAgo: 3,
@@ -82,25 +82,25 @@ export class DemoTransactionGenerator {
     {
       title: 'Pharmacy Health Supplies',
       merchant: 'Apollo Pharmacy',
-      amount: 620,
+      amount: 650,
       category: 'MEDICINE',
       paymentMethod: 'UPI',
-      daysAgo: 4,
+      daysAgo: 3,
       note: 'First aid and multivitamins',
     },
     {
       title: 'Weekend Cinema Tickets',
       merchant: 'PVR Cinemas',
-      amount: 850,
+      amount: 780,
       category: 'OUTING',
       paymentMethod: 'CARD',
-      daysAgo: 5,
+      daysAgo: 4,
       note: 'IMAX movie screening',
     },
     {
       title: 'Artisan Cafe Coffee',
       merchant: 'Blue Tokai Cafe',
-      amount: 280,
+      amount: 340,
       category: 'FOOD',
       paymentMethod: 'UPI',
       daysAgo: 5,
@@ -109,7 +109,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Online Fashion Purchase',
       merchant: 'Amazon Retail',
-      amount: 1650,
+      amount: 1450,
       category: 'SHOPPING',
       paymentMethod: 'CARD',
       daysAgo: 6,
@@ -118,49 +118,58 @@ export class DemoTransactionGenerator {
 
     // --- EARLIER THIS MONTH (7-25 days ago) ---
     {
-      title: 'Apartment Monthly Rent',
+      title: 'Apartment Maintenance Dues',
       merchant: 'Prestige Housing',
-      amount: 18500,
+      amount: 2200,
       category: 'RENT',
       paymentMethod: 'BANK_TRANSFER',
       daysAgo: 8,
-      note: 'Monthly residence lease payment',
+      note: 'Monthly residence society maintenance fee',
+    },
+    {
+      title: 'Supermarket Weekly Staples',
+      merchant: "Nature's Basket",
+      amount: 1850,
+      category: 'GROCERIES',
+      paymentMethod: 'CARD',
+      daysAgo: 10,
+      note: 'Organic groceries and pantry refill',
+    },
+    {
+      title: 'Family Lunch at Cafe',
+      merchant: 'Smoke House Deli',
+      amount: 1650,
+      category: 'FOOD',
+      paymentMethod: 'CARD',
+      daysAgo: 11,
+      note: 'Weekend family lunch',
     },
     {
       title: 'Mutual Fund SIP Contribution',
       merchant: 'Zerodha Coin',
-      amount: 5000,
+      amount: 2500,
       category: 'INVESTMENT',
       paymentMethod: 'BANK_TRANSFER',
-      daysAgo: 10,
+      daysAgo: 12,
       note: 'Monthly Nifty 50 Index SIP',
     },
     {
-      title: 'Supermarket Weekly Pantry',
-      merchant: "Nature's Basket",
-      amount: 2450,
-      category: 'GROCERIES',
-      paymentMethod: 'CARD',
-      daysAgo: 12,
-      note: 'Organic groceries and staples',
+      title: 'Fiber Internet Subscription',
+      merchant: 'Airtel Fiber',
+      amount: 999,
+      category: 'BILLS_UTILITIES',
+      paymentMethod: 'UPI',
+      daysAgo: 14,
+      note: 'High-speed broadband plan',
     },
     {
       title: 'Electricity Utility Bill',
       merchant: 'BESCOM Power',
-      amount: 1780,
-      category: 'BILLS_UTILITIES',
-      paymentMethod: 'UPI',
-      daysAgo: 14,
-      note: 'Monthly electricity bill',
-    },
-    {
-      title: 'Fiber Internet Subscription',
-      merchant: 'JioFiber',
-      amount: 999,
+      amount: 1250,
       category: 'BILLS_UTILITIES',
       paymentMethod: 'UPI',
       daysAgo: 15,
-      note: 'High-speed broadband plan',
+      note: 'Monthly electricity bill',
     },
     {
       title: 'Digital Music Streaming',
@@ -172,56 +181,65 @@ export class DemoTransactionGenerator {
       note: 'Individual monthly recurring',
     },
     {
-      title: 'Arcade Gaming Zone',
-      merchant: 'Smaaash Entertainment',
-      amount: 1100,
-      category: 'ENTERTAINMENT',
-      paymentMethod: 'CARD',
-      daysAgo: 18,
-      note: 'Bowling and VR gaming credits',
-    },
-    {
       title: 'Apparel Store Shopping',
       merchant: 'Uniqlo India',
-      amount: 2990,
+      amount: 2190,
       category: 'SHOPPING',
       paymentMethod: 'CARD',
-      daysAgo: 21,
-      note: 'Winter jackets and thermal wear',
+      daysAgo: 18,
+      note: 'Linen trousers and shirts',
+    },
+    {
+      title: 'Arcade Gaming Zone',
+      merchant: 'Smaaash Entertainment',
+      amount: 950,
+      category: 'ENTERTAINMENT',
+      paymentMethod: 'CARD',
+      daysAgo: 20,
+      note: 'Bowling and VR gaming credits',
     },
     {
       title: 'Highway Fuel Station',
       merchant: 'Shell Petrol Pump',
-      amount: 1800,
+      amount: 1200,
       category: 'PETROL',
       paymentMethod: 'CARD',
-      daysAgo: 24,
+      daysAgo: 22,
       note: 'V-Power petrol tank refill',
     },
-
-    // --- LAST MONTH (30-55 days ago) ---
     {
-      title: 'Apartment Monthly Rent',
-      merchant: 'Prestige Housing',
-      amount: 18500,
-      category: 'RENT',
-      paymentMethod: 'BANK_TRANSFER',
-      daysAgo: 38,
-      note: 'Previous month residence rent',
+      title: 'Organic Food Delivery',
+      merchant: 'Zomato Dining',
+      amount: 880,
+      category: 'FOOD',
+      paymentMethod: 'CARD',
+      daysAgo: 24,
+      note: 'Salad and healthy dinner bowl',
     },
+
+    // --- LAST MONTH (28-55 days ago) ---
     {
-      title: 'Family Weekend Resort Stay',
+      title: 'Weekend Boutique Resort Stay',
       merchant: 'MakeMyTrip Hotels',
-      amount: 7200,
+      amount: 3800,
       category: 'TRAVEL',
       paymentMethod: 'CARD',
-      daysAgo: 40,
+      daysAgo: 34,
       note: 'Hill station boutique resort booking',
     },
     {
-      title: 'Health Insurance Annual Premium',
+      title: 'Apartment Maintenance Dues',
+      merchant: 'Prestige Housing',
+      amount: 2200,
+      category: 'RENT',
+      paymentMethod: 'BANK_TRANSFER',
+      daysAgo: 38,
+      note: 'Previous month residence dues',
+    },
+    {
+      title: 'Health Insurance Premium',
       merchant: 'HDFC ERGO Health',
-      amount: 4800,
+      amount: 2400,
       category: 'INSURANCE',
       paymentMethod: 'BANK_TRANSFER',
       daysAgo: 42,
@@ -230,7 +248,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Data Science Online Course',
       merchant: 'Coursera Inc',
-      amount: 3200,
+      amount: 1800,
       category: 'EDUCATION',
       paymentMethod: 'CARD',
       daysAgo: 45,
@@ -239,7 +257,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Fine Dining Restaurant',
       merchant: 'Punjab Grill',
-      amount: 2100,
+      amount: 2200,
       category: 'FOOD',
       paymentMethod: 'CARD',
       daysAgo: 48,
@@ -254,39 +272,30 @@ export class DemoTransactionGenerator {
       daysAgo: 50,
       note: '4K Premium plan auto debit',
     },
-    {
-      title: 'PC Gaming Library Purchase',
-      merchant: 'Steam Games',
-      amount: 1450,
-      category: 'ENTERTAINMENT',
-      paymentMethod: 'CARD',
-      daysAgo: 53,
-      note: 'Multiplayer adventure bundle',
-    },
 
     // --- LAST 3 MONTHS (60-85 days ago) ---
     {
       title: 'Domestic Flight Tickets',
       merchant: 'IndiGo Airlines',
-      amount: 6400,
+      amount: 4500,
       category: 'TRAVEL',
       paymentMethod: 'CARD',
-      daysAgo: 68,
+      daysAgo: 65,
       note: 'Roundtrip vacation flight',
     },
     {
       title: 'Equity Index Lump Sum',
       merchant: 'Groww Investments',
-      amount: 7500,
+      amount: 3000,
       category: 'INVESTMENT',
       paymentMethod: 'BANK_TRANSFER',
-      daysAgo: 74,
+      daysAgo: 72,
       note: 'Tax saver ELSS allocation',
     },
     {
       title: 'Diagnostic Health Checkup',
       merchant: 'Dr Lal PathLabs',
-      amount: 1450,
+      amount: 1200,
       category: 'MEDICINE',
       paymentMethod: 'UPI',
       daysAgo: 78,
@@ -295,7 +304,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Technical Certification Books',
       merchant: 'Amazon Books',
-      amount: 1850,
+      amount: 1100,
       category: 'EDUCATION',
       paymentMethod: 'CARD',
       daysAgo: 82,
@@ -306,7 +315,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Home Deep Cleaning Service',
       merchant: 'Urban Company',
-      amount: 1400,
+      amount: 980,
       category: 'MISCELLANEOUS',
       paymentMethod: 'UPI',
       daysAgo: 110,
@@ -315,7 +324,7 @@ export class DemoTransactionGenerator {
     {
       title: 'Vehicle Insurance Renewal',
       merchant: 'ICICI Lombard',
-      amount: 3800,
+      amount: 2600,
       category: 'INSURANCE',
       paymentMethod: 'BANK_TRANSFER',
       daysAgo: 140,
@@ -331,8 +340,8 @@ export class DemoTransactionGenerator {
     const records: DemoTransactionRecord[] = [];
 
     this.TEMPLATES.forEach((tpl, idx) => {
-      // Calculate realistic date with slight jitter for natural time-of-day
-      const dateMs = now - tpl.daysAgo * 86400000 + (idx % 8) * 3600000;
+      const jitterMs = (idx * 7) % 24 * 3600000;
+      const dateMs = now - tpl.daysAgo * 86400000 - jitterMs;
       const txDate = new Date(dateMs);
 
       records.push({

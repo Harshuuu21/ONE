@@ -4,6 +4,32 @@ import { ENV } from '../config/env.js';
 import { UnauthorizedError } from '../shared/errors/index.js';
 import { AuthenticatedRequest, AuthUser } from '../shared/types/index.js';
 
+export const optionalAuth = (
+  req: AuthenticatedRequest,
+  _res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const payload = jwt.verify(token, ENV.JWT_SECRET) as AuthUser;
+      req.user = payload;
+      return next();
+    } catch {
+      // Fall through to demo user context
+    }
+  }
+
+  req.user = {
+    id: 'demo-user',
+    email: 'demo@one.ai',
+    role: 'USER',
+  };
+  next();
+};
+
 export const requireAuth = (
   req: AuthenticatedRequest,
   _res: Response,
@@ -25,4 +51,5 @@ export const requireAuth = (
     next(new UnauthorizedError('Invalid or expired authentication token'));
   }
 };
+
 

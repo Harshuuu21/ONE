@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middleware/authMiddleware.js';
+import { requireAuth, optionalAuth } from '../../middleware/authMiddleware.js';
 import { validateRequest } from '../../middleware/validateRequest.js';
 import { SpendingController } from './controllers/spending.controller.js';
 import {
@@ -19,7 +19,7 @@ router.get('/categories', SpendingController.listCategories);
 // 2. Spending Analytics Distribution & Visual Breakdown
 router.get(
   '/distribution',
-  requireAuth,
+  optionalAuth,
   validateRequest(spendingDistributionSchema),
   SpendingController.getDistribution
 );
@@ -27,7 +27,7 @@ router.get(
 // 2b. Development-Only Demo Spending Data Regeneration
 router.post(
   '/demo/regenerate',
-  requireAuth,
+  optionalAuth,
   SpendingController.regenerateDemoData
 );
 

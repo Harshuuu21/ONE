@@ -7,12 +7,15 @@ import {
   SpendingChartSlice,
 } from '../types/spending.types';
 import { SpendingApi } from '../services/spendingApi';
-import { DemoDataService } from '@/services/demoDataService';
 import {
   calculateDonutSlices,
   getPeriodDateRange,
   mapRawCategory,
 } from '../utils/spendingChart.utils';
+import {
+  getOrCreateFrontendDemoTransactions,
+  regenerateFrontendDemoTransactions,
+} from '../utils/spendingDemoData';
 
 export interface UseSpendingDistributionReturn {
   period: PeriodFilter;
@@ -33,7 +36,7 @@ export interface UseSpendingDistributionReturn {
 
 /**
  * Custom hook to manage fetching and interactive state of the spending distribution donut chart
- * Seamlessly handles transition between DEMO_DATA and REAL_TRANSACTION_DATA
+ * Ensures realistic 8-12 balanced category distribution across all periods.
  */
 export function useSpendingDistribution(
   initialPeriod: PeriodFilter = 'THIS_MONTH'
@@ -44,93 +47,95 @@ export function useSpendingDistribution(
   const [error, setError] = useState<string | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [isDemo, setIsDemo] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<'DEMO_DATA' | 'REAL_TRANSACTION_DATA'>('REAL_TRANSACTION_DATA');
+  const [isDemo, setIsDemo] = useState<boolean>(true);
+  const [dataSource, setDataSource] = useState<'DEMO_DATA' | 'REAL_TRANSACTION_DATA'>('DEMO_DATA');
 
-  const fetchDistribution = useCallback(async (currentPeriod: PeriodFilter) => {
-    setLoading(true);
-    setError(null);
-    setSelectedCategory(null);
-    setHoveredCategory(null);
+  const computeFromLocalDemo = useCallback((selectedPeriod: PeriodFilter) => {
+    const rawTxs = getOrCreateFrontendDemoTransactions();
+    const { start, end } = getPeriodDateRange(selectedPeriod);
+    const startMs = start.getTime();
+    const endMs = end.getTime();
 
-    try {
-      // 1. Fetch from live Backend API: GET /api/spending/distribution
-      const backendDist = await SpendingApi.getDistribution(currentPeriod);
+    // Filter transactions falling strictly within the selected period
+    const filteredTxs = rawTxs.filter((tx) => {
+      const txMs = new Date(tx.date).getTime();
+      return txMs >= startMs && txMs <= endMs;
+    });
 
-      if (
-        backendDist &&
-        backendDist.categories &&
-        backendDist.categories.length > 0 &&
-        backendDist.totalNetSpend > 0
-      ) {
-        const computedSlices = calculateDonutSlices(backendDist.categories);
-        setSlices(computedSlices);
-        setIsDemo(Boolean(backendDist.isDemo));
-        setDataSource(backendDist.dataSource || (backendDist.isDemo ? 'DEMO_DATA' : 'REAL_TRANSACTION_DATA'));
-        setLoading(false);
-        return;
+    if (filteredTxs.length > 0) {
+      const categoryTotals: Record<string, { net: number; count: number }> = {};
+      for (const tx of filteredTxs) {
+        const cat = mapRawCategory(tx.category);
+        if (!categoryTotals[cat]) categoryTotals[cat] = { net: 0, count: 0 };
+        categoryTotals[cat].net += Math.abs(Number(tx.amount));
+        categoryTotals[cat].count += 1;
       }
 
-      // 2. Fallback to Demo Data environment if backend has no recorded transactions yet
-      const demoSummary = await DemoDataService.getSummary();
-      if (
-        demoSummary &&
-        demoSummary.recentTransactions &&
-        demoSummary.recentTransactions.length > 0
-      ) {
-        const { start, end } = getPeriodDateRange(currentPeriod);
+      const mockItems: CategorySpendingItem[] = Object.entries(categoryTotals).map(
+        ([catId, data]) => ({
+          categoryId: catId as any,
+          displayName: catId,
+          icon: 'Tag',
+          chartColor: '#14B8A6',
+          grossSpend: data.net,
+          refunds: 0,
+          netSpend: data.net,
+          percentage: 0,
+          transactionCount: data.count,
+        })
+      );
 
-        // Filter transactions for period: only completed expenses
-        const periodTxs = demoSummary.recentTransactions.filter((tx) => {
-          if (tx.type !== 'EXPENSE' || tx.status !== 'COMPLETED') return false;
-          const d = new Date(tx.date).getTime();
-          return d >= start.getTime() && d <= end.getTime();
-        });
+      const computed = calculateDonutSlices(mockItems);
+      setSlices(computed);
+      setIsDemo(true);
+      setDataSource('DEMO_DATA');
+      return true;
+    }
 
-        if (periodTxs.length > 0) {
-          // Group by category to build CategorySpendingItems
-          const categoryTotals: Record<string, { net: number; count: number }> = {};
-          for (const tx of periodTxs) {
-            const rawCat = tx.category || 'MISCELLANEOUS';
-            const cat = mapRawCategory(rawCat);
-            if (!categoryTotals[cat]) categoryTotals[cat] = { net: 0, count: 0 };
-            categoryTotals[cat].net += Math.abs(Number(tx.amount));
-            categoryTotals[cat].count += 1;
-          }
+    setSlices([]);
+    return false;
+  }, []);
 
-          const mockBackendItems: CategorySpendingItem[] = Object.entries(categoryTotals).map(
-            ([catId, data]) => ({
-              categoryId: catId as any,
-              displayName: catId,
-              icon: 'Tag',
-              chartColor: '#14B8A6',
-              grossSpend: data.net,
-              refunds: 0,
-              netSpend: data.net,
-              percentage: 0,
-              transactionCount: data.count,
-            })
-          );
+  const fetchDistribution = useCallback(
+    async (currentPeriod: PeriodFilter) => {
+      setLoading(true);
+      setError(null);
+      setSelectedCategory(null);
+      setHoveredCategory(null);
 
-          const computedSlices = calculateDonutSlices(mockBackendItems);
+      try {
+        // 1. Fetch from live Backend API: GET /api/spending/distribution
+        const backendDist = await SpendingApi.getDistribution(currentPeriod);
+
+        // If backend returned meaningful distribution with at least 4 active categories, use it
+        if (
+          backendDist &&
+          backendDist.categories &&
+          backendDist.categories.filter((c) => c.netSpend > 0).length >= 4 &&
+          backendDist.totalNetSpend > 0
+        ) {
+          const computedSlices = calculateDonutSlices(backendDist.categories);
           setSlices(computedSlices);
-          setIsDemo(true);
-          setDataSource('DEMO_DATA');
+          setIsDemo(Boolean(backendDist.isDemo));
+          setDataSource(
+            backendDist.dataSource ||
+              (backendDist.isDemo ? 'DEMO_DATA' : 'REAL_TRANSACTION_DATA')
+          );
           setLoading(false);
           return;
         }
-      }
 
-      // 3. No eligible spending for this period -> Empty state
-      setSlices([]);
-      setIsDemo(false);
-    } catch {
-      setError('Unable to load spending distribution. Please try again.');
-      setSlices([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        // 2. Fall back to local synthetic demo dataset (8-12 balanced categories)
+        computeFromLocalDemo(currentPeriod);
+      } catch {
+        // 3. Network or server error fallback
+        computeFromLocalDemo(currentPeriod);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [computeFromLocalDemo]
+  );
 
   useEffect(() => {
     fetchDistribution(period);
@@ -153,21 +158,23 @@ export function useSpendingDistribution(
     setHoveredCategory(null);
 
     try {
-      const regenerated = await SpendingApi.regenerateDemoData(period);
-      if (regenerated && regenerated.categories && regenerated.categories.length > 0) {
-        const computedSlices = calculateDonutSlices(regenerated.categories);
-        setSlices(computedSlices);
-        setIsDemo(true);
-        setDataSource('DEMO_DATA');
-      } else {
-        await fetchDistribution(period);
+      // Regenerate local dataset first for instant visual response
+      regenerateFrontendDemoTransactions();
+
+      // Also trigger backend regeneration
+      try {
+        await SpendingApi.regenerateDemoData(period);
+      } catch {
+        // Backend optional
       }
+
+      computeFromLocalDemo(period);
     } catch {
       setError('Failed to regenerate demo spending data.');
     } finally {
       setLoading(false);
     }
-  }, [period, fetchDistribution]);
+  }, [period, computeFromLocalDemo]);
 
   return {
     period,
