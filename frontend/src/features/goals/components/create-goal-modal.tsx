@@ -92,7 +92,7 @@ export function CreateGoalModal({
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">Target Amount ($)</label>
+                  <label className="text-xs font-medium text-muted-foreground">Target Amount (₹)</label>
                   <input 
                     type="number" 
                     placeholder="5000" 
@@ -103,7 +103,7 @@ export function CreateGoalModal({
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">Monthly Save ($)</label>
+                  <label className="text-xs font-medium text-muted-foreground">Monthly Save (₹)</label>
                   <input 
                     type="number" 
                     placeholder="250" 

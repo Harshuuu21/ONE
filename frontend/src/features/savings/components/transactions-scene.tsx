@@ -143,7 +143,7 @@ export function TransactionsScene() {
                 </div>
               </div>
               <p className={`font-serif text-lg font-medium ${tx.type === 'income' ? 'text-emerald-400' : 'text-foreground'}`}>
-                {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN')}
+                {tx.type === 'income' ? '+' : '-'}{currency(tx.amount)}
               </p>
             </div>
             {tx.aiInsight && (

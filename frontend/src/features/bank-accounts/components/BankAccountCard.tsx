@@ -3,6 +3,7 @@
 import React from 'react';
 import { Building2, ShieldCheck, MoreVertical, Trash2 } from 'lucide-react';
 import { LinkedBankAccount } from '../types';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface BankAccountCardProps {
   account: LinkedBankAccount;
@@ -57,7 +58,7 @@ export function BankAccountCard({ account, onDelink }: BankAccountCardProps) {
         <div>
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Balance</p>
           <p className="text-lg font-bold font-mono text-foreground">
-            ₹{Number(account.balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {formatCurrency(account.balance, { showDecimals: true })}
           </p>
         </div>
 

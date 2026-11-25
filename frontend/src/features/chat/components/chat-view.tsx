@@ -7,6 +7,7 @@ import { OneOrb } from '@/components/common/one-mark'
 import { SceneHeader } from '@/components/common/scene-header'
 import { useAuth } from '@/hooks/useAuth'
 import { useBankAccounts } from '@/features/bank-accounts'
+import { formatCurrency } from '@/lib/utils/currency'
 
 type Message = {
   id: string
@@ -27,7 +28,7 @@ const INITIAL_MESSAGES: Message[] = [
 const QUICK_PROMPTS = [
   'How much can I safely spend on dining this weekend?',
   'Am I still on track for my Tokyo trip next spring?',
-  'Can I afford to lend $200 in the community pool?',
+  'Can I afford to lend ₹200 in the community pool?',
   'Summarize my financial trajectory over the last 6 months',
 ]
 
@@ -55,13 +56,13 @@ export function ChatView() {
 
     // Dynamic AI response based on real accounts and user profile
     setTimeout(() => {
-      let replyContent = `I've analyzed your portfolio, ${user?.firstName || 'Harsh'}. You have ₹${totalBalance.toLocaleString('en-IN')} across ${linkedAccounts.length} linked accounts under active RBI Account Aggregator consent.`
+      let replyContent = `I've analyzed your portfolio, ${user?.firstName || 'Harsh'}. You have ${formatCurrency(totalBalance)} across ${linkedAccounts.length} linked accounts under active RBI Account Aggregator consent.`
       const lower = text.toLowerCase()
       if (lower.includes('balance') || lower.includes('bank') || lower.includes('account')) {
-        const bankSummary = linkedAccounts.map((a) => `${a.bankName} (${a.accountNumberMasked}): ₹${a.balance.toLocaleString('en-IN')}`).join(', ')
-        replyContent = `You have ${linkedAccounts.length} connected bank account(s) totaling ₹${totalBalance.toLocaleString('en-IN')}: ${bankSummary || 'No banks linked yet'}.`
+        const bankSummary = linkedAccounts.map((a) => `${a.bankName} (${a.accountNumberMasked}): ${formatCurrency(a.balance)}`).join(', ')
+        replyContent = `You have ${linkedAccounts.length} connected bank account(s) totaling ${formatCurrency(totalBalance)}: ${bankSummary || 'No banks linked yet'}.`
       } else if (lower.includes('dining') || lower.includes('spend')) {
-        replyContent = `Based on your recurring subscriptions and planned bills for this cycle, you have ₹${Math.round(totalBalance * 0.05).toLocaleString('en-IN')} in safe discretionary spend without dipping into your emergency buffer.`
+        replyContent = `Based on your recurring subscriptions and planned bills for this cycle, you have ${formatCurrency(Math.round(totalBalance * 0.05))} in safe discretionary spend without dipping into your emergency buffer.`
       } else if (lower.includes('tokyo') || lower.includes('trip')) {
         replyContent = "You're 54% funded for Tokyo and currently 3 weeks ahead of schedule. At your current pace, you'll hit your full target comfortably before departure."
       } else if (lower.includes('lend') || lower.includes('community')) {

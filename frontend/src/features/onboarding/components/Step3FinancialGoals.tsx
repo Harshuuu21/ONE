@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { GoalItem } from '../types';
+import { formatCurrency } from '@/lib/utils/currency';
 import { ShieldCheck, CreditCard, Laptop, Plane, TrendingUp, BookOpen, Clock, Check, Plus, Trash2 } from 'lucide-react';
 
 interface Props {
@@ -98,7 +99,7 @@ export function Step3FinancialGoals({ goals, onChange }: Props) {
                 <div>
                   <p className="text-xs font-medium text-white">{tpl.name}</p>
                   <p className="text-[11px] text-slate-400">
-                    Typical target: ₹{tpl.defaultTarget.toLocaleString('en-IN')}
+                    Typical target: {formatCurrency(tpl.defaultTarget)}
                   </p>
                 </div>
               </div>

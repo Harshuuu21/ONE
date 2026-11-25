@@ -4,6 +4,7 @@ import React from 'react';
 import { Building2, Plus, Wallet, RefreshCw } from 'lucide-react';
 import { LinkedBankAccount } from '../types';
 import { BankAccountCard } from './BankAccountCard';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface LinkedAccountsViewProps {
   accounts: LinkedBankAccount[];
@@ -59,7 +60,7 @@ export function LinkedAccountsView({
 
         <div>
           <div className="text-3xl md:text-4xl font-mono font-bold text-foreground tracking-tight">
-            ₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {formatCurrency(totalBalance, { showDecimals: true })}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Across {accounts.length} linked account{accounts.length === 1 ? '' : 's'} via Account Aggregator

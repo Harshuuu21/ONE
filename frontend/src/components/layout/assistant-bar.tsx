@@ -19,19 +19,19 @@ const SUGGESTIONS: Suggestion[] = [
     label: 'Am I on track for Japan?',
     go: 'goals',
     reply:
-      "Yes — you're 54% funded and actually 3 weeks ahead of schedule. At $420/month you'll hit your target by spring.",
+      "Yes — you're 54% funded and actually 3 weeks ahead of schedule. At ₹420/month you'll hit your target by spring.",
   },
   {
     label: 'Can I help someone today?',
     go: 'lending',
     reply:
-      'Daniel needs $170 more for tools on a new contract. His reputation is solid and his plan is realistic. A small amount goes a long way here.',
+      'Daniel needs ₹170 more for tools on a new contract. His reputation is solid and his plan is realistic. A small amount goes a long way here.',
   },
   {
     label: 'Show me how far I’ve come',
     go: 'journey',
     reply:
-      "Since 2023 your net worth grew 81% — from $21,200 to $38,400. More importantly, you've kept showing up. That's the real story.",
+      "Since 2023 your net worth grew 81% — from ₹21,200 to ₹38,400. More importantly, you've kept showing up. That's the real story.",
   },
 ]
 

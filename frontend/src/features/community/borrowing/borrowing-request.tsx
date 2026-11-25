@@ -41,7 +41,7 @@ export function BorrowingRequest({ onSuccess }: { onSuccess?: () => void }) {
         </p>
       </div>
       <div className="space-y-2">
-        <label className="text-xs text-muted-foreground font-medium">Amount Needed ($)</label>
+        <label className="text-xs text-muted-foreground font-medium">Amount Needed (₹)</label>
         <input
           type="number"
           placeholder="e.g. 250"

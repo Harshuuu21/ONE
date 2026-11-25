@@ -33,15 +33,15 @@ export const insights: Insight[] = [
   {
     id: 'i1',
     kind: 'opportunity',
-    title: 'Move $200 to your Japan trip',
+    title: 'Move ₹200 to your Japan trip',
     body: 'You spent less on dining this week. Redirecting the difference keeps your trip 3 weeks ahead of schedule.',
-    action: 'Move $200',
+    action: 'Move ₹200',
   },
   {
     id: 'i2',
     kind: 'caution',
     title: 'A subscription you forgot',
-    body: 'Aurora Cloud charged $14.99 again. You have not opened it in 4 months. Want me to flag it?',
+    body: 'Aurora Cloud charged ₹14.99 again. You have not opened it in 4 months. Want me to flag it?',
     action: 'Review it',
   },
   {
@@ -248,9 +248,9 @@ export const trip = {
   budgetTier: 'mid-range',
   weather: { temp: 18, condition: 'Clear Sky' },
   breakdown: [
-    { label: 'Flights', planned: 2400, spent: 2400, tone: 'Booked early — you saved $310' },
+    { label: 'Flights', planned: 2400, spent: 2400, tone: 'Booked early — you saved ₹310' },
     { label: 'Stays', planned: 2100, spent: 0, tone: '12 nights across Tokyo & Kyoto' },
-    { label: 'Food', planned: 1400, spent: 0, tone: 'About $50/day each' },
+    { label: 'Food', planned: 1400, spent: 0, tone: 'About ₹50/day each' },
     { label: 'Trains & transit', planned: 900, spent: 0, tone: 'JR Pass included' },
     { label: 'Experiences', planned: 1000, spent: 0, tone: 'Room for the unplanned' },
   ],
@@ -282,7 +282,7 @@ export const journey = {
   ],
   milestones: [
     { year: '2023', title: 'Opened ONE', note: 'Started with a single goal and a lot of doubt.' },
-    { year: '2024', title: 'First $10k saved', note: 'The moment saving started to feel real.' },
+    { year: '2024', title: 'First ₹10k saved', note: 'The moment saving started to feel real.' },
     { year: '2024', title: 'Became a Trusted Lender', note: 'Backed three people. All repaid.' },
     { year: '2025', title: 'Funded a dream', note: 'Booked the trip you almost cancelled twice.' },
   ],
@@ -380,7 +380,7 @@ export type CalendarEvent = {
 export const calendarEvents: CalendarEvent[] = [
   { id: 'ce1', title: 'Japan Trip Starts', date: 'Apr 2', type: 'trip' },
   { id: 'ce2', title: 'Daniel R. Repayment', date: 'Apr 5', type: 'reminder' },
-  { id: 'ce3', title: 'Emergency Fund Milestone ($10k)', date: 'Apr 15', type: 'milestone' },
+  { id: 'ce3', title: 'Emergency Fund Milestone (₹10k)', date: 'Apr 15', type: 'milestone' },
   { id: 'ce4', title: 'Aurora Cloud Renews', date: 'Apr 28', type: 'deadline' },
 ]
 
@@ -396,11 +396,4 @@ export const reports = {
   ],
 }
 
-
-export function currency(n: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(n)
-}
+export { currency, formatCurrency, formatCurrencyWithDecimals } from './utils/currency'

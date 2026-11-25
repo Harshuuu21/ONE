@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { SpendingCategory, CategoryCorrectionResponse } from '../types';
 import { SpendingService } from '../services/spending.service';
+import { formatCurrency } from '@/lib/utils/currency';
 
 export interface EditableTransaction {
   id: string;
@@ -299,7 +300,7 @@ export function TransactionCategoryEditor({
                 Amount
               </p>
               <p className="text-xl font-bold text-white mt-0.5">
-                ₹{transaction.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                {formatCurrency(transaction.amount, { showDecimals: true })}
               </p>
               <div className="mt-1 flex items-center sm:justify-end gap-1.5 text-xs text-slate-400">
                 <span>Predicted:</span>

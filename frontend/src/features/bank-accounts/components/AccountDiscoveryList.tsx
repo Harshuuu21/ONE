@@ -3,6 +3,7 @@
 import React from 'react';
 import { Check, Building2, ShieldCheck, CheckSquare, Square, Info } from 'lucide-react';
 import { DiscoveredAccount } from '../types';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface AccountDiscoveryListProps {
   accounts: DiscoveredAccount[];
@@ -98,7 +99,7 @@ export function AccountDiscoveryList({
                   <div className="text-right hidden sm:block">
                     <p className="text-xs text-muted-foreground">Available</p>
                     <p className="text-sm font-semibold text-foreground font-mono">
-                      ₹{acc.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      {formatCurrency(acc.balance, { showDecimals: true })}
                     </p>
                   </div>
                 )}

@@ -47,7 +47,7 @@ export function JourneyScene() {
         <div>
           <p className="text-sm text-muted-foreground">Net worth today</p>
           <p className="font-serif text-4xl font-medium tracking-tight">
-            ₹{netWorthNow.toLocaleString('en-IN')}
+            {currency(netWorthNow)}
           </p>
         </div>
         <div>
@@ -57,7 +57,7 @@ export function JourneyScene() {
           </p>
         </div>
         <p className="ml-auto max-w-xs text-sm leading-relaxed text-muted-foreground">
-          That&apos;s ₹{Math.abs(netWorthNow - netWorthStart).toLocaleString('en-IN')} of liquid momentum — but
+          That&apos;s {currency(Math.abs(netWorthNow - netWorthStart))} of liquid momentum — but
           the streak behind it matters more.
         </p>
       </div>

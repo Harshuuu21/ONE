@@ -42,7 +42,7 @@ export function NotificationsPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                     </div>
                     <div>
                       <p className="font-medium text-sm">Goal on track</p>
-                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Your Japan Trip is ahead of schedule. Keep saving $420/mo and you will hit it early.</p>
+                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Your Japan Trip is ahead of schedule. Keep saving ₹420/mo and you will hit it early.</p>
                       <p className="mt-2 text-[10px] text-muted-foreground uppercase">2 hours ago</p>
                     </div>
                   </div>
@@ -56,7 +56,7 @@ export function NotificationsPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                     </div>
                     <div>
                       <p className="font-medium text-sm">Flight prices dropped</p>
-                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Flights to Tokyo for Apr 2 just dropped by $120. Book now.</p>
+                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Flights to Tokyo for Apr 2 just dropped by ₹120. Book now.</p>
                       <p className="mt-2 text-[10px] text-muted-foreground uppercase">5 hours ago</p>
                     </div>
                   </div>
@@ -69,7 +69,7 @@ export function NotificationsPanel({ isOpen, onClose }: { isOpen: boolean; onClo
                     </div>
                     <div>
                       <p className="font-medium text-sm">Loan Repaid</p>
-                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Daniel R. repaid the $430 loan early. Your trust score went up!</p>
+                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Daniel R. repaid the ₹430 loan early. Your trust score went up!</p>
                       <p className="mt-2 text-[10px] text-muted-foreground uppercase">Yesterday</p>
                     </div>
                   </div>

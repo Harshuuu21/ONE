@@ -3,6 +3,7 @@ import {
   OnboardingCompletionResponse,
 } from '../types';
 import { AuthApi } from '@/features/authentication/services/authApi';
+import { formatCurrency } from '@/lib/utils/currency';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 const LOCAL_PROFILE_KEY = 'one_financial_profile';
@@ -127,7 +128,7 @@ export class FinancialIdentityApi {
         goals: (data.financialGoals || []).map((g, idx) => ({
           id: g.id || `rec_${idx}`,
           name: g.name,
-          description: `Targeting ₹${(g.targetAmount || 50000).toLocaleString('en-IN')}`,
+          description: `Targeting ${formatCurrency(g.targetAmount || 50000)}`,
           targetAmount: g.targetAmount || 50000,
           currentSavings: g.currentSavings || 0,
           remainingMonths: 12,

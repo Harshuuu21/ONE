@@ -7,7 +7,6 @@ import { DemoDataService } from '@/services/demoDataService';
 import {
   UserCheck,
   Briefcase,
-  DollarSign,
   Target,
   BookOpen,
   RefreshCw,

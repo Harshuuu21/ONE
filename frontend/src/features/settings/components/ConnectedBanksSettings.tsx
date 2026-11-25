@@ -14,6 +14,7 @@ import {
   Info,
 } from 'lucide-react';
 import { useBankAccounts } from '@/features/bank-accounts';
+import { formatCurrency } from '@/lib/utils/currency';
 import { useConsent, ConsentReviewModal, ConsentDetailCard, ConsentHistoryList } from '@/features/consent';
 import { useAccountAggregator } from '@/features/account-aggregator';
 import { AAProviderSelector } from '@/features/account-aggregator/components/AAProviderSelector';
@@ -214,7 +215,7 @@ export function ConnectedBanksSettings() {
                   <div>
                     <span className="text-muted-foreground text-[11px]">Balance: </span>
                     <span className="font-mono font-semibold text-foreground">
-                      ₹{acc.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      {formatCurrency(acc.balance, { showDecimals: true })}
                     </span>
                   </div>
                   <button

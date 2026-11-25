@@ -96,7 +96,7 @@ export function GoalsScene() {
               <span>AI Goal Forecasting</span>
             </div>
             <span className="text-xs text-center text-accent-foreground/80">
-              See what happens if you increase monthly savings by $50.
+              See what happens if you increase monthly savings by ₹50.
             </span>
           </button>
         </div>

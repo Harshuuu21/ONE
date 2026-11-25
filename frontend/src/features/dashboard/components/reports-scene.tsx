@@ -42,13 +42,13 @@ export function ReportsScene() {
         <div className="rounded-3xl border border-border bg-card p-6">
           <p className="text-sm text-muted-foreground">Monthly Spending</p>
           <p className="mt-1 font-serif text-3xl font-medium tracking-tight">
-            ₹{monthlySpending.toLocaleString('en-IN')}
+            {currency(monthlySpending)}
           </p>
         </div>
         <div className="rounded-3xl border border-border bg-card p-6">
           <p className="text-sm text-muted-foreground">Monthly Net Savings</p>
           <p className="mt-1 font-serif text-3xl font-medium tracking-tight text-primary">
-            ₹{monthlySavings.toLocaleString('en-IN')}
+            {currency(monthlySavings)}
           </p>
         </div>
       </div>
@@ -68,7 +68,7 @@ export function ReportsScene() {
                   className={`w-full rounded-t-lg ${cat.color} transition-opacity hover:opacity-80`}
                 />
                 <div className="absolute -top-8 opacity-0 transition-opacity group-hover:opacity-100 bg-foreground text-background text-xs px-2 py-1 rounded">
-                  ₹{cat.amount.toLocaleString('en-IN')}
+                  {currency(cat.amount)}
                 </div>
               </div>
             )
