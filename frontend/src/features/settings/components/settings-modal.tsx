@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Settings, X, Shield, Moon, Bell, CreditCard, User, Database, Building2, Sparkles } from 'lucide-react'
 import { DemoDataSettings } from './DemoDataSettings'
+import { ThemeSegmentedControl } from '@/components/common/ThemeToggle'
 
 export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [activeTab, setActiveTab] = useState('Account')
@@ -159,7 +160,20 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   <DemoDataSettings />
                 )}
 
-                {activeTab !== 'Account' && activeTab !== 'Demo Data' && activeTab !== 'Permissions & Data' && (
+                {activeTab === 'Preferences' && (
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-sm font-semibold">Theme & Appearance</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">Switch between light mode, dark mode, or follow your operating system</p>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-background p-4 space-y-3">
+                      <p className="text-xs font-medium text-foreground">Theme Mode</p>
+                      <ThemeSegmentedControl />
+                    </div>
+                  </div>
+                )}
+
+                {activeTab !== 'Account' && activeTab !== 'Demo Data' && activeTab !== 'Permissions & Data' && activeTab !== 'Preferences' && (
                   <div className="text-sm text-muted-foreground">
                     Settings for {activeTab} will appear here.
                   </div>

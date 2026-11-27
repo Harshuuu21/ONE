@@ -128,9 +128,9 @@ export const SPENDING_CATEGORY_CONFIGS: Record<SpendingCategory, SpendingCategor
   RENT: {
     id: 'RENT',
     name: 'Rent',
-    color: '#F43F5E', // Rose
-    hoverColor: '#FB7185',
-    glowColor: 'rgba(244, 63, 94, 0.5)',
+    color: '#FB7185', // Vibrant rose (accessible contrast in light & dark modes)
+    hoverColor: '#FDA4AF',
+    glowColor: 'rgba(251, 113, 133, 0.5)',
     iconName: 'Home',
     bgClass: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
   },

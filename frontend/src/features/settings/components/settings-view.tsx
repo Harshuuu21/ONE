@@ -23,6 +23,7 @@ import { SceneHeader } from '@/components/common/scene-header';
 import { AuthService } from '@/services/auth.service';
 import { useRouter } from 'next/navigation';
 import { ConnectedBanksSettings } from './ConnectedBanksSettings';
+import { ThemeSegmentedControl } from '@/components/common/ThemeToggle';
 import { DemoDataSettings } from './DemoDataSettings';
 import { FinancialProfileSettings } from './FinancialProfileSettings';
 import { PasskeyApi } from '@/features/authentication/services/passkeyApi';
@@ -237,12 +238,12 @@ export function SettingsView() {
                 <p className="text-sm text-muted-foreground mt-1">Customize your interaction experience</p>
               </div>
               <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-2xl border border-border p-4 bg-background">
+                <div className="rounded-2xl border border-border p-5 bg-card space-y-3">
                   <div>
-                    <p className="font-medium text-sm">Theme Mode</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Dark fintech theme (high contrast)</p>
+                    <p className="font-medium text-sm">Theme Appearance</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Choose between light, dark, or automatic system preferences</p>
                   </div>
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-secondary">Dark Mode</span>
+                  <ThemeSegmentedControl />
                 </div>
                 <div className="flex items-center justify-between rounded-2xl border border-border p-4 bg-background">
                   <div>

@@ -142,7 +142,7 @@ export function TransactionsScene() {
                   {tx.isDemo && <DemoDataBadge />}
                 </div>
               </div>
-              <p className={`font-serif text-lg font-medium ${tx.type === 'income' ? 'text-emerald-400' : 'text-foreground'}`}>
+              <p className={`font-serif text-lg font-medium ${tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground'}`}>
                 {tx.type === 'income' ? '+' : '-'}{currency(tx.amount)}
               </p>
             </div>

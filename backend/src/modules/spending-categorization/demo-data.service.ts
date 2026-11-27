@@ -55,27 +55,40 @@ export class DemoDataService {
         orderBy: { date: 'desc' },
       });
 
-      if (dbRecords.length > 0) {
-        const formatted: DemoTransactionRecord[] = dbRecords.map((r) => ({
-          id: r.id,
-          userId: r.userId,
-          title: r.title,
-          merchant: r.merchant || r.merchantName || 'Merchant',
-          amount: Number(r.amount),
-          category: r.category as any,
-          type: r.type as any,
-          paymentMethod: r.paymentMethod || 'UPI',
-          status: 'COMPLETED',
-          date: new Date(r.date),
-          isDemo: true,
-          note: r.note || undefined,
-          originalPredictedCategory: (r.originalPredictedCategory as any) || r.category,
-          confidenceScore: Number(r.confidenceScore) || 95.0,
-          classificationMethod: r.classificationMethod || 'SYNTHETIC_DEMO_ENGINE',
-        }));
+      if (dbRecords.length >= 15) {
+        const uniqueCategories = new Set(dbRecords.map((r) => r.category));
+        if (uniqueCategories.size >= 8) {
+          const formatted: DemoTransactionRecord[] = dbRecords.map((r) => ({
+            id: r.id,
+            userId: r.userId,
+            title: r.title,
+            merchant: r.merchant || r.merchantName || 'Merchant',
+            amount: Number(r.amount),
+            category: r.category as any,
+            type: r.type as any,
+            paymentMethod: r.paymentMethod || 'UPI',
+            status: 'COMPLETED',
+            date: new Date(r.date),
+            isDemo: true,
+            note: r.note || undefined,
+            originalPredictedCategory: (r.originalPredictedCategory as any) || r.category,
+            confidenceScore: Number(r.confidenceScore) || 95.0,
+            classificationMethod: r.classificationMethod || 'SYNTHETIC_DEMO_ENGINE',
+          }));
 
-        this.userDemoCache.set(userId, formatted);
-        return formatted;
+          this.userDemoCache.set(userId, formatted);
+          return formatted;
+        }
+      }
+
+      // If existing dataset is legacy or has fewer than 8 categories, purge and upgrade
+      if (dbRecords.length > 0) {
+        await prisma.transaction.deleteMany({
+          where: {
+            userId,
+            isDemo: true,
+          },
+        });
       }
     } catch {
       // Database not available or offline, proceed to generate

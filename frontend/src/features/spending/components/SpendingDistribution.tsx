@@ -30,25 +30,25 @@ export function SpendingDistribution() {
   } = useSpendingDistribution('THIS_MONTH');
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/60 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
+    <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm dark:border-white/10 dark:bg-slate-900/60 dark:shadow-2xl backdrop-blur-xl transition-colors">
       {/* Background Ambience Glow */}
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" />
       <div className="pointer-events-none absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
 
       {/* Header & Controls */}
-      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border dark:border-white/10 pb-6">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5 text-xs font-semibold text-teal-400 border border-teal-500/20">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5 text-xs font-semibold text-teal-600 dark:text-teal-400 border border-teal-500/20">
               <Sparkles className="h-3 w-3" />
               Category Insights
             </span>
             {isDemo && <SpendingDemoLabel />}
           </div>
-          <h2 className="mt-2 text-xl md:text-2xl font-serif font-semibold text-white tracking-tight">
+          <h2 className="mt-2 text-xl md:text-2xl font-serif font-semibold text-foreground dark:text-white tracking-tight">
             Spending Distribution
           </h2>
-          <p className="mt-0.5 text-xs md:text-sm text-slate-400">
+          <p className="mt-0.5 text-xs md:text-sm text-muted-foreground dark:text-slate-400">
             Proportional financial allocation across categories for {PERIOD_LABELS[period]}.
           </p>
         </div>
@@ -128,10 +128,10 @@ export function SpendingDistribution() {
             {/* Compact Category Legend */}
             <div className="w-full flex-1 min-w-0">
               <div className="flex items-center justify-between mb-3 px-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground dark:text-slate-400">
                   Categories ({slices.length})
                 </span>
-                <span className="text-xs font-mono text-teal-400">
+                <span className="text-xs font-mono text-teal-600 dark:text-teal-400 font-semibold">
                   100% Total
                 </span>
               </div>
@@ -166,8 +166,8 @@ export function SpendingDistribution() {
                 className="h-2 w-2 rounded-full"
                 style={{ backgroundColor: activeSlice.color }}
               />
-              <span className="text-slate-300">
-                Filtered view: <strong className="text-white">{activeSlice.name}</strong> accounts for{' '}
+              <span className="text-foreground/85 dark:text-slate-300">
+                Filtered view: <strong className="text-foreground dark:text-white">{activeSlice.name}</strong> accounts for{' '}
                 <strong style={{ color: activeSlice.color }}>{activeSlice.percentage}%</strong> of spending across{' '}
                 <strong>
                   {activeSlice.transactionCount} {activeSlice.transactionCount === 1 ? 'transaction' : 'transactions'}
@@ -179,7 +179,7 @@ export function SpendingDistribution() {
             <button
               type="button"
               onClick={() => setSelectedCategory(null)}
-              className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium text-slate-300 hover:bg-white/10 hover:text-white transition"
+              className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:bg-secondary hover:text-foreground dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white transition"
               aria-label="Clear category selection"
             >
               <span>Clear</span>

@@ -18,15 +18,15 @@ export function SpendingDemoLabel({ className = '' }: SpendingDemoLabelProps) {
       role="status"
       aria-label="Synthetic spending demo data notice"
     >
-      <span className="flex h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
-      <span className="font-mono text-[11px] font-bold tracking-wider text-teal-300 uppercase">
+      <span className="flex h-2 w-2 rounded-full bg-teal-500 dark:bg-teal-400 animate-pulse" />
+      <span className="font-mono text-[11px] font-bold tracking-wider text-teal-700 dark:text-teal-300 uppercase">
         DEMO DATA
       </span>
-      <span className="hidden sm:inline text-slate-400">·</span>
-      <span className="hidden sm:inline text-[11px] text-slate-300">
+      <span className="hidden sm:inline text-muted-foreground dark:text-slate-400">·</span>
+      <span className="hidden sm:inline text-[11px] text-foreground/80 dark:text-slate-300">
         Illustrative spending distribution for preview purposes.
       </span>
-      <Info className="h-3 w-3 text-teal-400/70 sm:hidden" />
+      <Info className="h-3 w-3 text-teal-600 dark:text-teal-400/70 sm:hidden" />
     </div>
   );
 }

@@ -249,69 +249,69 @@ export function TransactionCategoryEditor({
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-white/10 bg-slate-900/95 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
+          className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-2xl backdrop-blur-xl sm:p-8 dark:border-white/10 dark:bg-slate-900/95"
         >
           {/* Header */}
-          <div className="flex items-start justify-between border-b border-white/10 pb-4">
+          <div className="flex items-start justify-between border-b border-border dark:border-white/10 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5 text-xs font-medium text-teal-400 border border-teal-500/20">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5 text-xs font-medium text-teal-600 dark:text-teal-400 border border-teal-500/20">
                   <Sparkles className="h-3 w-3" />
                   Category Intelligence
                 </span>
                 {transaction.isManuallyCorrected && (
-                  <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400 border border-amber-500/20">
+                  <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400 border border-amber-500/20">
                     Manually Corrected
                   </span>
                 )}
               </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">
+              <h2 className="mt-2 text-xl font-semibold text-foreground dark:text-white">
                 Reclassify Transaction
               </h2>
-              <p className="mt-0.5 text-sm text-slate-400">
+              <p className="mt-0.5 text-sm text-muted-foreground dark:text-slate-400">
                 Adjust the spending category and help ONE learn your financial preferences.
               </p>
             </div>
             <button
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 hover:bg-white/10 hover:text-white transition"
+              className="rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-foreground dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white transition"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* Transaction Metadata Card */}
-          <div className="my-5 rounded-2xl border border-white/10 bg-white/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="my-5 rounded-2xl border border-border bg-muted/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 dark:border-white/10 dark:bg-white/5">
             <div>
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <p className="text-xs font-medium text-muted-foreground dark:text-slate-400 uppercase tracking-wider">
                 Merchant / Entity
               </p>
-              <p className="text-base font-semibold text-white mt-0.5">
+              <p className="text-base font-semibold text-foreground dark:text-white mt-0.5">
                 {transaction.merchant}
               </p>
-              <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-400">
+              <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground dark:text-slate-400">
                 <span>{transaction.date}</span>
                 {transaction.upiId && <span>UPI: {transaction.upiId}</span>}
               </div>
             </div>
 
             <div className="sm:text-right">
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <p className="text-xs font-medium text-muted-foreground dark:text-slate-400 uppercase tracking-wider">
                 Amount
               </p>
-              <p className="text-xl font-bold text-white mt-0.5">
+              <p className="text-xl font-bold text-foreground dark:text-white mt-0.5">
                 {formatCurrency(transaction.amount, { showDecimals: true })}
               </p>
-              <div className="mt-1 flex items-center sm:justify-end gap-1.5 text-xs text-slate-400">
+              <div className="mt-1 flex items-center sm:justify-end gap-1.5 text-xs text-muted-foreground dark:text-slate-400">
                 <span>Predicted:</span>
-                <span className="font-medium text-teal-400">{originalPredicted}</span>
+                <span className="font-medium text-teal-600 dark:text-teal-400">{originalPredicted}</span>
               </div>
             </div>
           </div>
 
           {/* Category Selection Grid */}
           <div>
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-3">
+            <label className="text-xs font-semibold text-foreground/80 dark:text-slate-300 uppercase tracking-wider block mb-3">
               Select Verified Category
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-64 overflow-y-auto pr-1">
@@ -326,7 +326,7 @@ export function TransactionCategoryEditor({
                     className={`relative flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition ${
                       isSelected
                         ? `${opt.borderColor} ${opt.bgColor} ring-2 ring-teal-500/50`
-                        : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/10'
+                        : 'border-border bg-card hover:bg-secondary/60 hover:border-primary/30 dark:border-white/5 dark:bg-white/[0.02] dark:hover:bg-white/[0.06] dark:hover:border-white/10'
                     }`}
                   >
                     <div
@@ -336,12 +336,12 @@ export function TransactionCategoryEditor({
                       <IconComponent className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium text-white truncate">
+                      <p className="text-xs font-medium text-foreground dark:text-white truncate">
                         {opt.displayName}
                       </p>
                     </div>
                     {isSelected && (
-                      <div className="shrink-0 text-teal-400">
+                      <div className="shrink-0 text-teal-600 dark:text-teal-400">
                         <Check className="h-4 w-4" />
                       </div>
                     )}
@@ -352,7 +352,7 @@ export function TransactionCategoryEditor({
           </div>
 
           {/* Merchant Learning Checkbox */}
-          <div className="mt-5 border-t border-white/10 pt-4">
+          <div className="mt-5 border-t border-border dark:border-white/10 pt-4">
             {isPersonalUpi ? (
               <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-300">
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-400" />
@@ -369,10 +369,10 @@ export function TransactionCategoryEditor({
                   className="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-800 text-teal-500 focus:ring-teal-400"
                 />
                 <div>
-                  <span className="text-sm font-medium text-white group-hover:text-teal-300 transition">
+                  <span className="text-sm font-medium text-foreground dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-300 transition">
                     Remember this category for future transactions from &ldquo;{transaction.merchant}&rdquo;
                   </span>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-muted-foreground dark:text-slate-400 mt-0.5">
                     ONE will prioritize your verified preference for this merchant in future statements.
                   </p>
                 </div>
@@ -394,7 +394,7 @@ export function TransactionCategoryEditor({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="rounded-xl px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/10 transition"
+              className="rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white transition"
             >
               Cancel
             </button>

@@ -24,6 +24,7 @@ import { AssistantBar } from '@/components/layout/assistant-bar'
 import { GlobalSearch } from '@/components/layout/global-search'
 import { NotificationsPanel } from '@/components/layout/notifications-panel'
 import { SettingsModal } from '@/features/settings/components/settings-modal'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import type { PillarId } from '@/lib/one-data'
 
 type NavItem = {
@@ -109,7 +110,7 @@ export default function AuthenticatedLayout({
             <OneOrb size={22} />
             <span className="font-serif text-lg font-semibold tracking-tight">ONE</span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3.5">
             <button
               onClick={() => setSearchOpen(true)}
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -124,6 +125,7 @@ export default function AuthenticatedLayout({
             >
               <Bell className="size-4" />
             </button>
+            <ThemeToggle />
             <button
               onClick={() => setSettingsOpen(true)}
               className="text-muted-foreground hover:text-foreground transition-colors"

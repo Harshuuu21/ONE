@@ -30,7 +30,8 @@ export function SpendingEmptyState({ periodLabel = 'this period' }: SpendingEmpt
             cy="80"
             r="60"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.05)"
+            className="text-border dark:text-white/5"
+            stroke="currentColor"
             strokeWidth="14"
           />
           <circle
@@ -45,24 +46,24 @@ export function SpendingEmptyState({ periodLabel = 'this period' }: SpendingEmpt
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400">
             <PieChart className="h-6 w-6 opacity-80" />
           </div>
-          <span className="mt-1 text-[10px] font-mono uppercase tracking-widest text-slate-500">
+          <span className="mt-1 text-[10px] font-mono uppercase tracking-widest text-muted-foreground dark:text-slate-500">
             0% Active
           </span>
         </div>
       </div>
 
-      <h3 className="font-serif text-lg font-medium text-white">
+      <h3 className="font-serif text-lg font-medium text-foreground dark:text-white">
         Your spending insights will appear here.
       </h3>
-      <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-400">
+      <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-muted-foreground dark:text-slate-400">
         Complete your first eligible transaction to see your spending distribution for {periodLabel}.
       </p>
 
-      <div className="mt-4 flex items-center gap-1.5 rounded-full bg-white/[0.03] border border-white/5 px-3 py-1 text-[11px] text-slate-400">
-        <Clock className="h-3 w-3 text-teal-400" />
+      <div className="mt-4 flex items-center gap-1.5 rounded-full bg-secondary/50 border border-border dark:bg-white/[0.03] dark:border-white/5 px-3 py-1 text-[11px] text-muted-foreground dark:text-slate-400">
+        <Clock className="h-3 w-3 text-teal-600 dark:text-teal-400" />
         <span>Try selecting another period above to view historical distributions</span>
       </div>
     </motion.div>

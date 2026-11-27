@@ -277,7 +277,7 @@ const BASE_DEMO_TEMPLATES = [
   },
 ];
 
-const STORAGE_KEY = 'one_smart_spending_demo_dataset_v2';
+const STORAGE_KEY = 'one_smart_spending_demo_dataset_v4';
 
 /**
  * Generates synthetic transactions with natural date jitter
@@ -314,7 +314,10 @@ export function getOrCreateFrontendDemoTransactions(): FrontendDemoTransaction[]
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length >= 20) {
-        return parsed;
+        const uniqueCategories = new Set(parsed.map((t: any) => t.category));
+        if (uniqueCategories.size >= 8) {
+          return parsed;
+        }
       }
     }
   } catch {

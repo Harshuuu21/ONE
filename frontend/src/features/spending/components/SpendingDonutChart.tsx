@@ -25,10 +25,10 @@ export function SpendingDonutChart({
 
   // Geometric parameters
   const center = size / 2;
-  const radius = size * 0.34; // ~95px at 280px size
+  const radius = size * 0.35; // ~98px at 280px size
   const circumference = 2 * Math.PI * radius;
-  const normalStroke = 24;
-  const hoverStroke = 32;
+  const normalStroke = 20;
+  const hoverStroke = 28;
 
   // Find currently active slice (hovered takes precedence, then selected)
   const activeCategoryName = hoveredCategory || selectedCategory;
@@ -36,26 +36,20 @@ export function SpendingDonutChart({
     (s) => s.name === activeCategoryName || s.categoryId === activeCategoryName
   ) || null;
 
-  // Calculate cumulative offsets and dash lengths
-  const isSingleSegment = slices.length === 1;
-  const gapPx = isSingleSegment ? 0 : 6; // Separation between rounded caps
+  // Calculate cumulative offsets and dash lengths with clean, modern segment gaps
+  const isSingleSegment = slices.length <= 1;
+  const gapPx = isSingleSegment ? 0 : 3.5; // Crisp radial gap between segments
 
   let accumulatedPercent = 0;
   const segmentData = slices.map((slice) => {
     const fraction = slice.percentage / 100;
     const arcLength = fraction * circumference;
-    const isSmall = arcLength <= normalStroke + gapPx;
-
-    // With strokeLinecap="round", the caps add normalStroke total to the visible length
     const dashLength = isSingleSegment
       ? circumference
-      : isSmall
-      ? 1
-      : Math.max(1, arcLength - normalStroke - gapPx);
+      : Math.max(1, arcLength - gapPx);
 
-    // Initial offset adjusted for the half-cap shift
-    const startShift = isSingleSegment ? 0 : (normalStroke + gapPx) / 2;
-    const offset = -((accumulatedPercent / 100) * circumference + startShift);
+    // Initial offset aligned precisely with the gap
+    const offset = -((accumulatedPercent / 100) * circumference + gapPx / 2);
 
     accumulatedPercent += slice.percentage;
 
@@ -117,7 +111,8 @@ export function SpendingDonutChart({
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.04)"
+          stroke="currentColor"
+          className="text-slate-200/60 dark:text-white/[0.04]"
           strokeWidth={normalStroke}
         />
 
@@ -157,7 +152,7 @@ export function SpendingDonutChart({
                 fill="none"
                 stroke={isHovered ? slice.hoverColor : slice.color}
                 strokeWidth={isHovered || isSelected ? hoverStroke : normalStroke}
-                strokeLinecap="round"
+                strokeLinecap="butt"
                 strokeDasharray={`${dashLength} ${circumference}`}
                 initial={{ strokeDashoffset: circumference }}
                 animate={{
@@ -197,10 +192,10 @@ export function SpendingDonutChart({
               >
                 {activeSlice.percentage}%
               </span>
-              <span className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-slate-300">
+              <span className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-foreground/80 dark:text-slate-300">
                 {activeSlice.name}
               </span>
-              <span className="text-[10px] tracking-widest text-slate-500 uppercase">
+              <span className="text-[10px] tracking-widest text-muted-foreground dark:text-slate-500 uppercase">
                 {activeSlice.transactionCount} {activeSlice.transactionCount === 1 ? 'transaction' : 'transactions'}
               </span>
             </motion.div>
@@ -213,13 +208,13 @@ export function SpendingDonutChart({
               transition={{ duration: 0.18 }}
               className="flex flex-col items-center px-4"
             >
-              <span className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-white">
+              <span className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-foreground dark:text-white">
                 100%
               </span>
-              <span className="mt-1 text-[10px] font-semibold tracking-widest text-teal-400 uppercase">
+              <span className="mt-1 text-[10px] font-semibold tracking-widest text-teal-600 dark:text-teal-400 uppercase">
                 SPENDING DISTRIBUTION
               </span>
-              <span className="mt-0.5 text-[10px] tracking-wider text-slate-500">
+              <span className="mt-0.5 text-[10px] tracking-wider text-muted-foreground dark:text-slate-500">
                 {slices.length} {slices.length === 1 ? 'active category' : 'active categories'}
               </span>
             </motion.div>
@@ -230,7 +225,7 @@ export function SpendingDonutChart({
       {/* Clean Interactive Hover Tooltip (NO RUPEE AMOUNTS) */}
       {activeSlice && tooltipPos && (
         <div
-          className="pointer-events-none absolute z-30 hidden sm:block -translate-x-1/2 -translate-y-12 rounded-xl border border-white/10 bg-slate-900/90 px-3 py-1.5 shadow-xl backdrop-blur-md"
+          className="pointer-events-none absolute z-30 hidden sm:block -translate-x-1/2 -translate-y-12 rounded-xl border border-border bg-card/95 text-card-foreground dark:border-white/10 dark:bg-slate-900/90 dark:text-white px-3 py-1.5 shadow-xl backdrop-blur-md"
           style={{
             left: Math.max(50, Math.min(size - 50, tooltipPos.x)),
             top: Math.max(10, Math.min(size - 30, tooltipPos.y)),
@@ -241,10 +236,10 @@ export function SpendingDonutChart({
               className="h-2 w-2 rounded-full"
               style={{ backgroundColor: activeSlice.color }}
             />
-            <span className="text-xs font-semibold text-white">
+            <span className="text-xs font-semibold text-foreground dark:text-white">
               {activeSlice.name}
             </span>
-            <span className="text-xs font-mono font-bold text-teal-300">
+            <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-300">
               {activeSlice.percentage}%
             </span>
           </div>
